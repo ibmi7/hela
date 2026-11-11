@@ -29,7 +29,9 @@ sealed class HelaThemesRow(val key: String) {
     data class Pack(val pack: InstalledThemePack) : HelaThemesRow("pack:${pack.id}")
 }
 
-enum class HelaPackAction { APPLY, USE_MAIN, USE_EXTERNAL, DELETE, CANCEL_DELETE, CONFIRM_DELETE }
+enum class HelaPackAction {
+    APPLY, USE_MAIN, USE_EXTERNAL, USE_COLORS, DELETE, CANCEL_DELETE, CONFIRM_DELETE
+}
 
 data class HelaThemesUiState(
     val rows: List<HelaThemesRow> = listOf(HelaThemesRow.Import, HelaThemesRow.Animate),
@@ -70,9 +72,7 @@ class HelaThemesViewModel @Inject constructor(
             val rows = buildList {
                 add(HelaThemesRow.Import)
                 add(HelaThemesRow.Animate)
-                if (selection.mainPackId != null || selection.externalPackId != null) {
-                    add(HelaThemesRow.Clear)
-                }
+                if (!selection.isEmpty) add(HelaThemesRow.Clear)
                 packs.forEach { add(HelaThemesRow.Pack(it)) }
             }
             val menuPack = packs.firstOrNull { it.id == local.menuPackId }
@@ -126,7 +126,7 @@ class HelaThemesViewModel @Inject constructor(
         when (row) {
             HelaThemesRow.Import -> local.update { it.copy(showBrowser = true, messageRes = null) }
             HelaThemesRow.Animate -> setAnimate(!uiState.value.selection.animate)
-            HelaThemesRow.Clear -> viewModelScope.launch { store.clearWallpapers() }
+            HelaThemesRow.Clear -> viewModelScope.launch { store.clearSelection() }
             is HelaThemesRow.Pack -> local.update {
                 it.copy(menuPackId = row.pack.id, menuFocusIndex = 0, confirmingDelete = false)
             }
@@ -163,6 +163,7 @@ class HelaThemesViewModel @Inject constructor(
                 HelaPackAction.APPLY -> store.applyPack(pack.id)
                 HelaPackAction.USE_MAIN -> store.setSlot(WallpaperSlot.MAIN, pack.id)
                 HelaPackAction.USE_EXTERNAL -> store.setSlot(WallpaperSlot.EXTERNAL, pack.id)
+                HelaPackAction.USE_COLORS -> store.setColorsPack(pack.id)
                 HelaPackAction.CONFIRM_DELETE -> store.deletePack(pack.id)
                 HelaPackAction.DELETE, HelaPackAction.CANCEL_DELETE -> Unit
             }
@@ -199,9 +200,10 @@ class HelaThemesViewModel @Inject constructor(
     }
 
     private fun actionsFor(pack: InstalledThemePack): List<HelaPackAction> = buildList {
-        if (pack.main != null || pack.external != null) add(HelaPackAction.APPLY)
+        if (pack.main != null || pack.external != null || pack.colors != null) add(HelaPackAction.APPLY)
         if (pack.main != null) add(HelaPackAction.USE_MAIN)
         if (pack.external != null) add(HelaPackAction.USE_EXTERNAL)
+        if (pack.colors != null) add(HelaPackAction.USE_COLORS)
         add(HelaPackAction.DELETE)
     }
 

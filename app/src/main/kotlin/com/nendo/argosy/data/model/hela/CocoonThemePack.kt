@@ -7,13 +7,40 @@ enum class WallpaperSlot(val token: String, val fallbackNames: List<String>) {
 
 enum class WallpaperKind { IMAGE, VIDEO }
 
+enum class CocoonThemeMode(val token: String) {
+    LIGHT("light"),
+    DARK("dark"),
+    OLED("oled"),
+    SYSTEM("system");
+
+    companion object {
+        fun fromToken(value: String?): CocoonThemeMode? =
+            entries.firstOrNull { it.token == value?.trim()?.lowercase() }
+    }
+}
+
+data class PackColors(
+    val mode: CocoonThemeMode? = null,
+    val accent: Int? = null,
+    val secondary: Int? = null
+) {
+    val isDark: Boolean?
+        get() = when (mode) {
+            CocoonThemeMode.DARK, CocoonThemeMode.OLED -> true
+            CocoonThemeMode.LIGHT -> false
+            CocoonThemeMode.SYSTEM, null -> null
+        }
+}
+
 data class CocoonThemeManifest(
     val name: String,
     val author: String? = null,
     val version: String? = null,
     val description: String? = null,
     val wallpaperMain: String? = null,
-    val wallpaperExternal: String? = null
+    val wallpaperExternal: String? = null,
+    val themeMode: String? = null,
+    val colorScheme: Map<String, String> = emptyMap()
 ) {
     fun wallpaperReference(slot: WallpaperSlot): String? = when (slot) {
         WallpaperSlot.MAIN -> wallpaperMain
@@ -33,7 +60,8 @@ data class InstalledThemePack(
     val author: String? = null,
     val version: String? = null,
     val main: PackWallpaper? = null,
-    val external: PackWallpaper? = null
+    val external: PackWallpaper? = null,
+    val colors: PackColors? = null
 ) {
     fun wallpaper(slot: WallpaperSlot): PackWallpaper? = when (slot) {
         WallpaperSlot.MAIN -> main
@@ -44,8 +72,12 @@ data class InstalledThemePack(
 data class HelaThemeSelection(
     val mainPackId: String? = null,
     val externalPackId: String? = null,
+    val colorsPackId: String? = null,
     val animate: Boolean = true
 ) {
+    val isEmpty: Boolean
+        get() = mainPackId == null && externalPackId == null && colorsPackId == null
+
     fun packId(slot: WallpaperSlot): String? = when (slot) {
         WallpaperSlot.MAIN -> mainPackId
         WallpaperSlot.EXTERNAL -> externalPackId

@@ -33,6 +33,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import coil.compose.AsyncImage
 import com.nendo.argosy.data.hela.theme.HelaThemeStore
+import com.nendo.argosy.data.model.hela.PackColors
 import com.nendo.argosy.data.model.hela.PackWallpaper
 import com.nendo.argosy.data.model.hela.WallpaperKind
 import com.nendo.argosy.ui.theme.LocalLauncherTheme
@@ -49,6 +50,28 @@ interface HelaThemeEntryPoint {
     fun helaThemeStore(): HelaThemeStore
 }
 
+@Composable
+internal fun rememberHelaThemeStore(): HelaThemeStore? {
+    val context = LocalContext.current
+    return remember(context) {
+        runCatching {
+            EntryPointAccessors
+                .fromApplication(context.applicationContext, HelaThemeEntryPoint::class.java)
+                .helaThemeStore()
+        }.getOrNull()
+    }
+}
+
+/**
+ * Colors of the pack selected for the color slot, or null when no pack supplies them.
+ */
+@Composable
+fun rememberHelaColors(): PackColors? {
+    val store = rememberHelaThemeStore() ?: return null
+    val colors by store.colors.collectAsState()
+    return colors
+}
+
 data class HelaScreenWallpaper(
     val wallpaper: PackWallpaper,
     val animate: Boolean
@@ -61,13 +84,7 @@ data class HelaScreenWallpaper(
 @Composable
 fun rememberHelaWallpaper(): HelaScreenWallpaper? {
     val context = LocalContext.current
-    val store = remember(context) {
-        runCatching {
-            EntryPointAccessors
-                .fromApplication(context.applicationContext, HelaThemeEntryPoint::class.java)
-                .helaThemeStore()
-        }.getOrNull()
-    } ?: return null
+    val store = rememberHelaThemeStore() ?: return null
     val wallpapers by store.wallpapers.collectAsState()
     val onDefaultDisplay =
         ContextCompat.getDisplayOrDefault(context).displayId == Display.DEFAULT_DISPLAY

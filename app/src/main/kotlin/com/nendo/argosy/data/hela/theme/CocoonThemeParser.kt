@@ -24,9 +24,14 @@ object CocoonThemeParser {
             version = root.text("version"),
             description = root.text("description"),
             wallpaperMain = root.text("wallpaper_main"),
-            wallpaperExternal = root.text("wallpaper_external")
+            wallpaperExternal = root.text("wallpaper_external"),
+            themeMode = root.text("theme_mode"),
+            colorScheme = root.optJSONObject("color_scheme")?.texts().orEmpty()
         )
     }
+
+    private fun JSONObject.texts(): Map<String, String> =
+        keys().asSequence().mapNotNull { key -> text(key)?.let { key to it } }.toMap()
 
     private fun JSONObject.text(key: String): String? {
         if (!has(key) || isNull(key)) return null

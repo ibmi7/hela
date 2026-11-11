@@ -216,13 +216,21 @@ private fun HelaThemesStatus(state: HelaThemesUiState) {
 
 @Composable
 private fun packSubtitle(pack: InstalledThemePack, selection: HelaThemeSelection): String {
-    val onMain = pack.main != null && selection.mainPackId == pack.id
-    val onExternal = pack.external != null && selection.externalPackId == pack.id
-    val usage = when {
-        onMain && onExternal -> stringResource(R.string.hela_themes_pack_in_use_both)
-        onMain -> stringResource(R.string.hela_themes_pack_in_use_main)
-        onExternal -> stringResource(R.string.hela_themes_pack_in_use_external)
-        else -> stringResource(R.string.hela_themes_pack_not_in_use)
+    val slots = buildList {
+        if (pack.main != null && selection.mainPackId == pack.id) {
+            add(stringResource(R.string.hela_themes_slot_main))
+        }
+        if (pack.external != null && selection.externalPackId == pack.id) {
+            add(stringResource(R.string.hela_themes_slot_external))
+        }
+        if (pack.colors != null && selection.colorsPackId == pack.id) {
+            add(stringResource(R.string.hela_themes_slot_colors))
+        }
+    }
+    val usage = if (slots.isEmpty()) {
+        stringResource(R.string.hela_themes_pack_not_in_use)
+    } else {
+        stringResource(R.string.hela_themes_pack_in_use, slots.joinToString(", "))
     }
     val author = pack.author ?: return usage
     return stringResource(R.string.hela_themes_pack_subtitle, author, usage)
@@ -278,6 +286,13 @@ private fun PackActionsModal(
                     subtitle = stringResource(R.string.hela_themes_action_use_external_subtitle),
                     isFocused = index == focusedIndex,
                     icon = Icons.Outlined.Image,
+                    onClick = { onAction(action) }
+                )
+                HelaPackAction.USE_COLORS -> ActionPreference(
+                    title = stringResource(R.string.hela_themes_action_use_colors),
+                    subtitle = stringResource(R.string.hela_themes_action_use_colors_subtitle),
+                    isFocused = index == focusedIndex,
+                    icon = Icons.Outlined.Palette,
                     onClick = { onAction(action) }
                 )
                 HelaPackAction.DELETE -> ActionPreference(

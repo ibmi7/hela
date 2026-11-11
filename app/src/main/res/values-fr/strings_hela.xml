@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="settings_theme_cocoon_packs_title">Packs Cocoon</string>
-    <string name="settings_theme_cocoon_packs_subtitle">Fonds d\'écran des packs de thème importés</string>
+    <string name="settings_theme_cocoon_packs_subtitle">Fonds d\'écran et couleurs des packs de thème importés</string>
 
     <string name="hela_themes_title">Packs Cocoon</string>
     <string name="hela_themes_back_desc">Retour</string>
@@ -19,18 +19,14 @@
 
     <string name="hela_themes_animate_title">Fonds animés</string>
     <string name="hela_themes_animate_subtitle">Lit les fonds vidéo en boucle ; désactivé, affiche une image fixe</string>
-    <string name="hela_themes_clear_title">Retirer les fonds</string>
-    <string name="hela_themes_clear_subtitle">Rend aux deux écrans les fonds d\'Argosy</string>
+    <string name="hela_themes_clear_title">Retirer le thème Cocoon</string>
+    <string name="hela_themes_clear_subtitle">Rend les fonds et les couleurs aux réglages d\'Argosy</string>
     <string name="hela_themes_empty">Aucun pack installé pour l\'instant</string>
-
-    <string name="hela_themes_pack_in_use_both">Utilisé sur les deux écrans</string>
-    <string name="hela_themes_pack_in_use_main">Utilisé sur l\'écran du haut</string>
-    <string name="hela_themes_pack_in_use_external">Utilisé sur l\'écran du bas</string>
     <string name="hela_themes_pack_not_in_use">Non utilisé</string>
     <string name="hela_themes_pack_subtitle">%1$s · %2$s</string>
 
     <string name="hela_themes_action_apply">Appliquer le thème</string>
-    <string name="hela_themes_action_apply_subtitle">Utilise tous les fonds fournis par ce pack</string>
+    <string name="hela_themes_action_apply_subtitle">Utilise les fonds et les couleurs fournis par ce pack</string>
     <string name="hela_themes_action_use_main">Utiliser le fond de l\'écran du haut</string>
     <string name="hela_themes_action_use_main_subtitle">Laisse l\'écran du bas tel quel</string>
     <string name="hela_themes_action_use_external">Utiliser le fond de l\'écran du bas</string>
@@ -42,4 +38,10 @@
     <string name="hela_themes_action_cancel_delete_subtitle">Revenir sans rien supprimer</string>
     <string name="hela_themes_action_confirm_delete">Supprimer</string>
     <string name="hela_themes_action_confirm_delete_subtitle">Les écrans qui l\'utilisent retrouvent le fond d\'Argosy</string>
+    <string name="hela_themes_pack_in_use">Utilisé : %1$s</string>
+    <string name="hela_themes_slot_main">écran du haut</string>
+    <string name="hela_themes_slot_external">écran du bas</string>
+    <string name="hela_themes_slot_colors">couleurs</string>
+    <string name="hela_themes_action_use_colors">Utiliser ses couleurs</string>
+    <string name="hela_themes_action_use_colors_subtitle">Mode sombre ou clair et couleur d\'accent ; les fonds restent tels quels</string>
 </resources>

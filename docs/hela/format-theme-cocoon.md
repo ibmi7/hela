@@ -56,7 +56,8 @@ Noms de base attendus dans `sounds/` : `navigate`, `select`, `back`, `folder_ope
 | Fonds d'écran (haut / bas) | Argosy n'avait qu'un fond flouté en 640×360 sur l'accueil et un motif sur le second écran ; Hela ajoute sa propre couche image et vidéo (`ui/hela/theme/`) | Moyenne ; codée, à vérifier sur l'appareil |
 | Sons d'interface | Sons de navigation existent ; moins de noms | Faible, partielle |
 | Musique (playlist, planning horaire) | Musique de fond existe ; domaine réservé aux mainteneurs en amont | Moyenne |
-| Couleurs d'accent, fond, texte | Accent + teinte dérivée ; pas de palette libre | Moyenne : palette complète à ajouter |
+| Mode et couleur d'accent | `theme_mode` force le mode sombre ou clair ; l'accent vient de `selection_gradient_start`, sinon `accent_gradient_start`, sinon `accent_glow`, et la couleur secondaire de la fin du même dégradé. Branché dans `rememberArgosyPalette` | Faite, vérifiée sur la Thor |
+| Fond, cartes, texte, séparateurs | Argosy dérive ces surfaces de sa propre rampe ; pas de palette libre | Moyenne : non faite, décision à prendre |
 | Arrondi, échelle des icônes, style de curseur | Jetons de dimensions figés à la compilation | Moyenne |
 | Masques et surcouches d'icônes par plateforme | Style de jaquette existe ; pas de masque par plateforme | Moyenne ; identifiants de plateforme Cocoon à traduire |
 | Matière « verre » (flou, réfraction) | Pas d'équivalent | Élevée |
