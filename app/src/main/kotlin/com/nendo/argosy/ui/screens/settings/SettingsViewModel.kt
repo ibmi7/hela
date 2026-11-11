@@ -871,6 +871,13 @@ class SettingsViewModel @Inject constructor(
     fun openFrameConfig() = routeOpenFrameConfig(this)
     fun downloadAndSelectFrame(frameId: String) = routeDownloadAndSelectFrame(this, frameId)
 
+    private val _openHelaThemesEvent = MutableSharedFlow<Unit>()
+    val openHelaThemesEvent: SharedFlow<Unit> = _openHelaThemesEvent.asSharedFlow()
+
+    fun requestHelaThemes() {
+        viewModelScope.launch { _openHelaThemesEvent.emit(Unit) }
+    }
+
     fun requestCustomFramePicker() {
         viewModelScope.launch { _openCustomFramePickerEvent.emit(Unit) }
     }

@@ -182,7 +182,16 @@ private fun PresentationSlotScene(
                 modifier = Modifier.fillMaxSize()
                     .then(if (frostedBackdrop != null) Modifier.frostedBackdropSource(frostedBackdrop) else Modifier)
                     .surfaceBackdrop(BackdropRole.WALLPAPER)
-            )
+            ) {
+                val helaWallpaper = com.nendo.argosy.ui.hela.theme.rememberHelaWallpaper()
+                if (helaWallpaper != null) {
+                    com.nendo.argosy.ui.hela.theme.HelaWallpaperLayer(
+                        wallpaper = helaWallpaper,
+                        modifier = Modifier.fillMaxSize(),
+                        paused = slot is PresentationSlot.InGame
+                    )
+                }
+            }
         }
         when (slot) {
             PresentationSlot.Fallback -> Unit

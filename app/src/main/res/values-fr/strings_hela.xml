@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_theme_cocoon_packs_title">Packs Cocoon</string>
+    <string name="settings_theme_cocoon_packs_subtitle">Fonds d\'écran des packs de thème importés</string>
+
+    <string name="hela_themes_title">Packs Cocoon</string>
+    <string name="hela_themes_back_desc">Retour</string>
+    <string name="hela_themes_browser_title">Choisir un pack de thème</string>
+
+    <string name="hela_themes_import_title">Importer un pack</string>
+    <string name="hela_themes_import_subtitle">Choisir le fichier ZIP d\'un thème</string>
+    <string name="hela_themes_importing">Import en cours…</string>
+    <string name="hela_themes_import_done">Pack importé</string>
+    <string name="hela_themes_import_error_not_zip">Ce fichier n\'est pas une archive ZIP</string>
+    <string name="hela_themes_import_error_no_theme">Ni theme.json ni dossier wallpapers dans cette archive</string>
+    <string name="hela_themes_import_error_unsafe">L\'archive contient un chemin de fichier hors du dossier du thème</string>
+    <string name="hela_themes_import_error_too_large">L\'archive est trop volumineuse pour être importée</string>
+    <string name="hela_themes_import_error_io">L\'archive n\'a pas pu être lue ou copiée</string>
+
+    <string name="hela_themes_animate_title">Fonds animés</string>
+    <string name="hela_themes_animate_subtitle">Lit les fonds vidéo en boucle ; désactivé, affiche une image fixe</string>
+    <string name="hela_themes_clear_title">Retirer les fonds</string>
+    <string name="hela_themes_clear_subtitle">Rend aux deux écrans les fonds d\'Argosy</string>
+    <string name="hela_themes_empty">Aucun pack installé pour l\'instant</string>
+
+    <string name="hela_themes_pack_in_use_both">Utilisé sur les deux écrans</string>
+    <string name="hela_themes_pack_in_use_main">Utilisé sur l\'écran du haut</string>
+    <string name="hela_themes_pack_in_use_external">Utilisé sur l\'écran du bas</string>
+    <string name="hela_themes_pack_not_in_use">Non utilisé</string>
+    <string name="hela_themes_pack_subtitle">%1$s · %2$s</string>
+
+    <string name="hela_themes_action_apply">Appliquer le thème</string>
+    <string name="hela_themes_action_apply_subtitle">Utilise tous les fonds fournis par ce pack</string>
+    <string name="hela_themes_action_use_main">Utiliser le fond de l\'écran du haut</string>
+    <string name="hela_themes_action_use_main_subtitle">Laisse l\'écran du bas tel quel</string>
+    <string name="hela_themes_action_use_external">Utiliser le fond de l\'écran du bas</string>
+    <string name="hela_themes_action_use_external_subtitle">Laisse l\'écran du haut tel quel</string>
+    <string name="hela_themes_action_delete">Supprimer le pack</string>
+    <string name="hela_themes_action_delete_subtitle">Efface ses fichiers de cet appareil</string>
+    <string name="hela_themes_delete_confirm_prompt">Supprimer ce pack et ses fonds d\'écran ?</string>
+    <string name="hela_themes_action_cancel_delete">Conserver le pack</string>
+    <string name="hela_themes_action_cancel_delete_subtitle">Revenir sans rien supprimer</string>
+    <string name="hela_themes_action_confirm_delete">Supprimer</string>
+    <string name="hela_themes_action_confirm_delete_subtitle">Les écrans qui l\'utilisent retrouvent le fond d\'Argosy</string>
+</resources>

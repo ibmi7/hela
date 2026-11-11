@@ -51,6 +51,7 @@ internal sealed class ThemeItem(val key: String, val section: String) {
     data object Backdrop : ThemeItem("backdrop", "identity")
     data object Fonts : ThemeItem("fonts", "identity")
     data object IconPack : ThemeItem("iconPack", "identity")
+    data object CocoonPacks : ThemeItem("cocoonPacks", "identity")
 
     companion object {
         private val AppearanceHeader =
@@ -64,7 +65,7 @@ internal sealed class ThemeItem(val key: String, val section: String) {
                 AppearanceHeader,
                 Mode, AccentColor, AccentFooter, SecondaryColor, TintBleed,
                 IdentitySpacer, IdentityHeader,
-                Backdrop, Fonts, IconPack
+                Backdrop, Fonts, IconPack, CocoonPacks
             )
     }
 }
@@ -213,6 +214,14 @@ fun ThemeSection(uiState: SettingsUiState, viewModel: SettingsViewModel) {
                 isFocused = isFocused(item),
                 onCycle = { direction -> openFrom(item) { viewModel.cycleIconPack(direction) } },
                 onSelect = { packageName -> viewModel.setIconPack(packageName) }
+            )
+
+            ThemeItem.CocoonPacks -> NavigationPreference(
+                icon = Icons.Outlined.Image,
+                title = stringResource(R.string.settings_theme_cocoon_packs_title),
+                subtitle = stringResource(R.string.settings_theme_cocoon_packs_subtitle),
+                isFocused = isFocused(item),
+                onClick = { openFrom(item) { viewModel.requestHelaThemes() } }
             )
         }
     }

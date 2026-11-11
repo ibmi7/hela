@@ -556,7 +556,8 @@ fun HomeScreen(
 
     val backdropEnabled = LocalSurfaceBackdrop.current.enabled
     val isGridLayout = uiState.layoutKind != HomeLayoutKind.CAROUSEL
-    val showArtLayer = !isGridLayout &&
+    val helaWallpaper = com.nendo.argosy.ui.hela.theme.rememberHelaWallpaper()
+    val showArtLayer = !isGridLayout && helaWallpaper == null &&
         (!backdropEnabled || uiState.homeBackgroundMode == HomeBackgroundMode.GAME_ART)
 
     var backgroundIsScreenshot = false
@@ -643,6 +644,13 @@ fun HomeScreen(
         ) {
             if (backdropEnabled) {
                 Box(modifier = Modifier.fillMaxSize().surfaceBackdrop(BackdropRole.CONTENT))
+            }
+            if (helaWallpaper != null) {
+                com.nendo.argosy.ui.hela.theme.HelaWallpaperLayer(
+                    wallpaper = helaWallpaper,
+                    modifier = Modifier.fillMaxSize(),
+                    scrim = true
+                )
             }
             if (isCustomGrid) {
                 val pageSettings = uiState.customGrid.currentPageSettings

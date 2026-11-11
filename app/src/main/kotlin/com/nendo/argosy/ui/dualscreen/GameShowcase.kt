@@ -213,7 +213,13 @@ private fun GameShowcaseContent(
       }) {
         val gutter = maxWidth * GUTTER_SHARE
         Box(Modifier.fillMaxSize().frostedBackdropSource(backdrop).background(theme.surfaceBase)) {
-            (detail.backdropUrl ?: detail.artUrl)?.let { background ->
+            val helaWallpaper = com.nendo.argosy.ui.hela.theme.rememberHelaWallpaper()
+            if (helaWallpaper != null) {
+                com.nendo.argosy.ui.hela.theme.HelaWallpaperLayer(
+                    wallpaper = helaWallpaper,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else (detail.backdropUrl ?: detail.artUrl)?.let { background ->
                 val isScreenshot = detail.backdropIsScreenshotOrArt && background == detail.backdropUrl
                 val backdropImage = rememberShowcaseBackdrop(
                     background,

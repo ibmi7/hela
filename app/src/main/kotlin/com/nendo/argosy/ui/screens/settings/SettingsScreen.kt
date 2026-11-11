@@ -242,6 +242,11 @@ fun SettingsScreen(
     var showSettingsBackupBrowser by remember { mutableStateOf(false) }
     var showCertBrowser by remember { mutableStateOf(false) }
     var showCustomFrameBrowser by remember { mutableStateOf(false) }
+    var showHelaThemes by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.openHelaThemesEvent.collect { showHelaThemes = true }
+    }
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -1295,6 +1300,10 @@ fun SettingsScreen(
             },
             onDismiss = { showCertBrowser = false }
         )
+    }
+
+    if (showHelaThemes) {
+        com.nendo.argosy.ui.hela.theme.HelaThemesScreen(onDismiss = { showHelaThemes = false })
     }
 
     if (showCustomFrameBrowser) {

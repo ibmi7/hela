@@ -1,0 +1,50 @@
+{
+  "name": "OLED Observatory",
+  "author": "Lyte",
+  "version": "1.0",
+  "description": "An OLED background edit of Red's Observatory theme to better match the black Thor models. Comes with Chroma Wave folder icons. The recommended smart folder logo pack is called Showcase (both light and dark versions look good with this theme), but it couldn't be added here alongside Chroma Wave so I recommend downloading it! Hope you enjoy!",
+  "theme_mode": "oled",
+  "color_scheme": {
+    "card_gradient_start": "#00000000",
+    "card_gradient_end": "#00FFFFFF",
+    "icon_tint": "#FFFFFFFF",
+    "tile_background": "#00000000",
+    "tile_border": "#1B000000",
+    "divider": "#1AFFFFFF",
+    "accent_gradient_start": "#FF86A7FD",
+    "accent_gradient_end": "#FF8037FF",
+    "accent_glow": "#FF8037FF"
+  },
+  "settings": {
+    "icon_roundness": 0.24828768,
+    "icon_scale": 0.7979452,
+    "hover_scale": 1,
+    "hero_display_style": "VIGNETTE",
+    "hero_vignette_size": 0.40068495,
+    "icon_style": "ACCENT",
+    "surface_material": "GLASS",
+    "glass_blur": 4.349315,
+    "glass_refraction": 0.55479455,
+    "glass_rim_strength": 0.14726028,
+    "glass_tint": 0.3458904,
+    "highlight_thickness": 0.75,
+    "dock_icon_shape": "ROUNDED_SQUARE",
+    "hide_dock_background": true
+  },
+  "wallpaper_external": "external.png",
+  "wallpaper_main": "main.mp4",
+  "asset_refs": [
+    {
+      "id": "chroma-wave-icons-smart-folders-9c82d6",
+      "name": "Chroma Wave Icons - Smart Folders",
+      "category": "smart_folders",
+      "version": "1.1"
+    },
+    {
+      "id": "nintendo-3ds-first-time-setup-8a25a4",
+      "name": "Nintendo 3DS First Time Setup",
+      "category": "music",
+      "version": "1.0"
+    }
+  ]
+}

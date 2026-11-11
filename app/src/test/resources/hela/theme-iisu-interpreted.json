@@ -1,0 +1,56 @@
+{
+  "name": "Iisu interpreted theme",
+  "author": "GiuPhoenix",
+  "version": "2.0",
+  "description": "Interpretation of the iisu icons, with custom backgrounds, new logos/colors for dark/oled theme. Now with new matching heros and logos. Features 100 platforms.\r\nIf you want to support me: https://ko-fi.com/giphoenix",
+  "theme_mode": "oled",
+  "color_scheme": {
+    "background_gradient_start": "#000000",
+    "background_gradient_end": "#000000",
+    "card_gradient_start": "#1C1C1E",
+    "card_gradient_end": "#0C0C0E",
+    "text_primary": "#FAFAFA",
+    "text_secondary": "#CCCCCC",
+    "icon_tint": "#FAFAFA",
+    "tile_background": "#000000",
+    "tile_border": "#1C1C1E",
+    "toggle_off_gradient_start": "#2C2C2E",
+    "toggle_off_gradient_end": "#1C1C1E",
+    "toggle_thumb_gradient_start": "#FAFAFA",
+    "toggle_thumb_gradient_end": "#F3F8FB",
+    "drop_shadow": "rgba(0,0,0,0.5)",
+    "inner_shadow_light": "rgba(255,255,255,0.06)",
+    "inner_shadow_dark": "rgba(0,0,0,0.5)",
+    "success": "#27ae60",
+    "warning": "#f39c12",
+    "divider": "#1E1E1E",
+    "accent_gradient_start": "#008BB5",
+    "accent_gradient_end": "#00A865",
+    "accent_glow": "rgba(227,144,248,0.3)"
+  },
+  "settings": {
+    "icon_roundness": 0.065,
+    "hero_display_style": "FULLSCREEN",
+    "hero_logo_scale": 0.45,
+    "hero_folder_logo_scale": 0.5,
+    "hero_gradient_style": "NONE",
+    "icon_scale": 1,
+    "hover_scale": 1
+  },
+  "wallpaper_external": "external.webm",
+  "wallpaper_main": "main.mp4",
+  "asset_refs": [
+    {
+      "id": "iisu-interpreted-icons-smart-folders-36e7be",
+      "name": "Iisu interpreted - Smart Folders",
+      "category": "smart_folders",
+      "version": "2.0"
+    },
+    {
+      "id": "iisu-interpreted-icon-overlays-c6c203",
+      "name": "Iisu interpreted - Icon Overlays",
+      "category": "icon_overlays",
+      "version": "1.0"
+    }
+  ]
+}

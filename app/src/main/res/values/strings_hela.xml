@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_theme_cocoon_packs_title">Cocoon packs</string>
+    <string name="settings_theme_cocoon_packs_subtitle">Wallpapers from imported theme packs</string>
+
+    <string name="hela_themes_title">Cocoon packs</string>
+    <string name="hela_themes_back_desc">Back</string>
+    <string name="hela_themes_browser_title">Select a theme pack</string>
+
+    <string name="hela_themes_import_title">Import a pack</string>
+    <string name="hela_themes_import_subtitle">Choose a theme ZIP file</string>
+    <string name="hela_themes_importing">Importing…</string>
+    <string name="hela_themes_import_done">Pack imported</string>
+    <string name="hela_themes_import_error_not_zip">This file is not a ZIP archive</string>
+    <string name="hela_themes_import_error_no_theme">No theme.json or wallpapers folder in this archive</string>
+    <string name="hela_themes_import_error_unsafe">The archive contains a file path outside the theme folder</string>
+    <string name="hela_themes_import_error_too_large">The archive is too large to import</string>
+    <string name="hela_themes_import_error_io">The archive could not be read or copied</string>
+
+    <string name="hela_themes_animate_title">Animated wallpapers</string>
+    <string name="hela_themes_animate_subtitle">Loop video wallpapers; off shows a still frame</string>
+    <string name="hela_themes_clear_title">Remove wallpapers</string>
+    <string name="hela_themes_clear_subtitle">Return both screens to the Argosy backgrounds</string>
+    <string name="hela_themes_empty">No pack installed yet</string>
+
+    <string name="hela_themes_pack_in_use_both">In use on both screens</string>
+    <string name="hela_themes_pack_in_use_main">In use on the top screen</string>
+    <string name="hela_themes_pack_in_use_external">In use on the bottom screen</string>
+    <string name="hela_themes_pack_not_in_use">Not in use</string>
+    <!-- Pack row subtitle: %1$s is the pack author, %2$s is where the pack is in use -->
+    <string name="hela_themes_pack_subtitle">%1$s · %2$s</string>
+
+    <string name="hela_themes_action_apply">Apply theme</string>
+    <string name="hela_themes_action_apply_subtitle">Use every wallpaper this pack provides</string>
+    <string name="hela_themes_action_use_main">Use top-screen wallpaper</string>
+    <string name="hela_themes_action_use_main_subtitle">Leave the bottom screen as it is</string>
+    <string name="hela_themes_action_use_external">Use bottom-screen wallpaper</string>
+    <string name="hela_themes_action_use_external_subtitle">Leave the top screen as it is</string>
+    <string name="hela_themes_action_delete">Delete pack</string>
+    <string name="hela_themes_action_delete_subtitle">Remove its files from this device</string>
+    <string name="hela_themes_delete_confirm_prompt">Delete this pack and its wallpapers?</string>
+    <string name="hela_themes_action_cancel_delete">Keep pack</string>
+    <string name="hela_themes_action_cancel_delete_subtitle">Go back without deleting</string>
+    <string name="hela_themes_action_confirm_delete">Delete</string>
+    <string name="hela_themes_action_confirm_delete_subtitle">Screens using it return to the Argosy background</string>
+</resources>

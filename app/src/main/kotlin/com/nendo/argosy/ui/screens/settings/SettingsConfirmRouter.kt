@@ -816,6 +816,7 @@ private fun routeThemeConfirm(vm: SettingsViewModel, state: SettingsUiState): In
         ThemeItem.AccentFooter -> vm.setUseAccentColorFooter(!state.display.useAccentColorFooter)
         ThemeItem.Backdrop -> vm.navigateToThemeBackdrop()
         ThemeItem.Fonts -> vm.navigateToThemeFonts()
+        ThemeItem.CocoonPacks -> vm.requestHelaThemes()
         ThemeItem.IconPack -> {
             if (state.display.iconPacks.isEmpty()) return InputResult.handled(SoundType.SILENT)
             vm.requestEnumPicker(ThemeItem.IconPack.key)

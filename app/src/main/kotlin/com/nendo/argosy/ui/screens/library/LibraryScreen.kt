@@ -366,6 +366,14 @@ fun LibraryScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        val helaWallpaper = com.nendo.argosy.ui.hela.theme.rememberHelaWallpaper()
+        if (helaWallpaper != null) {
+            com.nendo.argosy.ui.hela.theme.HelaWallpaperLayer(
+                wallpaper = helaWallpaper,
+                modifier = Modifier.fillMaxSize(),
+                scrim = true
+            )
+        }
         Box(modifier = Modifier.fillMaxSize().blur(combinedBlur)) {
             Box(
                 modifier = Modifier

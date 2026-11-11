@@ -1,0 +1,80 @@
+{
+  "name": "3DS Dark Reimagined",
+  "author": "GiuPhoenix",
+  "version": "1.0",
+  "description": "The theme is inspired by Download play on the 3ds, if you dont like the animations you can use my \"VIRTUAL CONSOLE\" assets.\r\nYou can find more 3ds assets i'll be posting on cocoon's discord and my kofi (system icons, extra wallpapers etc)\r\nIf you enjoy my themes you can support me here https://ko-fi.com/giphoenix.  \r\nCREDITS: Huge thanks to bon for the animated wallpaer & help, controller vectors by pineapplegraphics",
+  "theme_mode": "dark",
+  "color_scheme": {
+    "background_gradient_start": "#FF1B1B1D",
+    "background_gradient_end": "#FF111214",
+    "card_gradient_start": "#FF5F5F63",
+    "card_gradient_end": "#FF4B4B4F",
+    "text_primary": "#FFF0F0F0",
+    "text_secondary": "#FFC7C7C7",
+    "icon_tint": "#FFF0F0F0",
+    "tile_background": "#FF6A6A6F",
+    "tile_border": "#FF9A9AA0",
+    "toggle_off_gradient_start": "#FF5A5A5F",
+    "toggle_off_gradient_end": "#FF404045",
+    "toggle_thumb_gradient_start": "#FF38D8FF",
+    "toggle_thumb_gradient_end": "#FF00BFFF",
+    "drop_shadow": "#00000099",
+    "inner_shadow_light": "#FF8F8F95",
+    "inner_shadow_dark": "#FF1A1A1D",
+    "success": "#FF52D273",
+    "warning": "#FFF5B942",
+    "divider": "#FF4D4D52",
+    "accent_gradient_start": "#FFEDEDED",
+    "accent_gradient_end": "#FF494949",
+    "accent_glow": "#FF23E6D7",
+    "selection_gradient_start": "#FF5CE6D7",
+    "selection_gradient_end": "#FF1FFFC2"
+  },
+  "settings": {
+    "icon_roundness": 0.15068494,
+    "icon_scale": 1,
+    "hover_scale": 1,
+    "hero_display_style": "VIGNETTE",
+    "hero_logo_scale": 0.44520545,
+    "hero_folder_logo_scale": 0.7996575,
+    "hero_vignette_size": 0.39828768,
+    "cursor_style": "ALTERNATIVE_ANIMATED",
+    "highlight_thickness": 0.7,
+    "dock_icon_shape": "SQUARE",
+    "hide_dock_background": true,
+    "dock_on_top": true,
+    "corner_hints": false
+  },
+  "credits": "controllers from pineapplegraphics",
+  "website": "https://ko-fi.com/giphoenix",
+  "sfx_volume": 1,
+  "music_volume": 0.5,
+  "wallpaper_external": "external.png",
+  "wallpaper_main": "main.mp4",
+  "asset_refs": [
+    {
+      "id": "3ds-background-music-3bd40c3c",
+      "name": "3DS Background Music",
+      "category": "music",
+      "version": "1.0"
+    },
+    {
+      "id": "3ds-sound-effects-d750b4a4",
+      "name": "3DS Sound Effects",
+      "category": "sounds",
+      "version": "1.0"
+    },
+    {
+      "id": "3ds-dark-icon-overlays-aa954e53",
+      "name": "3DS Dark Icon Overlays",
+      "category": "icon_overlays",
+      "version": "1.0"
+    },
+    {
+      "id": "nintendo-3ds-dark-reimagined-smart-folders-374bda9d",
+      "name": "3DS Dark Reimagined - Smart Folders",
+      "category": "smart_folders",
+      "version": "1.1"
+    }
+  ]
+}
