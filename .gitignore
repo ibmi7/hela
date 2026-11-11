@@ -66,3 +66,6 @@ wiki/
 
 # RomM version testbed local env
 testbed/romm/.env
+
+# Hela: packs de thème Cocoon de référence (volumineux)
+docs/hela/*.zip
