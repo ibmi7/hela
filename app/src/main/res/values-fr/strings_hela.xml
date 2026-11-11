@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="settings_theme_cocoon_packs_title">Packs Cocoon</string>
-    <string name="settings_theme_cocoon_packs_subtitle">Fonds d\'écran, couleurs, sons et musique des packs importés</string>
+    <string name="settings_theme_cocoon_packs_subtitle">Fonds d\'écran, couleurs, sons, musique et icônes des packs importés</string>
 
     <string name="hela_themes_title">Packs Cocoon</string>
     <string name="hela_themes_back_desc">Retour</string>
@@ -12,7 +12,7 @@
     <string name="hela_themes_importing">Import en cours…</string>
     <string name="hela_themes_import_done">Pack importé</string>
     <string name="hela_themes_import_error_not_zip">Ce fichier n\'est pas une archive ZIP</string>
-    <string name="hela_themes_import_error_no_theme">Ni theme.json, ni metadata.json, ni dossier wallpapers, sounds ou music dans cette archive</string>
+    <string name="hela_themes_import_error_no_theme">Ni theme.json, ni metadata.json, ni dossier de pack (wallpapers, sounds, music, icon_overlays) dans cette archive</string>
     <string name="hela_themes_import_error_unsafe">L\'archive contient un chemin de fichier hors du dossier du thème</string>
     <string name="hela_themes_import_error_too_large">L\'archive est trop volumineuse pour être importée</string>
     <string name="hela_themes_import_error_io">L\'archive n\'a pas pu être lue ou copiée</string>
@@ -20,7 +20,7 @@
     <string name="hela_themes_animate_title">Fonds animés</string>
     <string name="hela_themes_animate_subtitle">Lit les fonds vidéo en boucle ; désactivé, affiche une image fixe</string>
     <string name="hela_themes_clear_title">Retirer le thème Cocoon</string>
-    <string name="hela_themes_clear_subtitle">Rend les fonds, les couleurs, les sons et la musique aux réglages d\'Argosy</string>
+    <string name="hela_themes_clear_subtitle">Rend tout aux réglages d\'Argosy</string>
     <string name="hela_themes_empty">Aucun pack installé pour l\'instant</string>
     <string name="hela_themes_pack_not_in_use">Non utilisé</string>
     <string name="hela_themes_pack_subtitle">%1$s · %2$s</string>
@@ -50,4 +50,7 @@
     <string name="hela_themes_slot_music">musique</string>
     <string name="hela_themes_action_use_music">Utiliser sa musique</string>
     <string name="hela_themes_action_use_music_subtitle">Remplace votre liste de lecture Argosy, qui est conservée</string>
+    <string name="hela_themes_slot_icons">icônes</string>
+    <string name="hela_themes_action_use_icons">Utiliser ses icônes</string>
+    <string name="hela_themes_action_use_icons_subtitle">Tuiles de jeux carrées avec ce cadre, sur l\'accueil et dans la bibliothèque</string>
 </resources>

@@ -56,6 +56,11 @@ data class PackTrack(
     val path: String
 )
 
+data class PackIconOverlay(
+    val maskPath: String? = null,
+    val overlayPath: String? = null
+)
+
 data class PackWallpaper(
     val path: String,
     val kind: WallpaperKind,
@@ -71,7 +76,8 @@ data class InstalledThemePack(
     val external: PackWallpaper? = null,
     val colors: PackColors? = null,
     val sounds: Map<String, String> = emptyMap(),
-    val music: List<PackTrack> = emptyList()
+    val music: List<PackTrack> = emptyList(),
+    val icons: Map<String, PackIconOverlay> = emptyMap()
 ) {
     fun wallpaper(slot: WallpaperSlot): PackWallpaper? = when (slot) {
         WallpaperSlot.MAIN -> main
@@ -85,11 +91,12 @@ data class HelaThemeSelection(
     val colorsPackId: String? = null,
     val soundsPackId: String? = null,
     val musicPackId: String? = null,
+    val iconsPackId: String? = null,
     val animate: Boolean = true
 ) {
     val isEmpty: Boolean
         get() = mainPackId == null && externalPackId == null && colorsPackId == null &&
-            soundsPackId == null && musicPackId == null
+            soundsPackId == null && musicPackId == null && iconsPackId == null
 
     fun packId(slot: WallpaperSlot): String? = when (slot) {
         WallpaperSlot.MAIN -> mainPackId

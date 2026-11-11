@@ -74,6 +74,7 @@ fun NavGraph(
         }
 
         composable(Screen.Home.route) {
+            com.nendo.argosy.ui.hela.theme.HelaIconScope {
             HomeScreen(
                 isDefaultView = true,
                 videoPreviewBlocked = videoPreviewBlocked,
@@ -111,6 +112,7 @@ fun NavGraph(
                     navController.navigate(Screen.MediaDetail.createRoute(itemId))
                 }
             )
+            }
         }
 
         composable(
@@ -136,6 +138,7 @@ fun NavGraph(
             val platformId = backStackEntry.arguments?.getString("platformId")?.toLongOrNull()
             val source = backStackEntry.arguments?.getString("source")
             val filters = backStackEntry.arguments?.getString("filters")
+            com.nendo.argosy.ui.hela.theme.HelaIconScope {
             LibraryScreen(
                 isDefaultView = false,
                 initialPlatformId = platformId,
@@ -150,6 +153,7 @@ fun NavGraph(
                 onNavigateToDefault = navigateToDefault,
                 onDrawerToggle = onDrawerToggle
             )
+            }
         }
 
         composable(Screen.Collections.route) {

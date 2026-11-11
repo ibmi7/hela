@@ -129,6 +129,24 @@ fun GameCard(
         ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(saturation) })
     } else null
 
+    val helaIcon = com.nendo.argosy.ui.hela.theme.rememberHelaIcon(game.platformSlug)
+    if (helaIcon != null) {
+        com.nendo.argosy.ui.hela.theme.HelaIconTile(
+            icon = helaIcon,
+            coverPath = effectiveCoverPath,
+            title = game.title,
+            isFocused = isFocused,
+            modifier = modifier,
+            focusScale = focusScale,
+            scalePivotY = scalePivotY,
+            scaleOverride = scaleOverride,
+            alphaOverride = alphaOverride,
+            colorFilter = saturationColorFilter,
+            downloadIndicator = downloadIndicator
+        )
+        return
+    }
+
     val borderColor = MaterialTheme.colorScheme.primary
 
     val box3dImagePath = resolvedArt?.box3dPath ?: game.box3dPath

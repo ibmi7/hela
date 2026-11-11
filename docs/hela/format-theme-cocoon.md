@@ -58,7 +58,7 @@ assets/<catégorie>/<identifiant>/
 - Le nom de fichier cité dans `music_playlist` peut différer du fichier réel par la casse (`3DS_First_Time_Setup_-_Lost_Music.mp3` contre `3ds_first_time_setup_-_lost_music.mp3`).
 - `category` vaut `music`, `icon_overlays`, `smart_folders` ou `sounds`.
 - `settings` est `null` sauf pour la musique, où il porte `music_mode`, `music_playback_mode`, `music_playlist` et `music_time_schedule` (chemins relatifs au pack, par exemple `music/track.mp3`).
-- Icônes : `icon_overlays/<plateforme>/mask.png` et `overlay.png` ; le pack 3DS n'a qu'un dossier `global`.
+- Icônes : `icon_overlays/<plateforme>/mask.png` et `overlay.png`, en 1024×1024 ; le masque découpe l'image du jeu, la surcouche est un cadre (avec le logo de la plateforme dans le pack iiSU). Le pack 3DS n'a qu'un dossier `global`.
 - Dossiers intelligents : `smart_folders/by_platform/<plateforme>/icon`, `logo` et parfois `hero`, en PNG ou WebP.
 - Hela importe ces ZIP comme les thèmes : le dossier du pack est le parent de `metadata.json`.
 
@@ -76,7 +76,7 @@ Noms de base attendus dans `sounds/` : `navigate`, `select`, `back`, `folder_ope
 | Mode et couleur d'accent | `theme_mode` force le mode sombre ou clair ; l'accent vient de `selection_gradient_start`, sinon `accent_gradient_start`, sinon `accent_glow`, et la couleur secondaire de la fin du même dégradé. Branché dans `rememberArgosyPalette` | Faite, vérifiée sur la Thor |
 | Fond, cartes, texte, séparateurs | Argosy dérive ces surfaces de sa propre rampe ; pas de palette libre | Moyenne : non faite, décision à prendre |
 | Arrondi, échelle des icônes, style de curseur | Jetons de dimensions figés à la compilation | Moyenne |
-| Masques et surcouches d'icônes par plateforme | Style de jaquette existe ; pas de masque par plateforme | Moyenne ; identifiants de plateforme Cocoon à traduire |
+| Masques et surcouches d'icônes par plateforme | Avec un pack d'icônes actif, les tuiles de jeux de l'accueil et de la bibliothèque deviennent carrées : jaquette recadrée dans `mask.png`, `overlay.png` posé dessus (`ui/hela/theme/HelaIcons.kt`, branché dans `GameCard`). Les noms de plateforme Cocoon qui diffèrent des slugs d'Argosy sont traduits dans `CocoonIcons` ; `global` sert de repli | Faite ; vérifiée sur la Thor avec le pack iiSU |
 | Matière « verre » (flou, réfraction) | Pas d'équivalent | Élevée |
 | Bandeau (hero), dock, dossiers intelligents | Propres à la disposition de Cocoon | Dépend du nouvel écran d'accueil |
 | `asset_refs` | Dépend de la boutique Silk | Hors périmètre au départ |

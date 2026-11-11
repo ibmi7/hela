@@ -16,6 +16,7 @@ import com.nendo.argosy.data.model.hela.HelaThemeSelection
 import com.nendo.argosy.data.model.hela.HelaWallpapers
 import com.nendo.argosy.data.model.hela.InstalledThemePack
 import com.nendo.argosy.data.model.hela.PackColors
+import com.nendo.argosy.data.model.hela.PackIconOverlay
 import com.nendo.argosy.data.model.hela.PackTrack
 import com.nendo.argosy.data.model.hela.PackWallpaper
 import com.nendo.argosy.data.model.hela.WallpaperKind
@@ -50,6 +51,7 @@ class HelaThemeStore @Inject constructor(
         val COLORS_PACK = stringPreferencesKey("hela_colors_pack")
         val SOUNDS_PACK = stringPreferencesKey("hela_sounds_pack")
         val MUSIC_PACK = stringPreferencesKey("hela_music_pack")
+        val ICONS_PACK = stringPreferencesKey("hela_icons_pack")
         val ANIMATE = booleanPreferencesKey("hela_wallpaper_animate")
     }
 
@@ -67,6 +69,7 @@ class HelaThemeStore @Inject constructor(
                 colorsPackId = prefs[Keys.COLORS_PACK],
                 soundsPackId = prefs[Keys.SOUNDS_PACK],
                 musicPackId = prefs[Keys.MUSIC_PACK],
+                iconsPackId = prefs[Keys.ICONS_PACK],
                 animate = prefs[Keys.ANIMATE] ?: true
             )
         }
@@ -96,6 +99,14 @@ class HelaThemeStore @Inject constructor(
         packs.firstOrNull { it.id == selection.musicPackId }?.music?.takeIf { it.isNotEmpty() }
     }.stateIn(scope, SharingStarted.Eagerly, null)
 
+    /**
+     * Icon overlays of the pack selected for icons, keyed by Cocoon platform folder; null when
+     * no pack is selected for them.
+     */
+    val icons: StateFlow<Map<String, PackIconOverlay>?> = combine(_packs, selection) { packs, selection ->
+        packs.firstOrNull { it.id == selection.iconsPackId }?.icons?.takeIf { it.isNotEmpty() }
+    }.stateIn(scope, SharingStarted.Eagerly, null)
+
     init {
         scope.launch { refresh() }
     }
@@ -118,6 +129,13 @@ class HelaThemeStore @Inject constructor(
             if (pack.colors != null) prefs[Keys.COLORS_PACK] = pack.id
             if (pack.sounds.isNotEmpty()) prefs[Keys.SOUNDS_PACK] = pack.id
             if (pack.music.isNotEmpty()) prefs[Keys.MUSIC_PACK] = pack.id
+            if (pack.icons.isNotEmpty()) prefs[Keys.ICONS_PACK] = pack.id
+        }
+    }
+
+    suspend fun setIconsPack(packId: String?) {
+        dataStore.edit { prefs ->
+            if (packId != null) prefs[Keys.ICONS_PACK] = packId else prefs.remove(Keys.ICONS_PACK)
         }
     }
 
@@ -153,6 +171,7 @@ class HelaThemeStore @Inject constructor(
             prefs.remove(Keys.COLORS_PACK)
             prefs.remove(Keys.SOUNDS_PACK)
             prefs.remove(Keys.MUSIC_PACK)
+            prefs.remove(Keys.ICONS_PACK)
         }
     }
 
@@ -167,6 +186,7 @@ class HelaThemeStore @Inject constructor(
             if (prefs[Keys.COLORS_PACK] == packId) prefs.remove(Keys.COLORS_PACK)
             if (prefs[Keys.SOUNDS_PACK] == packId) prefs.remove(Keys.SOUNDS_PACK)
             if (prefs[Keys.MUSIC_PACK] == packId) prefs.remove(Keys.MUSIC_PACK)
+            if (prefs[Keys.ICONS_PACK] == packId) prefs.remove(Keys.ICONS_PACK)
         }
         File(themesDir, packId).takeIf { it.parentFile == themesDir }?.deleteRecursively()
         refresh()
@@ -198,7 +218,8 @@ class HelaThemeStore @Inject constructor(
             external = readWallpaper(packDir, manifest, WallpaperSlot.EXTERNAL),
             colors = CocoonColors.packColors(manifest),
             sounds = CocoonSounds.find(packDir),
-            music = CocoonMusic.find(packDir, manifest)
+            music = CocoonMusic.find(packDir, manifest),
+            icons = CocoonIcons.find(packDir)
         )
     }
 
