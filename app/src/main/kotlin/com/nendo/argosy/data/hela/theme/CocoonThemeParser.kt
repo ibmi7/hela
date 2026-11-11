@@ -7,7 +7,7 @@ import org.json.JSONObject
 object CocoonThemeParser {
 
     /**
-     * Manifest of a Cocoon theme.json. A missing or unreadable document yields a manifest
+     * Manifest of a Cocoon theme.json or of an asset pack metadata.json. A missing or unreadable document yields a manifest
      * named [fallbackName] with no wallpaper references, leaving resolution to file names.
      */
     fun parse(json: String?, fallbackName: String): CocoonThemeManifest {
@@ -26,7 +26,8 @@ object CocoonThemeParser {
             wallpaperMain = root.text("wallpaper_main"),
             wallpaperExternal = root.text("wallpaper_external"),
             themeMode = root.text("theme_mode"),
-            colorScheme = root.optJSONObject("color_scheme")?.texts().orEmpty()
+            colorScheme = root.optJSONObject("color_scheme")?.texts().orEmpty(),
+            category = root.text("category")
         )
     }
 

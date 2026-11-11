@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.FileOpen
 import androidx.compose.material.icons.outlined.HideImage
@@ -226,6 +227,9 @@ private fun packSubtitle(pack: InstalledThemePack, selection: HelaThemeSelection
         if (pack.colors != null && selection.colorsPackId == pack.id) {
             add(stringResource(R.string.hela_themes_slot_colors))
         }
+        if (pack.sounds.isNotEmpty() && selection.soundsPackId == pack.id) {
+            add(stringResource(R.string.hela_themes_slot_sounds))
+        }
     }
     val usage = if (slots.isEmpty()) {
         stringResource(R.string.hela_themes_pack_not_in_use)
@@ -293,6 +297,13 @@ private fun PackActionsModal(
                     subtitle = stringResource(R.string.hela_themes_action_use_colors_subtitle),
                     isFocused = index == focusedIndex,
                     icon = Icons.Outlined.Palette,
+                    onClick = { onAction(action) }
+                )
+                HelaPackAction.USE_SOUNDS -> ActionPreference(
+                    title = stringResource(R.string.hela_themes_action_use_sounds),
+                    subtitle = stringResource(R.string.hela_themes_action_use_sounds_subtitle),
+                    isFocused = index == focusedIndex,
+                    icon = Icons.AutoMirrored.Outlined.VolumeUp,
                     onClick = { onAction(action) }
                 )
                 HelaPackAction.DELETE -> ActionPreference(

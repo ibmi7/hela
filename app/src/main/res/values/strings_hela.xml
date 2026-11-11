@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="settings_theme_cocoon_packs_title">Cocoon packs</string>
-    <string name="settings_theme_cocoon_packs_subtitle">Wallpapers and colors from imported theme packs</string>
+    <string name="settings_theme_cocoon_packs_subtitle">Wallpapers, colors and sounds from imported packs</string>
 
     <string name="hela_themes_title">Cocoon packs</string>
     <string name="hela_themes_back_desc">Back</string>
-    <string name="hela_themes_browser_title">Select a theme pack</string>
+    <string name="hela_themes_browser_title">Select a theme or asset pack</string>
 
     <string name="hela_themes_import_title">Import a pack</string>
-    <string name="hela_themes_import_subtitle">Choose a theme ZIP file</string>
+    <string name="hela_themes_import_subtitle">Choose the ZIP file of a theme or an asset pack</string>
     <string name="hela_themes_importing">Importing…</string>
     <string name="hela_themes_import_done">Pack imported</string>
     <string name="hela_themes_import_error_not_zip">This file is not a ZIP archive</string>
-    <string name="hela_themes_import_error_no_theme">No theme.json or wallpapers folder in this archive</string>
+    <string name="hela_themes_import_error_no_theme">No theme.json, metadata.json, wallpapers or sounds folder in this archive</string>
     <string name="hela_themes_import_error_unsafe">The archive contains a file path outside the theme folder</string>
     <string name="hela_themes_import_error_too_large">The archive is too large to import</string>
     <string name="hela_themes_import_error_io">The archive could not be read or copied</string>
@@ -20,21 +20,21 @@
     <string name="hela_themes_animate_title">Animated wallpapers</string>
     <string name="hela_themes_animate_subtitle">Loop video wallpapers; off shows a still frame</string>
     <string name="hela_themes_clear_title">Remove the Cocoon theme</string>
-    <string name="hela_themes_clear_subtitle">Return wallpapers and colors to the Argosy settings</string>
+    <string name="hela_themes_clear_subtitle">Return wallpapers, colors and sounds to the Argosy settings</string>
     <string name="hela_themes_empty">No pack installed yet</string>
     <string name="hela_themes_pack_not_in_use">Not in use</string>
     <!-- Pack row subtitle: %1$s is the pack author, %2$s is where the pack is in use -->
     <string name="hela_themes_pack_subtitle">%1$s · %2$s</string>
 
-    <string name="hela_themes_action_apply">Apply theme</string>
-    <string name="hela_themes_action_apply_subtitle">Use the wallpapers and colors this pack provides</string>
+    <string name="hela_themes_action_apply">Apply everything</string>
+    <string name="hela_themes_action_apply_subtitle">Use every part this pack provides</string>
     <string name="hela_themes_action_use_main">Use top-screen wallpaper</string>
     <string name="hela_themes_action_use_main_subtitle">Leave the bottom screen as it is</string>
     <string name="hela_themes_action_use_external">Use bottom-screen wallpaper</string>
     <string name="hela_themes_action_use_external_subtitle">Leave the top screen as it is</string>
     <string name="hela_themes_action_delete">Delete pack</string>
     <string name="hela_themes_action_delete_subtitle">Remove its files from this device</string>
-    <string name="hela_themes_delete_confirm_prompt">Delete this pack and its wallpapers?</string>
+    <string name="hela_themes_delete_confirm_prompt">Delete this pack and its files?</string>
     <string name="hela_themes_action_cancel_delete">Keep pack</string>
     <string name="hela_themes_action_cancel_delete_subtitle">Go back without deleting</string>
     <string name="hela_themes_action_confirm_delete">Delete</string>
@@ -46,4 +46,7 @@
     <string name="hela_themes_slot_colors">colors</string>
     <string name="hela_themes_action_use_colors">Use its colors</string>
     <string name="hela_themes_action_use_colors_subtitle">Dark or light mode and accent color; wallpapers stay as they are</string>
+    <string name="hela_themes_slot_sounds">sounds</string>
+    <string name="hela_themes_action_use_sounds">Use its sounds</string>
+    <string name="hela_themes_action_use_sounds_subtitle">Interface sounds; a sound you set yourself in Argosy still wins</string>
 </resources>

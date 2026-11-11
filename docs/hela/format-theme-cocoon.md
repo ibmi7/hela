@@ -45,6 +45,22 @@ Packs examinés : 3DS Dark Reimagined, Iisu interpreted theme, OLED Observatory 
 - `theme_mode` est en minuscules (`"dark"`, `"oled"`). Les couleurs apparaissent sous trois formes : `#RRGGBB`, `#AARRGGBB` et `rgba(r,g,b,a)`.
 - Les références de fond peuvent omettre l'extension (d'après le wiki ; non observé dans ces packs).
 
+## Packs d'assets Silk (constaté sur sept packs, 11/11/2026)
+
+Packs examinés : deux de musique, deux d'icônes, trois de dossiers intelligents. Aucun pack de sons n'a pu être examiné.
+
+```
+assets/<catégorie>/<identifiant>/
+├── metadata.json     id, name, author, category, version, description, file_count, settings
+└── <catégorie>/      même contenu que le dossier du même nom dans un thème
+```
+
+- `category` vaut `music`, `icon_overlays`, `smart_folders` ou `sounds`.
+- `settings` est `null` sauf pour la musique, où il porte `music_mode`, `music_playback_mode`, `music_playlist` et `music_time_schedule` (chemins relatifs au pack, par exemple `music/track.mp3`).
+- Icônes : `icon_overlays/<plateforme>/mask.png` et `overlay.png` ; le pack 3DS n'a qu'un dossier `global`.
+- Dossiers intelligents : `smart_folders/by_platform/<plateforme>/icon`, `logo` et parfois `hero`, en PNG ou WebP.
+- Hela importe ces ZIP comme les thèmes : le dossier du pack est le parent de `metadata.json`.
+
 ## Sons
 
 Noms de base attendus dans `sounds/` : `navigate`, `select`, `back`, `folder_open`, `folder_close`, `launch`, `error`, `notification`, `discord_open`, `discord_close`, `screen_swap`, `grid_zoom_in`, `grid_zoom_out`, `reorder_pickup`, `reorder_place`, `open_edit`, `pop`, `slider_increase`, `slider_decrease`, `saving`, `saving_end`, `retroachievements`. Formats : WAV, MP3, OGG, M4A, FLAC.
@@ -54,7 +70,7 @@ Noms de base attendus dans `sounds/` : `navigate`, `select`, `back`, `folder_ope
 | Élément Cocoon | Dans Argosy | Difficulté |
 |---|---|---|
 | Fonds d'écran (haut / bas) | Argosy n'avait qu'un fond flouté en 640×360 sur l'accueil et un motif sur le second écran ; Hela ajoute sa propre couche image et vidéo (`ui/hela/theme/`) | Moyenne ; codée, à vérifier sur l'appareil |
-| Sons d'interface | Sons de navigation existent ; moins de noms | Faible, partielle |
+| Sons d'interface | 11 des 22 noms Cocoon ont un événement Argosy (`navigate`, `select`, `back`, `folder_open`, `folder_close`, `launch`, `error`, `notification`, `screen_swap`, `pop`, `slider_increase`) ; les sons du pack passent par les sons personnalisés d'Argosy, et un son réglé par l'utilisateur reste prioritaire | Codée ; vérifiée avec un pack fabriqué, pas avec un vrai pack Silk |
 | Musique (playlist, planning horaire) | Musique de fond existe ; domaine réservé aux mainteneurs en amont | Moyenne |
 | Mode et couleur d'accent | `theme_mode` force le mode sombre ou clair ; l'accent vient de `selection_gradient_start`, sinon `accent_gradient_start`, sinon `accent_glow`, et la couleur secondaire de la fin du même dégradé. Branché dans `rememberArgosyPalette` | Faite, vérifiée sur la Thor |
 | Fond, cartes, texte, séparateurs | Argosy dérive ces surfaces de sa propre rampe ; pas de palette libre | Moyenne : non faite, décision à prendre |

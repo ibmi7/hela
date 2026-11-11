@@ -30,7 +30,7 @@ sealed class HelaThemesRow(val key: String) {
 }
 
 enum class HelaPackAction {
-    APPLY, USE_MAIN, USE_EXTERNAL, USE_COLORS, DELETE, CANCEL_DELETE, CONFIRM_DELETE
+    APPLY, USE_MAIN, USE_EXTERNAL, USE_COLORS, USE_SOUNDS, DELETE, CANCEL_DELETE, CONFIRM_DELETE
 }
 
 data class HelaThemesUiState(
@@ -164,6 +164,7 @@ class HelaThemesViewModel @Inject constructor(
                 HelaPackAction.USE_MAIN -> store.setSlot(WallpaperSlot.MAIN, pack.id)
                 HelaPackAction.USE_EXTERNAL -> store.setSlot(WallpaperSlot.EXTERNAL, pack.id)
                 HelaPackAction.USE_COLORS -> store.setColorsPack(pack.id)
+                HelaPackAction.USE_SOUNDS -> store.setSoundsPack(pack.id)
                 HelaPackAction.CONFIRM_DELETE -> store.deletePack(pack.id)
                 HelaPackAction.DELETE, HelaPackAction.CANCEL_DELETE -> Unit
             }
@@ -200,10 +201,12 @@ class HelaThemesViewModel @Inject constructor(
     }
 
     private fun actionsFor(pack: InstalledThemePack): List<HelaPackAction> = buildList {
-        if (pack.main != null || pack.external != null || pack.colors != null) add(HelaPackAction.APPLY)
+        val slots = listOf(pack.main != null, pack.external != null, pack.colors != null, pack.sounds.isNotEmpty())
+        if (slots.count { it } > 1) add(HelaPackAction.APPLY)
         if (pack.main != null) add(HelaPackAction.USE_MAIN)
         if (pack.external != null) add(HelaPackAction.USE_EXTERNAL)
         if (pack.colors != null) add(HelaPackAction.USE_COLORS)
+        if (pack.sounds.isNotEmpty()) add(HelaPackAction.USE_SOUNDS)
         add(HelaPackAction.DELETE)
     }
 

@@ -9,6 +9,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.nendo.argosy.core.input.SoundConfig
+import com.nendo.argosy.core.input.SoundType
+import com.nendo.argosy.data.model.hela.CocoonThemeManifest
 import com.nendo.argosy.data.model.hela.HelaThemeSelection
 import com.nendo.argosy.data.model.hela.HelaWallpapers
 import com.nendo.argosy.data.model.hela.InstalledThemePack
@@ -44,6 +47,7 @@ class HelaThemeStore @Inject constructor(
         val MAIN_PACK = stringPreferencesKey("hela_wallpaper_main_pack")
         val EXTERNAL_PACK = stringPreferencesKey("hela_wallpaper_external_pack")
         val COLORS_PACK = stringPreferencesKey("hela_colors_pack")
+        val SOUNDS_PACK = stringPreferencesKey("hela_sounds_pack")
         val ANIMATE = booleanPreferencesKey("hela_wallpaper_animate")
     }
 
@@ -59,6 +63,7 @@ class HelaThemeStore @Inject constructor(
                 mainPackId = prefs[Keys.MAIN_PACK],
                 externalPackId = prefs[Keys.EXTERNAL_PACK],
                 colorsPackId = prefs[Keys.COLORS_PACK],
+                soundsPackId = prefs[Keys.SOUNDS_PACK],
                 animate = prefs[Keys.ANIMATE] ?: true
             )
         }
@@ -75,6 +80,11 @@ class HelaThemeStore @Inject constructor(
     val colors: StateFlow<PackColors?> = combine(_packs, selection) { packs, selection ->
         packs.firstOrNull { it.id == selection.colorsPackId }?.colors
     }.stateIn(scope, SharingStarted.Eagerly, null)
+
+    val sounds: StateFlow<Map<SoundType, SoundConfig>> = combine(_packs, selection) { packs, selection ->
+        val pack = packs.firstOrNull { it.id == selection.soundsPackId }
+        CocoonSounds.configs(pack?.sounds.orEmpty())
+    }.stateIn(scope, SharingStarted.Eagerly, emptyMap())
 
     init {
         scope.launch { refresh() }
@@ -96,6 +106,13 @@ class HelaThemeStore @Inject constructor(
             if (pack.main != null) prefs[Keys.MAIN_PACK] = pack.id
             if (pack.external != null) prefs[Keys.EXTERNAL_PACK] = pack.id
             if (pack.colors != null) prefs[Keys.COLORS_PACK] = pack.id
+            if (pack.sounds.isNotEmpty()) prefs[Keys.SOUNDS_PACK] = pack.id
+        }
+    }
+
+    suspend fun setSoundsPack(packId: String?) {
+        dataStore.edit { prefs ->
+            if (packId != null) prefs[Keys.SOUNDS_PACK] = packId else prefs.remove(Keys.SOUNDS_PACK)
         }
     }
 
@@ -117,6 +134,7 @@ class HelaThemeStore @Inject constructor(
             prefs.remove(Keys.MAIN_PACK)
             prefs.remove(Keys.EXTERNAL_PACK)
             prefs.remove(Keys.COLORS_PACK)
+            prefs.remove(Keys.SOUNDS_PACK)
         }
     }
 
@@ -129,6 +147,7 @@ class HelaThemeStore @Inject constructor(
             if (prefs[Keys.MAIN_PACK] == packId) prefs.remove(Keys.MAIN_PACK)
             if (prefs[Keys.EXTERNAL_PACK] == packId) prefs.remove(Keys.EXTERNAL_PACK)
             if (prefs[Keys.COLORS_PACK] == packId) prefs.remove(Keys.COLORS_PACK)
+            if (prefs[Keys.SOUNDS_PACK] == packId) prefs.remove(Keys.SOUNDS_PACK)
         }
         File(themesDir, packId).takeIf { it.parentFile == themesDir }?.deleteRecursively()
         refresh()
@@ -150,9 +169,7 @@ class HelaThemeStore @Inject constructor(
     }
 
     private fun readPack(packDir: File): InstalledThemePack {
-        val manifestFile = File(packDir, CocoonPackImporter.THEME_FILE)
-        val json = manifestFile.takeIf { it.isFile }?.let { runCatching { it.readText() }.getOrNull() }
-        val manifest = CocoonThemeParser.parse(json, fallbackName = packDir.name)
+        val manifest = readManifest(packDir)
         return InstalledThemePack(
             id = packDir.name,
             name = manifest.name,
@@ -160,13 +177,22 @@ class HelaThemeStore @Inject constructor(
             version = manifest.version,
             main = readWallpaper(packDir, manifest, WallpaperSlot.MAIN),
             external = readWallpaper(packDir, manifest, WallpaperSlot.EXTERNAL),
-            colors = CocoonColors.packColors(manifest)
+            colors = CocoonColors.packColors(manifest),
+            sounds = CocoonSounds.find(packDir)
         )
+    }
+
+    private fun readManifest(packDir: File): CocoonThemeManifest {
+        val manifestFile = sequenceOf(CocoonPackImporter.THEME_FILE, CocoonPackImporter.ASSET_FILE)
+            .map { File(packDir, it) }
+            .firstOrNull { it.isFile }
+        val json = manifestFile?.let { runCatching { it.readText() }.getOrNull() }
+        return CocoonThemeParser.parse(json, fallbackName = packDir.name)
     }
 
     private fun readWallpaper(
         packDir: File,
-        manifest: com.nendo.argosy.data.model.hela.CocoonThemeManifest,
+        manifest: CocoonThemeManifest,
         slot: WallpaperSlot
     ): PackWallpaper? {
         val file = CocoonWallpaperResolver.resolve(packDir, manifest, slot) ?: return null
@@ -182,9 +208,7 @@ class HelaThemeStore @Inject constructor(
         File(packDir, "$STILLS_DIR/${slot.token}.jpg")
 
     private fun extractStills(packDir: File) {
-        val manifestFile = File(packDir, CocoonPackImporter.THEME_FILE)
-        val json = manifestFile.takeIf { it.isFile }?.let { runCatching { it.readText() }.getOrNull() }
-        val manifest = CocoonThemeParser.parse(json, fallbackName = packDir.name)
+        val manifest = readManifest(packDir)
         for (slot in WallpaperSlot.entries) {
             val video = CocoonWallpaperResolver.resolve(packDir, manifest, slot)
                 ?.takeIf { CocoonWallpaperResolver.kindOf(it) == WallpaperKind.VIDEO }

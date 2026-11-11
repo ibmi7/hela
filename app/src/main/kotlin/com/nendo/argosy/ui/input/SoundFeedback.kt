@@ -13,6 +13,8 @@ import com.nendo.argosy.core.media.SfxCacheCleaner
 import com.nendo.argosy.core.media.SfxTranscoder
 import com.nendo.argosy.data.storage.StorageAttributionRepository
 import com.nendo.argosy.data.storage.StorageCategory
+import com.nendo.argosy.ui.hela.theme.HelaThemeEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
@@ -74,6 +76,12 @@ class SoundFeedbackManager @Inject constructor(
     private var soundConfigs: Map<SoundType, SoundConfig> = emptyMap()
 
     @Volatile
+    private var userSoundConfigs: Map<SoundType, SoundConfig> = emptyMap()
+
+    @Volatile
+    private var packSoundConfigs: Map<SoundType, SoundConfig> = emptyMap()
+
+    @Volatile
     private var lastBoundaryPlayMs = 0L
 
     private val defaultPresetMap = mapOf(
@@ -110,6 +118,16 @@ class SoundFeedbackManager @Inject constructor(
         private const val PRIORITY_DEFAULT = 2
         private const val PRIORITY_HIGH = 3
         private const val BOUNDARY_RATE_LIMIT_MS = 500L
+    }
+
+    init {
+        runCatching {
+            EntryPointAccessors
+                .fromApplication(context.applicationContext, HelaThemeEntryPoint::class.java)
+                .helaThemeStore()
+        }.getOrNull()?.let { store ->
+            scope.launch { store.sounds.collect { setPackSoundConfigs(it) } }
+        }
     }
 
     fun setEnabled(enabled: Boolean) {
@@ -225,17 +243,30 @@ class SoundFeedbackManager @Inject constructor(
     }
 
     fun setSoundConfigs(configs: Map<SoundType, SoundConfig>) {
-        soundConfigs = configs
-        refreshCustomSounds()
+        userSoundConfigs = configs
+        applySoundConfigs()
     }
 
     fun setSoundConfig(type: SoundType, config: SoundConfig) {
-        soundConfigs = soundConfigs + (type to config)
-        refreshCustomSounds()
+        userSoundConfigs = userSoundConfigs + (type to config)
+        applySoundConfigs()
     }
 
     fun clearSoundConfig(type: SoundType) {
-        soundConfigs = soundConfigs - type
+        userSoundConfigs = userSoundConfigs - type
+        applySoundConfigs()
+    }
+
+    /**
+     * Sounds supplied by a theme pack. A sound the user configured for the same event wins.
+     */
+    fun setPackSoundConfigs(configs: Map<SoundType, SoundConfig>) {
+        packSoundConfigs = configs
+        applySoundConfigs()
+    }
+
+    private fun applySoundConfigs() {
+        soundConfigs = packSoundConfigs + userSoundConfigs
         refreshCustomSounds()
     }
 
@@ -251,7 +282,7 @@ class SoundFeedbackManager @Inject constructor(
         }
     }
 
-    fun getSoundConfig(type: SoundType): SoundConfig? = soundConfigs[type]
+    fun getSoundConfig(type: SoundType): SoundConfig? = userSoundConfigs[type]
 
     fun playPreset(preset: SoundPreset) {
         if (!enabled) return

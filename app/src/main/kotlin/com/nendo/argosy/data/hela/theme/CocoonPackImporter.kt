@@ -16,15 +16,18 @@ enum class PackImportFailure { NOT_A_ZIP, NO_THEME, UNSAFE_ENTRY, TOO_LARGE, IO 
 object CocoonPackImporter {
 
     const val THEME_FILE = "theme.json"
+    const val ASSET_FILE = "metadata.json"
+    private val MANIFEST_FILES = listOf(THEME_FILE, ASSET_FILE)
+    private val CONTENT_DIRS = listOf(CocoonWallpaperResolver.WALLPAPERS_DIR, CocoonSounds.SOUNDS_DIR)
     private const val MAX_TOTAL_BYTES = 1024L * 1024L * 1024L
     private const val MAX_ENTRIES = 5000
     private const val STAGING_PREFIX = ".staging-"
     private val UNSAFE_ID_CHARS = Regex("[^A-Za-z0-9._-]")
 
     /**
-     * Extracts the theme folder of [zip] into [themesDir]/<id>, replacing a pack of the same id.
-     * The theme folder is the parent of the shallowest theme.json, or of the shallowest
-     * wallpapers/ folder in an archive without one.
+     * Extracts the pack folder of [zip] into [themesDir]/<id>, replacing a pack of the same id.
+     * The pack folder is the parent of the shallowest theme.json or metadata.json, or of the
+     * shallowest wallpapers/ or sounds/ folder in an archive without one.
      */
     fun import(zip: File, themesDir: File): PackImportResult {
         val archive = try {
@@ -97,16 +100,18 @@ object CocoonPackImporter {
     private fun themeRoot(entries: List<ZipEntry>): String? {
         val names = entries.map { it.name.replace('\\', '/') }
         val manifest = names
-            .filter { it == THEME_FILE || it.endsWith("/$THEME_FILE") }
+            .filter { name -> MANIFEST_FILES.any { name == it || name.endsWith("/$it") } }
             .minByOrNull { depth(it) }
-        if (manifest != null) return manifest.removeSuffix(THEME_FILE)
-        val marker = "${CocoonWallpaperResolver.WALLPAPERS_DIR}/"
+        if (manifest != null) return manifest.substringBeforeLast('/', "").let { if (it.isEmpty()) "" else "$it/" }
         return names
             .mapNotNull { name ->
-                when {
-                    name.startsWith(marker) -> ""
-                    name.contains("/$marker") -> name.substringBefore("/$marker") + "/"
-                    else -> null
+                CONTENT_DIRS.firstNotNullOfOrNull { dir ->
+                    val marker = "$dir/"
+                    when {
+                        name.startsWith(marker) -> ""
+                        name.contains("/$marker") -> name.substringBefore("/$marker") + "/"
+                        else -> null
+                    }
                 }
             }
             .minByOrNull { depth(it) }
