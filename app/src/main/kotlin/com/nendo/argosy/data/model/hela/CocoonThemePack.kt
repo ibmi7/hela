@@ -41,13 +41,20 @@ data class CocoonThemeManifest(
     val wallpaperExternal: String? = null,
     val themeMode: String? = null,
     val colorScheme: Map<String, String> = emptyMap(),
-    val category: String? = null
+    val category: String? = null,
+    val musicMode: String? = null,
+    val musicPlaylist: String? = null
 ) {
     fun wallpaperReference(slot: WallpaperSlot): String? = when (slot) {
         WallpaperSlot.MAIN -> wallpaperMain
         WallpaperSlot.EXTERNAL -> wallpaperExternal
     }
 }
+
+data class PackTrack(
+    val title: String,
+    val path: String
+)
 
 data class PackWallpaper(
     val path: String,
@@ -63,7 +70,8 @@ data class InstalledThemePack(
     val main: PackWallpaper? = null,
     val external: PackWallpaper? = null,
     val colors: PackColors? = null,
-    val sounds: Map<String, String> = emptyMap()
+    val sounds: Map<String, String> = emptyMap(),
+    val music: List<PackTrack> = emptyList()
 ) {
     fun wallpaper(slot: WallpaperSlot): PackWallpaper? = when (slot) {
         WallpaperSlot.MAIN -> main
@@ -76,11 +84,12 @@ data class HelaThemeSelection(
     val externalPackId: String? = null,
     val colorsPackId: String? = null,
     val soundsPackId: String? = null,
+    val musicPackId: String? = null,
     val animate: Boolean = true
 ) {
     val isEmpty: Boolean
         get() = mainPackId == null && externalPackId == null && colorsPackId == null &&
-            soundsPackId == null
+            soundsPackId == null && musicPackId == null
 
     fun packId(slot: WallpaperSlot): String? = when (slot) {
         WallpaperSlot.MAIN -> mainPackId

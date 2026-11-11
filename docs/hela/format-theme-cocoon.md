@@ -45,9 +45,9 @@ Packs examinés : 3DS Dark Reimagined, Iisu interpreted theme, OLED Observatory 
 - `theme_mode` est en minuscules (`"dark"`, `"oled"`). Les couleurs apparaissent sous trois formes : `#RRGGBB`, `#AARRGGBB` et `rgba(r,g,b,a)`.
 - Les références de fond peuvent omettre l'extension (d'après le wiki ; non observé dans ces packs).
 
-## Packs d'assets Silk (constaté sur sept packs, 11/11/2026)
+## Packs d'assets Silk (constaté sur huit packs, 11/11/2026)
 
-Packs examinés : deux de musique, deux d'icônes, trois de dossiers intelligents. Aucun pack de sons n'a pu être examiné.
+Packs examinés : deux de musique, deux d'icônes, trois de dossiers intelligents, puis un de sons (3DS Sound Effects : dix fichiers OGG dans `sounds/`, sans `navigate`).
 
 ```
 assets/<catégorie>/<identifiant>/
@@ -55,6 +55,7 @@ assets/<catégorie>/<identifiant>/
 └── <catégorie>/      même contenu que le dossier du même nom dans un thème
 ```
 
+- Le nom de fichier cité dans `music_playlist` peut différer du fichier réel par la casse (`3DS_First_Time_Setup_-_Lost_Music.mp3` contre `3ds_first_time_setup_-_lost_music.mp3`).
 - `category` vaut `music`, `icon_overlays`, `smart_folders` ou `sounds`.
 - `settings` est `null` sauf pour la musique, où il porte `music_mode`, `music_playback_mode`, `music_playlist` et `music_time_schedule` (chemins relatifs au pack, par exemple `music/track.mp3`).
 - Icônes : `icon_overlays/<plateforme>/mask.png` et `overlay.png` ; le pack 3DS n'a qu'un dossier `global`.
@@ -70,8 +71,8 @@ Noms de base attendus dans `sounds/` : `navigate`, `select`, `back`, `folder_ope
 | Élément Cocoon | Dans Argosy | Difficulté |
 |---|---|---|
 | Fonds d'écran (haut / bas) | Argosy n'avait qu'un fond flouté en 640×360 sur l'accueil et un motif sur le second écran ; Hela ajoute sa propre couche image et vidéo (`ui/hela/theme/`) | Moyenne ; codée, à vérifier sur l'appareil |
-| Sons d'interface | 11 des 22 noms Cocoon ont un événement Argosy (`navigate`, `select`, `back`, `folder_open`, `folder_close`, `launch`, `error`, `notification`, `screen_swap`, `pop`, `slider_increase`) ; les sons du pack passent par les sons personnalisés d'Argosy, et un son réglé par l'utilisateur reste prioritaire | Codée ; vérifiée avec un pack fabriqué, pas avec un vrai pack Silk |
-| Musique (playlist, planning horaire) | Musique de fond existe ; domaine réservé aux mainteneurs en amont | Moyenne |
+| Sons d'interface | 11 des 22 noms Cocoon ont un événement Argosy (`navigate`, `select`, `back`, `folder_open`, `folder_close`, `launch`, `error`, `notification`, `screen_swap`, `pop`, `slider_increase`) ; les sons du pack passent par les sons personnalisés d'Argosy, et un son réglé par l'utilisateur reste prioritaire | Faite ; vérifiée sur la Thor avec 3DS Sound Effects, pas à l'oreille |
+| Musique | Les pistes du pack remplacent la liste de lecture du launcher dans `BgmPlaylistCoordinator`, sans la modifier. `music_playlist` donne l'ordre ; le planning horaire (`music_time_schedule`), le mode de lecture et `music_volume` ne sont pas appliqués | Faite ; lecture vérifiée sur la Thor avec 3DS Background Music |
 | Mode et couleur d'accent | `theme_mode` force le mode sombre ou clair ; l'accent vient de `selection_gradient_start`, sinon `accent_gradient_start`, sinon `accent_glow`, et la couleur secondaire de la fin du même dégradé. Branché dans `rememberArgosyPalette` | Faite, vérifiée sur la Thor |
 | Fond, cartes, texte, séparateurs | Argosy dérive ces surfaces de sa propre rampe ; pas de palette libre | Moyenne : non faite, décision à prendre |
 | Arrondi, échelle des icônes, style de curseur | Jetons de dimensions figés à la compilation | Moyenne |

@@ -18,7 +18,11 @@ object CocoonPackImporter {
     const val THEME_FILE = "theme.json"
     const val ASSET_FILE = "metadata.json"
     private val MANIFEST_FILES = listOf(THEME_FILE, ASSET_FILE)
-    private val CONTENT_DIRS = listOf(CocoonWallpaperResolver.WALLPAPERS_DIR, CocoonSounds.SOUNDS_DIR)
+    private val CONTENT_DIRS = listOf(
+        CocoonWallpaperResolver.WALLPAPERS_DIR,
+        CocoonSounds.SOUNDS_DIR,
+        CocoonMusic.MUSIC_DIR
+    )
     private const val MAX_TOTAL_BYTES = 1024L * 1024L * 1024L
     private const val MAX_ENTRIES = 5000
     private const val STAGING_PREFIX = ".staging-"
@@ -27,7 +31,7 @@ object CocoonPackImporter {
     /**
      * Extracts the pack folder of [zip] into [themesDir]/<id>, replacing a pack of the same id.
      * The pack folder is the parent of the shallowest theme.json or metadata.json, or of the
-     * shallowest wallpapers/ or sounds/ folder in an archive without one.
+     * shallowest wallpapers/, sounds/ or music/ folder in an archive without one.
      */
     fun import(zip: File, themesDir: File): PackImportResult {
         val archive = try {

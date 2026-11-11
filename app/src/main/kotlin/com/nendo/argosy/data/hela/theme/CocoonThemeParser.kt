@@ -18,6 +18,7 @@ object CocoonThemeParser {
                 null
             }
         } ?: return CocoonThemeManifest(name = fallbackName)
+        val settings = root.optJSONObject("settings")
         return CocoonThemeManifest(
             name = root.text("name") ?: fallbackName,
             author = root.text("author"),
@@ -27,7 +28,9 @@ object CocoonThemeParser {
             wallpaperExternal = root.text("wallpaper_external"),
             themeMode = root.text("theme_mode"),
             colorScheme = root.optJSONObject("color_scheme")?.texts().orEmpty(),
-            category = root.text("category")
+            category = root.text("category"),
+            musicMode = root.text("music_mode") ?: settings?.text("music_mode"),
+            musicPlaylist = root.text("music_playlist") ?: settings?.text("music_playlist")
         )
     }
 

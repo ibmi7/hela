@@ -21,6 +21,7 @@ import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.FileOpen
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -230,6 +231,9 @@ private fun packSubtitle(pack: InstalledThemePack, selection: HelaThemeSelection
         if (pack.sounds.isNotEmpty() && selection.soundsPackId == pack.id) {
             add(stringResource(R.string.hela_themes_slot_sounds))
         }
+        if (pack.music.isNotEmpty() && selection.musicPackId == pack.id) {
+            add(stringResource(R.string.hela_themes_slot_music))
+        }
     }
     val usage = if (slots.isEmpty()) {
         stringResource(R.string.hela_themes_pack_not_in_use)
@@ -304,6 +308,13 @@ private fun PackActionsModal(
                     subtitle = stringResource(R.string.hela_themes_action_use_sounds_subtitle),
                     isFocused = index == focusedIndex,
                     icon = Icons.AutoMirrored.Outlined.VolumeUp,
+                    onClick = { onAction(action) }
+                )
+                HelaPackAction.USE_MUSIC -> ActionPreference(
+                    title = stringResource(R.string.hela_themes_action_use_music),
+                    subtitle = stringResource(R.string.hela_themes_action_use_music_subtitle),
+                    isFocused = index == focusedIndex,
+                    icon = Icons.Outlined.MusicNote,
                     onClick = { onAction(action) }
                 )
                 HelaPackAction.DELETE -> ActionPreference(

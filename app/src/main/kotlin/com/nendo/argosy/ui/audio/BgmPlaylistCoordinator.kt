@@ -1,10 +1,14 @@
 package com.nendo.argosy.ui.audio
 
 import android.util.Log
+import com.nendo.argosy.data.hela.theme.HelaThemeStore
 import com.nendo.argosy.data.local.entity.BgmPlaylistEntity
 import com.nendo.argosy.data.music.BgmPlaylistRepository
 import com.nendo.argosy.data.preferences.UserPreferencesRepository
+import com.nendo.argosy.domain.model.MusicQueueTrack
+import com.nendo.argosy.domain.model.MusicTrackSource
 import com.nendo.argosy.domain.usecase.music.GetLauncherQueueUseCase
+import com.nendo.argosy.domain.usecase.music.localTrackId
 import com.nendo.argosy.domain.usecase.music.MeasureTrackLoudnessUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +37,8 @@ class BgmPlaylistCoordinator @Inject constructor(
     private val ambientAudioManager: AmbientAudioManager,
     private val preferencesRepository: UserPreferencesRepository,
     private val measureTrackLoudness: MeasureTrackLoudnessUseCase,
-    private val getLauncherQueue: GetLauncherQueueUseCase
+    private val getLauncherQueue: GetLauncherQueueUseCase,
+    private val helaThemeStore: HelaThemeStore
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var watchJob: Job? = null
@@ -97,12 +102,21 @@ class BgmPlaylistCoordinator @Inject constructor(
 
     suspend fun reorder(orderedIds: List<Long>) = repository.reorder(orderedIds)
 
+    private suspend fun launcherTracks(): List<MusicQueueTrack> =
+        helaThemeStore.music.value?.map { track ->
+            MusicQueueTrack(
+                id = localTrackId(track.path),
+                source = MusicTrackSource.Local(track.path),
+                title = track.title
+            )
+        } ?: getLauncherQueue()
+
     private suspend fun pushPlaylist() {
-        val tracks = getLauncherQueue()
+        val tracks = launcherTracks()
         withContext(Dispatchers.Main) {
             ambientAudioManager.setLauncherSource(tracks) {
                 repository.reconcileFolderSources()
-                getLauncherQueue()
+                launcherTracks()
             }
         }
         scheduleLoudnessMeasurement(tracks.mapNotNull { it.localPath })
@@ -138,6 +152,7 @@ class BgmPlaylistCoordinator @Inject constructor(
     private fun startWatching() {
         if (watchJob?.isActive == true) return
         watchJob = scope.launch {
+            launch { helaThemeStore.music.drop(1).collect { pushPlaylist() } }
             repository.observeAll().drop(1).collect { pushPlaylist() }
         }
     }
