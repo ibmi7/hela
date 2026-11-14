@@ -68,4 +68,4 @@ Ces analyses datent du 11/11/2026 (Argosy 2.31.0, commit `29e350f`) et reposent 
 
 ## Prochaine étape
 
-Accueil inspiré d'iiSU, en quatre étapes décrites dans `docs/hela/plan-accueil-iisu.md`. L'étape 1 (réglage, bascule dans `NavGraph`, écran minimal) est faite et vérifiée sur la Thor ; suite : étape 2, grille et onglets. Voir aussi `docs/hela/etat-des-travaux.md`.
+Accueil inspiré d'iiSU, en quatre étapes décrites dans `docs/hela/plan-accueil-iisu.md`. Les étapes 1 (réglage, bascule dans `NavGraph`) et 2 (grille, onglets, fenêtres) sont faites et vérifiées sur la Thor ; suite : étape 3, fiche façon iiSU sur l'autre écran. Voir aussi `docs/hela/etat-des-travaux.md`.

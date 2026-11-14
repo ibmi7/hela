@@ -1984,7 +1984,7 @@ private fun EmptyState(
 }
 
 @Composable
-private fun GameSelectOverlay(
+internal fun GameSelectOverlay(
     game: HomeGameUi,
     isDownloadPaused: Boolean,
     isPlatformRow: Boolean,

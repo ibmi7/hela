@@ -420,6 +420,15 @@ object ComponentDefaults {
         const val entryStepMs = 20
     }
 
+    object HelaHome {
+        const val tileSizeDp = 120
+        const val minColumns = 3
+        const val tabBarHeightDp = 48
+        const val tabIconDp = 24
+        const val pageDotDp = 8
+        const val labelScrimAlpha = 0.85f
+    }
+
     object ArtPicker {
         const val stateHeightDp = 160
         const val checkerCellDp = 8

@@ -38,6 +38,9 @@ fun HelaHomeRoute(
         onNavigateToSettings = { section ->
             navController.navigate(Screen.Settings.createRoute(section))
         },
+        onOpenSettings = {
+            navController.navigate(Screen.Settings.createRoute())
+        },
         onNavigateToApps = {
             navController.navigate(Screen.Apps.route) { launchSingleTop = true }
         },

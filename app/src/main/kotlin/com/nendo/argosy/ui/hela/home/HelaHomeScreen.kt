@@ -1,41 +1,35 @@
 package com.nendo.argosy.ui.hela.home
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.nendo.argosy.domain.model.RequiredAction
-import com.nendo.argosy.ui.components.GameCard
 import com.nendo.argosy.ui.hela.theme.HelaWallpaperLayer
 import com.nendo.argosy.ui.hela.theme.rememberHelaWallpaper
 import com.nendo.argosy.ui.input.LocalInputDispatcher
 import com.nendo.argosy.ui.navigation.Screen
 import com.nendo.argosy.ui.screens.home.HomeEvent
-import com.nendo.argosy.ui.screens.home.HomeRowItem
 import com.nendo.argosy.ui.screens.home.HomeViewModel
 import com.nendo.argosy.ui.screens.library.LibraryFilterArgs
 import com.nendo.argosy.ui.theme.Dimens
-import com.nendo.argosy.ui.util.clickableNoFocus
 
 @Composable
 fun HelaHomeScreen(
@@ -46,12 +40,34 @@ fun HelaHomeScreen(
     onDrawerToggle: () -> Unit,
     onChangelogAction: (RequiredAction) -> Unit,
     onNavigateToSettings: (String) -> Unit,
+    onOpenSettings: () -> Unit,
     onNavigateToApps: () -> Unit,
     onPlayMedia: (itemId: String, startOver: Boolean) -> Unit,
     onMediaSelect: (String) -> Unit,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    helaViewModel: HelaHomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val helaState by helaViewModel.uiState.collectAsState()
+    val downloadIndicators = viewModel.downloadIndicators.collectAsState()
+    val pages = uiState.helaPages
+
+    LaunchedEffect(pages, uiState.currentRow) {
+        if (pages.isNotEmpty() && uiState.currentRow !in pages) viewModel.selectRow(pages.first())
+    }
+
+    val openTab: (HelaHomeTab) -> Unit = remember(
+        onNavigateToLibrary, onNavigateToCollections, onNavigateToApps, onOpenSettings
+    ) {
+        { tab ->
+            when (tab) {
+                HelaHomeTab.LIBRARY -> onNavigateToLibrary(null, null, null)
+                HelaHomeTab.COLLECTIONS -> onNavigateToCollections(0)
+                HelaHomeTab.APPS -> onNavigateToApps()
+                HelaHomeTab.SETTINGS -> onOpenSettings()
+            }
+        }
+    }
 
     HelaHomeEvents(
         viewModel = viewModel,
@@ -64,56 +80,64 @@ fun HelaHomeScreen(
     )
     HelaHomeLifecycle(
         viewModel = viewModel,
+        helaViewModel = helaViewModel,
+        openTab = openTab,
         onGameSelect = onGameSelect,
         onNavigateToDefault = onNavigateToDefault,
         onDrawerToggle = onDrawerToggle
     )
 
     val wallpaper = rememberHelaWallpaper()
-    val items = uiState.currentItems
-    val listState = rememberLazyListState()
-
-    LaunchedEffect(uiState.currentRow, uiState.focusedGameIndex, items.size) {
-        if (uiState.focusedGameIndex in items.indices) {
-            listState.animateScrollToItem(uiState.focusedGameIndex)
-        }
-    }
+    val onTabs = helaState.zone == HelaHomeZone.TABS
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (wallpaper != null) {
             HelaWallpaperLayer(wallpaper = wallpaper, modifier = Modifier.fillMaxSize(), scrim = true)
         }
-        LazyRow(
-            state = listState,
-            modifier = Modifier.align(Alignment.Center),
-            contentPadding = PaddingValues(horizontal = Dimens.spacingXl),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = Dimens.spacingLg, vertical = Dimens.spacingMd),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            itemsIndexed(items, key = { index, item -> item.stableKey(index) }) { index, item ->
-                val isFocused = index == uiState.focusedGameIndex
-                val tap = Modifier.clickableNoFocus { viewModel.handleItemTap(index, onGameSelect) }
-                when (item) {
-                    is HomeRowItem.Game -> GameCard(
-                        game = item.game,
-                        isFocused = isFocused,
-                        modifier = Modifier.width(Dimens.gameCardWidth).then(tap)
-                    )
-                    else -> Box(
-                        modifier = Modifier
-                            .size(Dimens.gameCardWidth, Dimens.gameCardHeight)
-                            .then(tap)
-                    )
+            HelaHomeTabBar(
+                focusedTab = helaState.focusedTab.takeIf { onTabs },
+                onTab = { tab ->
+                    helaViewModel.focusTab(tab)
+                    openTab(tab)
                 }
-                Spacer(modifier = Modifier.width(Dimens.spacingMd))
-            }
+            )
+            HelaHomeGrid(
+                items = uiState.currentItems,
+                page = uiState.currentRow,
+                focusedIndex = uiState.focusedGameIndex.takeIf { !onTabs },
+                downloadIndicators = downloadIndicators,
+                onColumns = helaViewModel::setColumns,
+                onTap = { index ->
+                    helaViewModel.focusGrid()
+                    viewModel.handleItemTap(index, onGameSelect)
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            )
+            HelaHomePageDots(
+                pages = pages,
+                current = uiState.currentRow,
+                onSelect = { row ->
+                    helaViewModel.focusGrid()
+                    viewModel.selectRow(row)
+                }
+            )
         }
+        HelaHomeOverlays(
+            viewModel = viewModel,
+            uiState = uiState,
+            downloadIndicators = downloadIndicators,
+            onGameSelect = onGameSelect,
+            onChangelogAction = onChangelogAction
+        )
     }
-}
-
-private fun HomeRowItem.stableKey(index: Int): String = when (this) {
-    is HomeRowItem.Game -> "game-${game.id}"
-    is HomeRowItem.Media -> "media-$index"
-    is HomeRowItem.ViewAll -> "all-${platformId ?: sourceFilter ?: index}"
 }
 
 @Composable
@@ -151,22 +175,30 @@ private fun HelaHomeEvents(
 @Composable
 private fun HelaHomeLifecycle(
     viewModel: HomeViewModel,
+    helaViewModel: HelaHomeViewModel,
+    openTab: (HelaHomeTab) -> Unit,
     onGameSelect: (Long) -> Unit,
     onNavigateToDefault: () -> Unit,
     onDrawerToggle: () -> Unit
 ) {
     val dockIsRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val inputDispatcher = LocalInputDispatcher.current
+    val currentOpenTab by rememberUpdatedState(openTab)
     val inputHandler = remember(onGameSelect, onDrawerToggle, dockIsRtl) {
-        viewModel.createInputHandler(
-            isDefaultView = true,
-            onGameSelect = onGameSelect,
-            onNavigateToDefault = onNavigateToDefault,
-            onDrawerToggle = {
-                viewModel.dismissAppBarTools()
-                onDrawerToggle()
-            },
-            dockIsRtl = dockIsRtl
+        HelaHomeInputHandler(
+            home = viewModel.createInputHandler(
+                isDefaultView = true,
+                onGameSelect = onGameSelect,
+                onNavigateToDefault = onNavigateToDefault,
+                onDrawerToggle = {
+                    viewModel.dismissAppBarTools()
+                    onDrawerToggle()
+                },
+                dockIsRtl = dockIsRtl
+            ),
+            homeViewModel = viewModel,
+            helaViewModel = helaViewModel,
+            onTab = { tab -> currentOpenTab(tab) }
         )
     }
 

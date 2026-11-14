@@ -55,4 +55,11 @@
     <string name="hela_themes_slot_icons">icônes</string>
     <string name="hela_themes_action_use_icons">Utiliser ses icônes</string>
     <string name="hela_themes_action_use_icons_subtitle">Tuiles de jeux carrées avec ce cadre, sur l\'accueil et dans la bibliothèque</string>
+
+    <string name="hela_home_tab_library">Bibliothèque</string>
+    <string name="hela_home_tab_collections">Collections</string>
+    <string name="hela_home_tab_apps">Applis</string>
+    <string name="hela_home_tab_settings">Réglages</string>
+    <string name="hela_home_tile_resume">Reprendre</string>
+    <string name="hela_home_tile_view_all">Tout voir</string>
 </resources>

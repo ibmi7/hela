@@ -61,20 +61,24 @@ Import de packs réels (iiSU, 3DS Dark Reimagined, OLED Observatory, 3DS Sound E
 
 Thème iiSU pour les fonds et les couleurs, 3DS Sound Effects, 3DS Background Music, cadres d'icônes iiSU. Les sons d'interface et la musique de fond sont désactivés dans les réglages d'Argosy.
 
-## Accueil Hela, étape 1
+## Accueil Hela, étapes 1 et 2
 
-Réglages > Thème > « Accueil Hela » remplace l'accueil d'Argosy par celui de Hela sur la route `home`, donc sur l'écran qui pilote, quel qu'il soit. L'écran réutilise `HomeViewModel` ; pour l'instant il n'affiche qu'une rangée de jaquettes.
+Réglages > Thème > « Accueil Hela » remplace l'accueil d'Argosy par celui de Hela sur la route `home`, donc sur l'écran qui pilote, quel qu'il soit. L'écran réutilise `HomeViewModel` : chaque page de la grille est une rangée d'Argosy (Récents, Sélection, Favoris, dans l'ordre d'Argosy), ce qui garde intactes la fiche de l'autre écran et la position à l'inversion.
 
-- Code : `data/hela/home/HelaHomeStore.kt` (clé `hela_home_enabled`), `ui/hela/home/` (`HelaHomeEntry`, `HelaHomeRoute`, `HelaHomeScreen`).
-- Retouches d'Argosy : `NavGraph` (aiguillage), `ThemeSection`, `SettingsConfirmRouter`, `SettingsViewModel` (interrupteur), `SettingsBackupKeysTest` (les clés `hela_*` classées hors sauvegarde ; le test échouait déjà sur les clés des thèmes).
-- À reporter lors d'une fusion : `HelaHomeScreen` recopie l'effet de cycle de vie et le collecteur d'événements de `HomeScreen`.
-- Vérifié sur la Thor : interrupteur à la manette, fiche de l'autre écran qui suit la sélection (croix et toucher), deux inversions avec Select maintenu, sélection conservée, manette active des deux côtés.
-- Défauts connus : un appui simple sur Select ouvre le menu du jeu sans l'afficher (B le referme) ; les numéros d'écran restent affichés après un appui sur Select ; jaquettes étirées.
+- Écran : barre d'onglets (Bibliothèque, Collections, Applis, Réglages ; icônes, libellé sur l'onglet focalisé), grille de tuiles carrées (cadres du pack d'icônes Cocoon s'il y en a un), tuile large « Reprendre » en tête de Récents, tuile « Tout voir », titre de page et points.
+- Manette : croix dans la grille, haut depuis la première rangée vers les onglets, gauche/droite au bord et L1/R1/L2/R2 pour changer de page ; A, B, X, Y, Start et Select restent ceux d'Argosy. Toucher : tuiles, onglets, points.
+- Code : `data/hela/home/HelaHomeStore.kt` (clé `hela_home_enabled`) ; `ui/hela/home/` : `HelaHomeScreen`, `HelaHomeRoute`, `HelaHomeEntry`, `HelaHomeViewModel` (zone, onglet, colonnes, pages), `HelaHomeInputHandler` (croix, A, B, gâchettes ; le reste délégué à `HomeInputHandler`), `HelaGridLayout` (placement et déplacements, testés), `HelaHomeGrid`, `HelaHomeTiles`, `HelaHomeTabBar`, `HelaHomeOverlays`.
+- Jetons : bloc `components.helaHome` dans `tokens.json` (régénérer avec `node scripts/gen-tokens.mjs` ; Node est dans `~/.local/node` sous Linux).
+- Retouches d'Argosy : `NavGraph` (aiguillage), `ThemeSection`, `SettingsConfirmRouter`, `SettingsViewModel` (interrupteur), `HomeScreen` (`GameSelectOverlay` passé en `internal`), `SettingsBackupKeysTest` (clés `hela_*` classées hors sauvegarde ; le test échouait déjà sur les clés des thèmes).
+- À reporter lors d'une fusion : `HelaHomeScreen` recopie l'effet de cycle de vie et le collecteur d'événements de `HomeScreen`, `HelaHomeOverlays` recopie ses fenêtres (menu du jeu, collections, disques, carte mémoire, changelog, reprise média).
+- Vérifié sur la Thor : interrupteur, navigation manette et toucher, onglet Collections, changement de page, menu du jeu affiché et fermé, fiche de l'autre écran qui suit, deux inversions avec Select maintenu.
+- Suppose la disposition carrousel d'Argosy (Réglages > Interface) : en grille personnalisée, `focusedGame` vient de la grille d'Argosy et la fiche ne suivrait pas.
+- Reste (étape 4) : appui long au toucher pour le menu du jeu, indications de boutons, états vide et chargement ; au retour d'un onglet, le focus revient parfois sur une autre tuile.
 
 ## Ce qui reste
 
 1. Décider si les pastilles de favori et de téléchargement reviennent sur les tuiles carrées.
-2. Nouvel écran d'accueil inspiré d'iiSU : plan dans `plan-accueil-iisu.md`. Étape 1 faite (voir plus bas), étapes 2 à 4 à faire.
+2. Nouvel écran d'accueil inspiré d'iiSU : plan dans `plan-accueil-iisu.md`. Étapes 1 et 2 faites (voir plus haut), étapes 3 et 4 à faire.
 3. Dossiers intelligents des packs (`smart_folders/`) : dépendent du nouvel écran d'accueil.
 4. Problèmes de lancement Vita et Switch (voir `CLAUDE.md`).
 
