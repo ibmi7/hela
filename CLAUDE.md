@@ -9,7 +9,7 @@ Ce fichier donne le contexte du fork. Les règles d'architecture du code sont da
 Garder l'intégration RomM d'Argosy (parcours de la bibliothèque, téléchargement, lancement, synchro des sauvegardes) et y ajouter ce qu'Argosy ne fera pas en amont :
 
 1. L'import de thèmes communautaires au format Cocoon (`theme.json` + ressources).
-2. Un nouvel écran d'accueil inspiré de Cocoon ou d'iiSU (choix entre les deux non arrêté).
+2. Un nouvel écran d'accueil inspiré d'iiSU (plan dans `docs/hela/plan-accueil-iisu.md`).
 3. Des corrections de lancement pour les plateformes qui posent problème (voir « Problèmes ouverts »).
 
 ## Décisions prises
@@ -24,7 +24,7 @@ Garder l'intégration RomM d'Argosy (parcours de la bibliothèque, téléchargem
 
 Deux machines, SDK Android en ligne de commande dans les deux cas (Android Studio n'est pas nécessaire).
 
-- JDK 17 obligatoire : Gradle 8.9 échoue avec un JDK 25 (erreur réduite à `25.0.4`).
+- JDK 21, comme la CI d'Argosy (`.github/workflows/build.yml`). Le JDK 17 compile mais ne fait pas tourner les tests netplay (lazysodium exige Java 21). Gradle 8.9 échoue avec un JDK 25 (erreur réduite à `25.0.4`).
 - Composants requis : plateforme `android-35`, `build-tools;34.0.0` et `35.0.0`, `platform-tools`, `ndk;27.0.12077973` et `cmake;3.22.1` (modules natifs `libretrodroid` et `sigil`).
 - Sous-modules git obligatoires (`sigil`, `rcheevos`, `libadrenotools`) : `git submodule update --init --recursive` après un clone, sinon le build échoue.
 
@@ -35,16 +35,17 @@ Deux machines, SDK Android en ligne de commande dans les deux cas (Android Studi
 
 ### Linux (Fedora)
 
-- Dépôt dans `~/Workspace/Hela`. Fedora ne fournit plus de JDK 17 : installer Temurin 17 à la main dans `~/.local/jdk-17` (archive depuis `api.adoptium.net`). Le JDK système (25) reste en place.
+- Dépôt dans `~/Workspace/Hela`. Installer Temurin 21 à la main dans `~/.local/jdk-21` (archive depuis `api.adoptium.net`). Le JDK système (25) reste en place ; un Temurin 17 traîne aussi dans `~/.local/jdk-17`.
 - SDK dans `~/Android/Sdk` : extraire les command-line tools de Google dans `~/Android/Sdk/cmdline-tools/latest`, puis :
   ```
-  export JAVA_HOME=~/.local/jdk-17 ANDROID_HOME=~/Android/Sdk
+  export JAVA_HOME=~/.local/jdk-21 ANDROID_HOME=~/Android/Sdk
   yes | sdkmanager --licenses
   sdkmanager "platform-tools" "platforms;android-35" "build-tools;34.0.0" "build-tools;35.0.0" "ndk;27.0.12077973" "cmake;3.22.1"
   ```
 - `local.properties` (ignoré par git) : `sdk.dir=/home/brams/Android/Sdk`.
 - `~/.bashrc` exporte `JAVA_HOME`, `ANDROID_HOME` et ajoute `platform-tools` et `cmdline-tools/latest/bin` au `PATH`.
-- Compiler : `./gradlew assembleDebug`. Compiler et installer : `./gradlew installDebug`.
+- Compiler : `./gradlew assembleDebug`. Compiler et installer : `./gradlew installDebug`. Tests : `./gradlew testDebugUnitTest` (`assembleDebug` ne compile pas les tests).
+- La clé de debug `~/.android/debug.keystore` est celle du PC Windows (empreinte SHA-256 `94:36:99:CF:…:D7:22`) : sans elle, `installDebug` échoue sur la Thor avec `INSTALL_FAILED_UPDATE_INCOMPATIBLE`.
 
 ### Commun
 - La version debug s'installe sous `com.nendo.argosy.debug`, à côté de l'Argosy officiel, avec ses propres données. Ne jamais désinstaller l'officiel.
@@ -61,9 +62,10 @@ Deux machines, SDK Android en ligne de commande dans les deux cas (Android Studi
 - `docs/hela/argosy-cartographie.md` : structure et tailles du code d'Argosy.
 - `docs/hela/comparatif-bases.md` : comparaison Argosy / NeoStation / Cocoon / iiSU.
 - `docs/hela/format-theme-cocoon.md` : format des thèmes Cocoon et correspondance avec Argosy.
+- `docs/hela/plan-accueil-iisu.md` : plan de l'accueil inspiré d'iiSU (référence visuelle, décisions, fichiers, étapes).
 
 Ces analyses datent du 11/11/2026 (Argosy 2.31.0, commit `29e350f`) et reposent sur une lecture de la structure et de la documentation, pas sur un audit du code. Les correspondances de thème sont à vérifier dans le code avant de s'y fier.
 
 ## Prochaine étape
 
-L'import des packs Cocoon est fait pour les fonds d'écran, les couleurs, les sons, la musique et les icônes : voir `docs/hela/etat-des-travaux.md`, à lire en premier pour reprendre le travail. Suite prévue : choisir entre l'inspiration Cocoon et l'inspiration iiSU pour le nouvel écran d'accueil, puis en proposer un plan ; les dossiers intelligents des packs en dépendent.
+Accueil inspiré d'iiSU, en quatre étapes décrites dans `docs/hela/plan-accueil-iisu.md`. L'étape 1 (réglage, bascule dans `NavGraph`, écran minimal) est faite et vérifiée sur la Thor ; suite : étape 2, grille et onglets. Voir aussi `docs/hela/etat-des-travaux.md`.

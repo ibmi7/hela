@@ -52,6 +52,7 @@ internal sealed class ThemeItem(val key: String, val section: String) {
     data object Fonts : ThemeItem("fonts", "identity")
     data object IconPack : ThemeItem("iconPack", "identity")
     data object CocoonPacks : ThemeItem("cocoonPacks", "identity")
+    data object HelaHome : ThemeItem("helaHome", "identity")
 
     companion object {
         private val AppearanceHeader =
@@ -65,7 +66,7 @@ internal sealed class ThemeItem(val key: String, val section: String) {
                 AppearanceHeader,
                 Mode, AccentColor, AccentFooter, SecondaryColor, TintBleed,
                 IdentitySpacer, IdentityHeader,
-                Backdrop, Fonts, IconPack, CocoonPacks
+                Backdrop, Fonts, IconPack, CocoonPacks, HelaHome
             )
     }
 }
@@ -222,6 +223,14 @@ fun ThemeSection(uiState: SettingsUiState, viewModel: SettingsViewModel) {
                 subtitle = stringResource(R.string.settings_theme_cocoon_packs_subtitle),
                 isFocused = isFocused(item),
                 onClick = { openFrom(item) { viewModel.requestHelaThemes() } }
+            )
+
+            ThemeItem.HelaHome -> SwitchPreference(
+                title = stringResource(R.string.settings_theme_hela_home_title),
+                subtitle = stringResource(R.string.settings_theme_hela_home_subtitle),
+                isEnabled = com.nendo.argosy.ui.hela.home.rememberHelaHomeEnabled() == true,
+                isFocused = isFocused(item),
+                onToggle = { viewModel.setHelaHomeEnabled(it) }
             )
         }
     }

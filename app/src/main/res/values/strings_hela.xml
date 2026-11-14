@@ -2,6 +2,8 @@
 <resources>
     <string name="settings_theme_cocoon_packs_title">Cocoon packs</string>
     <string name="settings_theme_cocoon_packs_subtitle">Wallpapers, colors, sounds, music and icons from imported packs</string>
+    <string name="settings_theme_hela_home_title">Hela home</string>
+    <string name="settings_theme_hela_home_subtitle">iiSU-style home on both screens, in place of the Argosy home</string>
 
     <string name="hela_themes_title">Cocoon packs</string>
     <string name="hela_themes_back_desc">Back</string>

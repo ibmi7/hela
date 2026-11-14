@@ -2,6 +2,8 @@
 <resources>
     <string name="settings_theme_cocoon_packs_title">Packs Cocoon</string>
     <string name="settings_theme_cocoon_packs_subtitle">Fonds d\'écran, couleurs, sons, musique et icônes des packs importés</string>
+    <string name="settings_theme_hela_home_title">Accueil Hela</string>
+    <string name="settings_theme_hela_home_subtitle">Accueil façon iiSU sur les deux écrans, à la place de celui d\'Argosy</string>
 
     <string name="hela_themes_title">Packs Cocoon</string>
     <string name="hela_themes_back_desc">Retour</string>

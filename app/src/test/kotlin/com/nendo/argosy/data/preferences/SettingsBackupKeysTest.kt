@@ -101,11 +101,17 @@ class SettingsBackupKeysTest {
 
     private val installPermissions = setOf("allow_remote_installs")
 
+    private val helaLocalPacksAndLayout = setOf(
+        "hela_wallpaper_main_pack", "hela_wallpaper_external_pack", "hela_colors_pack",
+        "hela_sounds_pack", "hela_music_pack", "hela_icons_pack", "hela_wallpaper_animate",
+        "hela_home_enabled"
+    )
+
     private val excluded: Set<String> =
         credentialsAndIdentity + presenceSharingAndServiceAccounts + syncWatermarksAndResume +
             oneShotAndVersionMarkers + liveSessionState + saveAndStateSafetyGates +
             filesystemLocations + hardwareAndUnit + perDeviceScreenChoices + localRowIdsAndSets +
-            derivedAndGenerated + diagnostics + installPermissions
+            derivedAndGenerated + diagnostics + installPermissions + helaLocalPacksAndLayout
 
     private val credentialShapes = listOf(
         "token", "credential", "password", "api_key", "username", "user_name", "user_id", "device_id",

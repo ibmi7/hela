@@ -75,7 +75,15 @@ fun NavGraph(
 
         composable(Screen.Home.route) {
             com.nendo.argosy.ui.hela.theme.HelaIconScope {
-            HomeScreen(
+            val helaHome = com.nendo.argosy.ui.hela.home.rememberHelaHomeEnabled()
+            if (helaHome == true) {
+                com.nendo.argosy.ui.hela.home.HelaHomeRoute(
+                    navController = navController,
+                    onNavigateToDefault = navigateToDefault,
+                    onDrawerToggle = onDrawerToggle,
+                    onPlayMedia = onPlayMedia
+                )
+            } else if (helaHome == false) HomeScreen(
                 isDefaultView = true,
                 videoPreviewBlocked = videoPreviewBlocked,
                 onNavigateToCollections = { collectionId ->

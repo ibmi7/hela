@@ -7,7 +7,7 @@
 1. `git clone https://github.com/ibmi7/hela.git`, puis `git checkout hela`.
 2. Récupérer les sous-modules, sans lesquels le build échoue : `git submodule update --init --recursive`.
 3. Ajouter l'amont, absent d'un clone neuf : `git remote add upstream https://github.com/rommapp/argosy-launcher.git`.
-4. Installer un JDK 17 (Temurin), le SDK Android, le NDK et CMake : versions et commandes Windows/Linux dans la section « Environnement de build » de `CLAUDE.md`.
+4. Installer un JDK 21 (Temurin), le SDK Android, le NDK et CMake : versions et commandes Windows/Linux dans la section « Environnement de build » de `CLAUDE.md`.
 5. Compiler et installer : `gradlew.bat installDebug` sous Windows, `./gradlew installDebug` sous Linux (paquet `com.nendo.argosy.debug`).
 6. Tests du chantier thèmes : `testDebugUnitTest --tests "com.nendo.argosy.data.hela.theme.*"` avec le même lanceur (64 tests).
 
@@ -61,10 +61,20 @@ Import de packs réels (iiSU, 3DS Dark Reimagined, OLED Observatory, 3DS Sound E
 
 Thème iiSU pour les fonds et les couleurs, 3DS Sound Effects, 3DS Background Music, cadres d'icônes iiSU. Les sons d'interface et la musique de fond sont désactivés dans les réglages d'Argosy.
 
+## Accueil Hela, étape 1
+
+Réglages > Thème > « Accueil Hela » remplace l'accueil d'Argosy par celui de Hela sur la route `home`, donc sur l'écran qui pilote, quel qu'il soit. L'écran réutilise `HomeViewModel` ; pour l'instant il n'affiche qu'une rangée de jaquettes.
+
+- Code : `data/hela/home/HelaHomeStore.kt` (clé `hela_home_enabled`), `ui/hela/home/` (`HelaHomeEntry`, `HelaHomeRoute`, `HelaHomeScreen`).
+- Retouches d'Argosy : `NavGraph` (aiguillage), `ThemeSection`, `SettingsConfirmRouter`, `SettingsViewModel` (interrupteur), `SettingsBackupKeysTest` (les clés `hela_*` classées hors sauvegarde ; le test échouait déjà sur les clés des thèmes).
+- À reporter lors d'une fusion : `HelaHomeScreen` recopie l'effet de cycle de vie et le collecteur d'événements de `HomeScreen`.
+- Vérifié sur la Thor : interrupteur à la manette, fiche de l'autre écran qui suit la sélection (croix et toucher), deux inversions avec Select maintenu, sélection conservée, manette active des deux côtés.
+- Défauts connus : un appui simple sur Select ouvre le menu du jeu sans l'afficher (B le referme) ; les numéros d'écran restent affichés après un appui sur Select ; jaquettes étirées.
+
 ## Ce qui reste
 
 1. Décider si les pastilles de favori et de téléchargement reviennent sur les tuiles carrées.
-2. Nouvel écran d'accueil : choisir entre l'inspiration Cocoon et l'inspiration iiSU, puis plan.
+2. Nouvel écran d'accueil inspiré d'iiSU : plan dans `plan-accueil-iisu.md`. Étape 1 faite (voir plus bas), étapes 2 à 4 à faire.
 3. Dossiers intelligents des packs (`smart_folders/`) : dépendent du nouvel écran d'accueil.
 4. Problèmes de lancement Vita et Switch (voir `CLAUDE.md`).
 

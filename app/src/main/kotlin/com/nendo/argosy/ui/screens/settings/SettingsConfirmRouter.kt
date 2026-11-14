@@ -817,6 +817,7 @@ private fun routeThemeConfirm(vm: SettingsViewModel, state: SettingsUiState): In
         ThemeItem.Backdrop -> vm.navigateToThemeBackdrop()
         ThemeItem.Fonts -> vm.navigateToThemeFonts()
         ThemeItem.CocoonPacks -> vm.requestHelaThemes()
+        ThemeItem.HelaHome -> vm.toggleHelaHome()
         ThemeItem.IconPack -> {
             if (state.display.iconPacks.isEmpty()) return InputResult.handled(SoundType.SILENT)
             vm.requestEnumPicker(ThemeItem.IconPack.key)
