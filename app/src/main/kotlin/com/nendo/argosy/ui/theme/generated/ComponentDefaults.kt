@@ -427,6 +427,14 @@ object ComponentDefaults {
         const val tabIconDp = 24
         const val pageDotDp = 8
         const val labelScrimAlpha = 0.85f
+        const val detailLogoWidthRatio = 0.6f
+        const val detailLogoHeightRatio = 0.4f
+        const val detailMediaCardWidthDp = 140
+        const val detailMediaCardAspectRatio = 0.75f
+        const val detailMediaStackOffsetDp = 8
+        const val detailScrimTopAlpha = 0.35f
+        const val detailScrimBottomAlpha = 0.8f
+        const val detailTitleShadowBlurPx = 24
     }
 
     object ArtPicker {

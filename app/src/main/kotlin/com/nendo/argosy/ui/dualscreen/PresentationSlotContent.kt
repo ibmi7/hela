@@ -211,7 +211,14 @@ private fun PresentationSlotScene(
                     ?: com.nendo.argosy.domain.model.PresentationStyle()
                 val backgroundBlur = com.nendo.argosy.DualScreenManagerHolder.instance
                     ?.presentationBackgroundBlur?.collectAsState()?.value ?: 0
-                CompanionDetailScreen(
+                val helaHome = com.nendo.argosy.ui.hela.home.rememberHelaHomeEnabled() == true
+                if (helaHome && slot.detail.isGameTitle) {
+                    com.nendo.argosy.ui.hela.home.HelaGameDetail(
+                        detail = slot.detail,
+                        bottomInset = hintsHeight,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else CompanionDetailScreen(
                     detail = slot.detail,
                     style = style,
                     backgroundBlur = backgroundBlur,
