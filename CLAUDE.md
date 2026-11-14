@@ -35,6 +35,7 @@ Garder l'intégration RomM d'Argosy (parcours de la bibliothèque, téléchargem
 
 ## Documents
 
+- `docs/hela/etat-des-travaux.md` : ce qui est fait, ce qui reste, comment reprendre sur une autre machine.
 - `docs/hela/argosy-cartographie.md` : structure et tailles du code d'Argosy.
 - `docs/hela/comparatif-bases.md` : comparaison Argosy / NeoStation / Cocoon / iiSU.
 - `docs/hela/format-theme-cocoon.md` : format des thèmes Cocoon et correspondance avec Argosy.
@@ -43,4 +44,4 @@ Ces analyses datent du 11/11/2026 (Argosy 2.31.0, commit `29e350f`) et reposent 
 
 ## Prochaine étape
 
-Lire le système de thème d'Argosy (`ui/theme/`, `design-handoff/THEMING.md`, `design-system-docs/04-theming.md`, préférences associées) et proposer un plan fichier par fichier pour l'import d'un pack Cocoon, en commençant par la lecture du ZIP et les fonds d'écran haut et bas.
+L'import des packs Cocoon est fait pour les fonds d'écran, les couleurs, les sons, la musique et les icônes : voir `docs/hela/etat-des-travaux.md`, à lire en premier pour reprendre le travail. Suite prévue : choisir entre l'inspiration Cocoon et l'inspiration iiSU pour le nouvel écran d'accueil, puis en proposer un plan ; les dossiers intelligents des packs en dépendent.
