@@ -78,12 +78,20 @@ Réglages > Thème > « Accueil Hela » remplace l'accueil d'Argosy par celui de
 - Vérifié aussi : pastille RA (Crisis Core mis en favori), fiche sur l'écran du bas après inversion, appui long, indications relayées sur l'autre écran.
 - Non vérifié : l'état vide (bibliothèque jamais vide sur la Thor), les sons à l'oreille, le mode un seul écran (indications en bas du même écran).
 
+## Lancement Vita
+
+- Cause : Vita3K 0.2.1 n'accepte plus l'activité `org.vita3k.emulator.Emulator` sans identifiant de jeu (`No title ID provided`, fermeture en deux secondes), et les zips No-Intro de la bibliothèque (`work.bin` + un `.pkg` au nom aléatoire) n'exposaient l'identifiant ni dans leur nom ni dans leurs entrées.
+- Correctif : `data/emulator/VitaPkgHeader.kt` lit les 84 premiers octets du `.pkg` du zip (signature `7F 50 4B 47`, identifiant de contenu ASCII à 0x30, title ID aux caractères 7 à 15) ; `GameLauncher.extractTitleIdFromZip` s'en sert quand aucune entrée ne commence par un identifiant. Sans identifiant, `commandForVita3K` ouvre l'activité de lancement du paquet (`getLaunchIntentForPackage`, `MainActivity` pour Vita3K), drapeaux `NEW_TASK | CLEAR_TASK`. Tests : `VitaPkgHeaderTest`.
+- Vérifié sur la Thor depuis Hela : Killzone (`PCSF00243`) et Uncharted (`PCSF00012`) démarrent ; lecture de l'en-tête en moins de 15 ms, y compris sur les zips de 2,8 Go des Trails. Repli sans identifiant vérifié par `adb` avec l'intent exact (aucun jeu de la bibliothèque n'y passe) : liste des jeux de Vita3K, qui reste ouverte.
+- Hors Hela : Trails of Cold Steel (`PCSB00866`) et II (`PCSB01016`) reçoivent le bon identifiant et démarrent, puis Vita3K plante (`std::terminate()`, SIGABRT dans « BGM Update Thread » pour le premier) ; même plantage avec un lancement par `adb`, donc compatibilité de Vita3K.
+- Non traité : FEZ (`[PCSB00456]` dans le nom) n'est pas installé dans Vita3K ; la synchro des sauvegardes Vita vise `Android/data/org.vita3k.emulator/files/VITA/ux0/user/00/savedata` alors que Vita3K écrit sous `/storage/4A21-0000/Vita3k/ux0/user/` (zone fragile, chantier séparé) ; `TitleIdDownloadObserver` (sigil) ne trouve pas non plus l'identifiant de ces zips.
+
 ## Ce qui reste
 
 1. Décider si les pastilles de favori et de téléchargement reviennent sur les tuiles carrées.
 2. Nouvel écran d'accueil inspiré d'iiSU : plan dans `plan-accueil-iisu.md`. Les quatre étapes du plan sont faites (voir plus haut). Suite : grille modifiable, liste par console, dossiers intelligents.
 3. Dossiers intelligents des packs (`smart_folders/`) : dépendent du nouvel écran d'accueil.
-4. Problèmes de lancement Vita et Switch (voir `CLAUDE.md`).
+4. Problème de lancement Switch (voir `CLAUDE.md`) ; Vita corrigé côté Hela, sauvegardes Vita à revoir.
 
 ## Précautions apprises
 

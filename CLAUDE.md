@@ -53,7 +53,7 @@ Deux machines, SDK Android en ligne de commande dans les deux cas (Android Studi
 
 ## Problèmes ouverts
 
-- **Vita** : au lancement depuis Argosy, l'émulateur ne s'ouvre pas ou se referme aussitôt. Dans `GameLauncher.commandForVita3K`, Argosy n'envoie à Vita3K qu'un identifiant de jeu (`-r PCSB00000`), extrait du nom du fichier (entre crochets ou en préfixe) ou de la racine du zip ; sans identifiant, il ouvre seulement l'émulateur. Hypothèse à vérifier : le jeu n'est pas installé dans Vita3K, ou l'identifiant est introuvable. Test à faire : lancer le jeu directement depuis Vita3K, puis lire `adb logcat` pendant un lancement depuis Hela.
+- **Vita** : corrigé côté Hela (voir `docs/hela/etat-des-travaux.md`). Les zips No-Intro (un `.pkg` au nom aléatoire et `work.bin`) ne portaient pas d'identifiant visible ; Hela le lit maintenant dans l'en-tête du `.pkg` (`VitaPkgHeader`) et l'envoie à Vita3K. Sans identifiant, il ouvre la liste de jeux de Vita3K au lieu de l'activité `Emulator`, qui se ferme à vide depuis Vita3K 0.2.1. Restent hors de Hela : Trails of Cold Steel I et II plantent dans Vita3K 0.2.1 quelques secondes après le démarrage (`std::terminate()`, même plantage lancé par `adb`) ; un jeu doit être installé dans Vita3K (`ux0/app`), Hela ne passe jamais le fichier.
 - **Switch** : écran noir quelques secondes puis fermeture, y compris en lançant le jeu directement depuis Eden. Ce n'est donc pas un problème de frontend. Pistes côté émulateur : clés et firmware, pilote graphique, intégrité du fichier, essai avec un autre jeu.
 
 ## Documents

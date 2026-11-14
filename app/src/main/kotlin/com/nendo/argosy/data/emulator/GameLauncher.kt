@@ -1678,21 +1678,29 @@ class GameLauncher @Inject constructor(
         config: LaunchConfig.Vita3K
     ): EffectiveLaunchCommand {
         val titleId = extractVitaTitleId(romFile)
-        val extras = if (titleId != null) {
+        if (titleId != null) {
             Logger.debug(TAG, "Vita3K: titleId=$titleId from ${romFile.name}")
-            listOf(ResolvedExtra.StringArrayExtra("AppStartParameters", arrayOf("-r", titleId)))
-        } else {
-            Logger.debug(TAG, "Vita3K: no titleId in ${romFile.name}, opening emulator only")
-            emptyList()
+            return EffectiveLaunchCommand(
+                action = emulator.launchAction,
+                packageName = emulator.packageName,
+                activityClass = config.activityClass,
+                categories = emptyList(),
+                extras = listOf(ResolvedExtra.StringArrayExtra("AppStartParameters", arrayOf("-r", titleId))),
+                intentFlags = config.defaultIntentFlags(emulator)
+            )
         }
 
+        val launcherActivity = context.packageManager
+            .getLaunchIntentForPackage(emulator.packageName)
+            ?.component
+            ?.className
+        Logger.debug(TAG, "Vita3K: no titleId in ${romFile.name}, opening game list via $launcherActivity")
         return EffectiveLaunchCommand(
-            action = emulator.launchAction,
+            action = Intent.ACTION_MAIN,
             packageName = emulator.packageName,
-            activityClass = config.activityClass,
-            categories = emptyList(),
-            extras = extras,
-            intentFlags = config.defaultIntentFlags(emulator)
+            activityClass = launcherActivity ?: config.activityClass,
+            categories = listOf(Intent.CATEGORY_LAUNCHER),
+            intentFlags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         )
     }
 
@@ -1721,6 +1729,7 @@ class GameLauncher @Inject constructor(
                         titleIdPattern.find(entry.name)?.groupValues?.get(1)
                     }
                     .firstOrNull()
+                    ?: VitaPkgHeader.titleIdIn(zip)
             }
         } catch (e: Exception) {
             Logger.warn(TAG, "Failed to read zip for titleId: ${zipFile.name}", e)
