@@ -84,4 +84,26 @@ class VitaPkgHeaderTest {
         val zip = zipOf("game.pkg" to header("EP9000-PCSF00243_00-KZV0000000000000").copyOf(40))
         assertNull(ZipFile(zip).use { VitaPkgHeader.titleIdIn(it) })
     }
+
+    @Test
+    fun `a Vita zip resolves to an exact-folder save id read from the file`() {
+        val pkg = header("EP9000-PCSF00243_00-KZV0000000000000") + ByteArray(1024)
+        val zip = zipOf("work.bin" to ByteArray(512), "random.pkg" to pkg)
+        val expected = TitleIdResult(titleId = "PCSF00243", fromBinary = true)
+        assertEquals(expected, VitaPkgHeader.titleIdResultOf(zip, "psvita"))
+        assertEquals(expected, VitaPkgHeader.titleIdResultOf(zip, "vita"))
+        assertEquals("PCSF00243", expected.saveId)
+        assertEquals(TitleIdResult.SaveUsage.FOLDER_EXACT, expected.usage)
+    }
+
+    @Test
+    fun `other platforms and other files resolve to nothing`() {
+        val pkg = header("EP9000-PCSF00243_00-KZV0000000000000") + ByteArray(1024)
+        val zip = zipOf("random.pkg" to pkg)
+        assertNull(VitaPkgHeader.titleIdResultOf(zip, "psp"))
+        assertNull(VitaPkgHeader.titleIdResultOf(temp.newFile("game.vpk"), "psvita"))
+        assertNull(VitaPkgHeader.titleIdResultOf(File(temp.root, "missing.zip"), "psvita"))
+        val notZip = temp.newFile("broken.zip").apply { writeBytes(ByteArray(64)) }
+        assertNull(VitaPkgHeader.titleIdResultOf(notZip, "psvita"))
+    }
 }

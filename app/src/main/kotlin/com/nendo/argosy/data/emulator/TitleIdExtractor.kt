@@ -69,8 +69,13 @@ class TitleIdExtractor @Inject constructor(
             prodKeysPath = prodKeys
         )
         if (r == null) {
-            Logger.debug(TAG, "[SaveSync] DETECT | sigil returned null | file=${romFile.name}, platform=$platformId")
-            return null
+            val fromPkg = VitaPkgHeader.titleIdResultOf(romFile, platformId)
+            Logger.debug(
+                TAG,
+                "[SaveSync] DETECT | sigil returned null | file=${romFile.name}, platform=$platformId, " +
+                    "pkgHeader=${fromPkg?.titleId}"
+            )
+            return fromPkg
         }
         Logger.debug(
             TAG,

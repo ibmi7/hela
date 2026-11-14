@@ -1,5 +1,7 @@
 package com.nendo.argosy.data.emulator
 
+import com.nendo.argosy.data.platform.PlatformDefinitions
+import java.io.File
 import java.util.zip.ZipFile
 
 object VitaPkgHeader {
@@ -36,5 +38,12 @@ object VitaPkgHeader {
             }
         }
         return if (read < header.size) null else titleIdOf(header)
+    }
+
+    fun titleIdResultOf(romFile: File, platformSlug: String): TitleIdResult? {
+        if (PlatformDefinitions.getCanonicalSlug(platformSlug) != "vita") return null
+        if (!romFile.extension.equals("zip", ignoreCase = true) || !romFile.isFile) return null
+        val titleId = runCatching { ZipFile(romFile).use { titleIdIn(it) } }.getOrNull() ?: return null
+        return TitleIdResult(titleId = titleId, fromBinary = true)
     }
 }
