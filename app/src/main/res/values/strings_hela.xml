@@ -65,4 +65,13 @@
     <string name="hela_home_tile_resume">Jump back in</string>
     <string name="hela_home_tile_view_all">View all</string>
     <string name="hela_detail_achievements">%1$d / %2$d</string>
+    <string name="hela_home_footer_pages">Pages</string>
+    <string name="hela_home_footer_play">Play</string>
+    <string name="hela_home_footer_install">Install</string>
+    <string name="hela_home_footer_download">Download</string>
+    <string name="hela_home_footer_resume">Resume</string>
+    <string name="hela_home_footer_favorite">Favorite</string>
+    <string name="hela_home_footer_unfavorite">Unfavorite</string>
+    <string name="hela_home_footer_details">Details</string>
+    <string name="hela_home_footer_library">Library</string>
 </resources>

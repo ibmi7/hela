@@ -1726,7 +1726,7 @@ fun HomeScreen(
 }
 
 @Composable
-private fun SplashOverlay() {
+internal fun SplashOverlay() {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -1906,7 +1906,7 @@ private fun LoadingState() {
 }
 
 @Composable
-private fun EmptyState(
+internal fun EmptyState(
     isRommConfigured: Boolean,
     currentRow: HomeRow,
     isPinnedLoading: Boolean,

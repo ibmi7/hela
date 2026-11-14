@@ -61,26 +61,27 @@ Import de packs réels (iiSU, 3DS Dark Reimagined, OLED Observatory, 3DS Sound E
 
 Thème iiSU pour les fonds et les couleurs, 3DS Sound Effects, 3DS Background Music, cadres d'icônes iiSU. Les sons d'interface et la musique de fond sont désactivés dans les réglages d'Argosy.
 
-## Accueil Hela, étapes 1 à 3
+## Accueil Hela (étapes 1 à 4 du plan)
 
 Réglages > Thème > « Accueil Hela » remplace l'accueil d'Argosy par celui de Hela sur la route `home`, donc sur l'écran qui pilote, quel qu'il soit. L'écran réutilise `HomeViewModel` : chaque page de la grille est une rangée d'Argosy (Récents, Sélection, Favoris, dans l'ordre d'Argosy), ce qui garde intactes la fiche de l'autre écran et la position à l'inversion.
 
 - Écran : barre d'onglets (Bibliothèque, Collections, Applis, Réglages ; icônes, libellé sur l'onglet focalisé), grille de tuiles carrées (cadres du pack d'icônes Cocoon s'il y en a un), tuile large « Reprendre » en tête de Récents, tuile « Tout voir », titre de page et points.
+- Finitions (étape 4) : appui long au toucher pour le menu du jeu ; indications de boutons (L1/R1 pages, A, Y favori, X détails), relayées sur l'autre écran quand il les affiche ; écran de démarrage d'Argosy pendant le chargement ; état vide d'Argosy (avec synchronisation par A) quand Récents, Sélection et Favoris sont tous vides.
 - Manette : croix dans la grille, haut depuis la première rangée vers les onglets, gauche/droite au bord et L1/R1/L2/R2 pour changer de page ; A, B, X, Y, Start et Select restent ceux d'Argosy. Toucher : tuiles, onglets, points.
-- Code : `data/hela/home/HelaHomeStore.kt` (clé `hela_home_enabled`) ; `ui/hela/home/` : `HelaHomeScreen`, `HelaHomeRoute`, `HelaHomeEntry`, `HelaHomeViewModel` (zone, onglet, colonnes, pages), `HelaHomeInputHandler` (croix, A, B, gâchettes ; le reste délégué à `HomeInputHandler`), `HelaGridLayout` (placement et déplacements, testés), `HelaHomeGrid`, `HelaHomeTiles`, `HelaHomeTabBar`, `HelaHomeOverlays`.
+- Code : `data/hela/home/HelaHomeStore.kt` (clé `hela_home_enabled`) ; `ui/hela/home/` : `HelaHomeScreen`, `HelaHomeRoute`, `HelaHomeEntry`, `HelaHomeViewModel` (zone, onglet, colonnes, pages), `HelaHomeInputHandler` (croix, A, B, gâchettes ; le reste délégué à `HomeInputHandler`), `HelaGridLayout` (placement et déplacements, testés), `HelaHomeGrid`, `HelaHomeTiles`, `HelaHomeTabBar`, `HelaHomeOverlays`, `HelaHomeFooter`, `HelaGameDetail`.
 - Fiche de l'autre écran (étape 3, `HelaGameDetail`) : quand l'accueil Hela est actif et que le jeu focalisé vient de l'accueil, `PresentationSlotContent` affiche le fond du jeu en plein écran sous un voile, le logo au centre (le titre en gras, ombré, quand RomM n'a pas de logo), la jaquette en carte empilée en bas à gauche et la pastille de succès RA en bas à droite. La bibliothèque garde sa vitrine de plateforme d'Argosy.
 - Jetons : bloc `components.helaHome` dans `tokens.json` (régénérer avec `node scripts/gen-tokens.mjs` ; Node est dans `~/.local/node` sous Linux).
-- Retouches d'Argosy : `NavGraph` (aiguillage), `PresentationSlotContent` (fiche Hela dans le slot `Detail`), `ThemeSection`, `SettingsConfirmRouter`, `SettingsViewModel` (interrupteur), `HomeScreen` (`GameSelectOverlay` passé en `internal`), `SettingsBackupKeysTest` (clés `hela_*` classées hors sauvegarde ; le test échouait déjà sur les clés des thèmes).
+- Retouches d'Argosy : `NavGraph` (aiguillage), `PresentationSlotContent` (fiche Hela dans le slot `Detail`), `ThemeSection`, `SettingsConfirmRouter`, `SettingsViewModel` (interrupteur), `HomeScreen` (`GameSelectOverlay`, `SplashOverlay` et `EmptyState` passés en `internal`), `SettingsBackupKeysTest` (clés `hela_*` classées hors sauvegarde ; le test échouait déjà sur les clés des thèmes).
 - À reporter lors d'une fusion : `HelaHomeScreen` recopie l'effet de cycle de vie et le collecteur d'événements de `HomeScreen`, `HelaHomeOverlays` recopie ses fenêtres (menu du jeu, collections, disques, carte mémoire, changelog, reprise média).
 - Vérifié sur la Thor : interrupteur, navigation manette et toucher, onglet Collections, changement de page, menu du jeu affiché et fermé, fiche de l'autre écran qui suit, deux inversions avec Select maintenu.
 - Suppose la disposition carrousel d'Argosy (Réglages > Interface) : en grille personnalisée, `focusedGame` vient de la grille d'Argosy et la fiche ne suivrait pas.
-- Non vérifié à l'écran : la pastille RA (un seul jeu de la bibliothèque a des succès, Crisis Core, absent des pages de l'accueil).
-- Reste (étape 4) : appui long au toucher pour le menu du jeu, indications de boutons, états vide et chargement ; au retour d'un onglet, le focus revient parfois sur une autre tuile.
+- Vérifié aussi : pastille RA (Crisis Core mis en favori), fiche sur l'écran du bas après inversion, appui long, indications relayées sur l'autre écran.
+- Non vérifié : l'état vide (bibliothèque jamais vide sur la Thor), les sons à l'oreille, le mode un seul écran (indications en bas du même écran).
 
 ## Ce qui reste
 
 1. Décider si les pastilles de favori et de téléchargement reviennent sur les tuiles carrées.
-2. Nouvel écran d'accueil inspiré d'iiSU : plan dans `plan-accueil-iisu.md`. Étapes 1 à 3 faites (voir plus haut), étape 4 à faire.
+2. Nouvel écran d'accueil inspiré d'iiSU : plan dans `plan-accueil-iisu.md`. Les quatre étapes du plan sont faites (voir plus haut). Suite : grille modifiable, liste par console, dossiers intelligents.
 3. Dossiers intelligents des packs (`smart_folders/`) : dépendent du nouvel écran d'accueil.
 4. Problèmes de lancement Vita et Switch (voir `CLAUDE.md`).
 

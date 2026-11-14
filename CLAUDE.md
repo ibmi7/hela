@@ -68,4 +68,4 @@ Ces analyses datent du 11/11/2026 (Argosy 2.31.0, commit `29e350f`) et reposent 
 
 ## Prochaine étape
 
-Accueil inspiré d'iiSU, en quatre étapes décrites dans `docs/hela/plan-accueil-iisu.md`. Les étapes 1 (réglage, bascule dans `NavGraph`), 2 (grille, onglets, fenêtres) et 3 (fiche façon iiSU sur l'autre écran) sont faites et vérifiées sur la Thor ; suite : étape 4, finitions (appui long, indications de boutons, états vide et chargement). Voir aussi `docs/hela/etat-des-travaux.md`.
+L'accueil inspiré d'iiSU est fait (les quatre étapes de `docs/hela/plan-accueil-iisu.md`, vérifiées sur la Thor) ; détail dans `docs/hela/etat-des-travaux.md`. Pistes suivantes, à choisir : dossiers intelligents des packs Cocoon (`smart_folders/`) et liste par console, grille modifiable, problèmes de lancement Vita et Switch.

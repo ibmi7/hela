@@ -42,6 +42,7 @@ fun HelaHomeGrid(
     downloadIndicators: State<Map<Long, GameDownloadIndicator>>,
     onColumns: (Int) -> Unit,
     onTap: (Int) -> Unit,
+    onLongPress: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     BoxWithConstraints(modifier = modifier) {
@@ -87,7 +88,7 @@ fun HelaHomeGrid(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(tileHeight)
-                        .clickableNoFocus { onTap(index) }
+                        .clickableNoFocus(onClick = { onTap(index) }, onLongClick = { onLongPress(index) })
                 )
             }
         }

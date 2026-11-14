@@ -28,6 +28,8 @@ class HelaHomeInputHandler(
 
     private val onTabs: Boolean get() = helaViewModel.uiState.value.zone == HelaHomeZone.TABS
 
+    private val noPages: Boolean get() = homeViewModel.uiState.value.helaPages.isEmpty()
+
     override fun onUp(): InputResult = when {
         overlayOpen() -> home.onUp()
         onTabs -> InputResult.handled(SoundType.BOUNDARY)
@@ -67,6 +69,10 @@ class HelaHomeInputHandler(
             onTab(helaViewModel.uiState.value.focusedTab)
             InputResult.handled(SoundType.SELECT)
         }
+        noPages -> {
+            homeViewModel.syncFromRomm()
+            InputResult.handled(SoundType.SELECT)
+        }
         else -> home.onConfirm()
     }
 
@@ -90,6 +96,10 @@ class HelaHomeInputHandler(
     private fun moveInGrid(direction: HelaGridDirection): InputResult {
         val state = homeViewModel.uiState.value
         val columns = helaViewModel.uiState.value.columns
+        if (noPages) {
+            if (direction == HelaGridDirection.UP) helaViewModel.focusTabs()
+            return InputResult.handled(SoundType.BOUNDARY)
+        }
         if (columns <= 0) return InputResult.handled(SoundType.BOUNDARY)
         val cells = HelaGridLayout.cells(
             count = state.currentItems.size,

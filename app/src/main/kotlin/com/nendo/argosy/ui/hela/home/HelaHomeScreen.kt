@@ -26,7 +26,11 @@ import com.nendo.argosy.ui.hela.theme.HelaWallpaperLayer
 import com.nendo.argosy.ui.hela.theme.rememberHelaWallpaper
 import com.nendo.argosy.ui.input.LocalInputDispatcher
 import com.nendo.argosy.ui.navigation.Screen
+import com.nendo.argosy.ui.components.FooterSpacer
+import com.nendo.argosy.ui.screens.home.EmptyState
 import com.nendo.argosy.ui.screens.home.HomeEvent
+import com.nendo.argosy.ui.screens.home.HomeRow
+import com.nendo.argosy.ui.screens.home.SplashOverlay
 import com.nendo.argosy.ui.screens.home.HomeViewModel
 import com.nendo.argosy.ui.screens.library.LibraryFilterArgs
 import com.nendo.argosy.ui.theme.Dimens
@@ -57,7 +61,7 @@ fun HelaHomeScreen(
     }
 
     val openTab: (HelaHomeTab) -> Unit = remember(
-        onNavigateToLibrary, onNavigateToCollections, onNavigateToApps, onOpenSettings
+        onNavigateToLibrary, onNavigateToCollections, onNavigateToApps, onOpenSettings, helaViewModel
     ) {
         { tab ->
             when (tab) {
@@ -66,6 +70,7 @@ fun HelaHomeScreen(
                 HelaHomeTab.APPS -> onNavigateToApps()
                 HelaHomeTab.SETTINGS -> onOpenSettings()
             }
+            helaViewModel.focusGrid()
         }
     }
 
@@ -94,7 +99,9 @@ fun HelaHomeScreen(
         if (wallpaper != null) {
             HelaWallpaperLayer(wallpaper = wallpaper, modifier = Modifier.fillMaxSize(), scrim = true)
         }
-        Column(
+        if (uiState.isLoading) {
+            SplashOverlay()
+        } else Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = Dimens.spacingLg, vertical = Dimens.spacingMd),
@@ -107,28 +114,57 @@ fun HelaHomeScreen(
                     openTab(tab)
                 }
             )
-            HelaHomeGrid(
-                items = uiState.currentItems,
-                page = uiState.currentRow,
-                focusedIndex = uiState.focusedGameIndex.takeIf { !onTabs },
-                downloadIndicators = downloadIndicators,
-                onColumns = helaViewModel::setColumns,
-                onTap = { index ->
-                    helaViewModel.focusGrid()
-                    viewModel.handleItemTap(index, onGameSelect)
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            )
-            HelaHomePageDots(
-                pages = pages,
-                current = uiState.currentRow,
-                onSelect = { row ->
-                    helaViewModel.focusGrid()
-                    viewModel.selectRow(row)
+            if (pages.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    EmptyState(
+                        isRommConfigured = uiState.isRommConfigured,
+                        currentRow = HomeRow.Continue,
+                        isPinnedLoading = false,
+                        onSync = viewModel::syncFromRomm
+                    )
                 }
-            )
+            } else {
+                HelaHomeGrid(
+                    items = if (uiState.currentRow in pages) uiState.currentItems else emptyList(),
+                    page = uiState.currentRow,
+                    focusedIndex = uiState.focusedGameIndex.takeIf { !onTabs },
+                    downloadIndicators = downloadIndicators,
+                    onColumns = helaViewModel::setColumns,
+                    onTap = { index ->
+                        helaViewModel.focusGrid()
+                        viewModel.handleItemTap(index, onGameSelect)
+                    },
+                    onLongPress = { index ->
+                        helaViewModel.focusGrid()
+                        viewModel.handleItemLongPress(index)
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                )
+                HelaHomePageDots(
+                    pages = pages,
+                    current = uiState.currentRow,
+                    onSelect = { row ->
+                        helaViewModel.focusGrid()
+                        viewModel.selectRow(row)
+                    }
+                )
+                HelaHomeFooter(
+                    uiState = uiState,
+                    onTabs = onTabs,
+                    pageCount = pages.size,
+                    downloadIndicators = downloadIndicators,
+                    viewModel = viewModel,
+                    onGameSelect = onGameSelect
+                )
+            }
+            FooterSpacer()
         }
         HelaHomeOverlays(
             viewModel = viewModel,

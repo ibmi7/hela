@@ -63,4 +63,13 @@
     <string name="hela_home_tile_resume">Reprendre</string>
     <string name="hela_home_tile_view_all">Tout voir</string>
     <string name="hela_detail_achievements">%1$d / %2$d</string>
+    <string name="hela_home_footer_pages">Pages</string>
+    <string name="hela_home_footer_play">Jouer</string>
+    <string name="hela_home_footer_install">Installer</string>
+    <string name="hela_home_footer_download">Télécharger</string>
+    <string name="hela_home_footer_resume">Reprendre</string>
+    <string name="hela_home_footer_favorite">Ajouter aux favoris</string>
+    <string name="hela_home_footer_unfavorite">Retirer des favoris</string>
+    <string name="hela_home_footer_details">Détails</string>
+    <string name="hela_home_footer_library">Bibliothèque</string>
 </resources>
