@@ -5,10 +5,11 @@
 ## Reprendre sur un autre ordinateur
 
 1. `git clone https://github.com/ibmi7/hela.git`, puis `git checkout hela`.
-2. Ajouter l'amont, absent d'un clone neuf : `git remote add upstream https://github.com/rommapp/argosy-launcher.git`.
-3. Installer un JDK 17 (Temurin) et pointer `JAVA_HOME` dessus ; installer le SDK Android en ligne de commande.
-4. Compiler et installer : `gradlew.bat installDebug` (paquet `com.nendo.argosy.debug`).
-5. Tests du chantier thèmes : `gradlew.bat testDebugUnitTest --tests "com.nendo.argosy.data.hela.theme.*"` (64 tests).
+2. Récupérer les sous-modules, sans lesquels le build échoue : `git submodule update --init --recursive`.
+3. Ajouter l'amont, absent d'un clone neuf : `git remote add upstream https://github.com/rommapp/argosy-launcher.git`.
+4. Installer un JDK 17 (Temurin), le SDK Android, le NDK et CMake : versions et commandes Windows/Linux dans la section « Environnement de build » de `CLAUDE.md`.
+5. Compiler et installer : `gradlew.bat installDebug` sous Windows, `./gradlew installDebug` sous Linux (paquet `com.nendo.argosy.debug`).
+6. Tests du chantier thèmes : `testDebugUnitTest --tests "com.nendo.argosy.data.hela.theme.*"` avec le même lanceur (64 tests).
 
 Ce qui ne suit pas le dépôt :
 

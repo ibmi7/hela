@@ -22,9 +22,31 @@ Garder l'intégration RomM d'Argosy (parcours de la bibliothèque, téléchargem
 
 ## Environnement de build
 
-- Windows, dépôt dans `D:\Workspace\hela`, SDK Android en ligne de commande (pas d'Android Studio).
+Deux machines, SDK Android en ligne de commande dans les deux cas (Android Studio n'est pas nécessaire).
+
 - JDK 17 obligatoire : Gradle 8.9 échoue avec un JDK 25 (erreur réduite à `25.0.4`).
+- Composants requis : plateforme `android-35`, `build-tools;34.0.0` et `35.0.0`, `platform-tools`, `ndk;27.0.12077973` et `cmake;3.22.1` (modules natifs `libretrodroid` et `sigil`).
+- Sous-modules git obligatoires (`sigil`, `rcheevos`, `libadrenotools`) : `git submodule update --init --recursive` après un clone, sinon le build échoue.
+
+### Windows
+
+- Dépôt dans `D:\Workspace\hela`.
 - Compiler : `gradlew.bat assembleDebug`. Compiler et installer : `gradlew.bat installDebug`.
+
+### Linux (Fedora)
+
+- Dépôt dans `~/Workspace/Hela`. Fedora ne fournit plus de JDK 17 : installer Temurin 17 à la main dans `~/.local/jdk-17` (archive depuis `api.adoptium.net`). Le JDK système (25) reste en place.
+- SDK dans `~/Android/Sdk` : extraire les command-line tools de Google dans `~/Android/Sdk/cmdline-tools/latest`, puis :
+  ```
+  export JAVA_HOME=~/.local/jdk-17 ANDROID_HOME=~/Android/Sdk
+  yes | sdkmanager --licenses
+  sdkmanager "platform-tools" "platforms;android-35" "build-tools;34.0.0" "build-tools;35.0.0" "ndk;27.0.12077973" "cmake;3.22.1"
+  ```
+- `local.properties` (ignoré par git) : `sdk.dir=/home/brams/Android/Sdk`.
+- `~/.bashrc` exporte `JAVA_HOME`, `ANDROID_HOME` et ajoute `platform-tools` et `cmdline-tools/latest/bin` au `PATH`.
+- Compiler : `./gradlew assembleDebug`. Compiler et installer : `./gradlew installDebug`.
+
+### Commun
 - La version debug s'installe sous `com.nendo.argosy.debug`, à côté de l'Argosy officiel, avec ses propres données. Ne jamais désinstaller l'officiel.
 - Journaux de l'appareil : `adb logcat`.
 
