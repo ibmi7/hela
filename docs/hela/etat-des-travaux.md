@@ -78,6 +78,18 @@ Réglages > Thème > « Accueil Hela » remplace l'accueil d'Argosy par celui de
 - Vérifié aussi : pastille RA (Crisis Core mis en favori), fiche sur l'écran du bas après inversion, appui long, indications relayées sur l'autre écran.
 - Non vérifié : l'état vide (bibliothèque jamais vide sur la Thor), les sons à l'oreille, le mode un seul écran (indications en bas du même écran).
 
+## Dossiers intelligents des packs Cocoon
+
+Un pack `smart_folders` (asset Silk) contient `smart_folders/by_platform/<plateforme>/` et des dossiers spéciaux (`favorites`, `recent`, parfois `most_played`, `newly_added`, `android_games`), chacun avec `icon` (1024×1024), `logo` et `hero` (1920×1080, souvent une bande sur fond transparent), en PNG, WebP, JPG ou GIF. Le pack ne fournit que des visuels.
+
+- Import : même écran « Packs Cocoon » ; nouvel emplacement « dossiers » (« Utiliser ses dossiers », clé `hela_folders_pack`), indépendant des autres. `CocoonSmartFolders` lit le pack ; les noms de plateforme passent par `CocoonIcons.cocoonNames` (psvita, n3ds…).
+- Accueil Hela : page « Consoles » après les pages de jeux (L1/R1, points). Tuiles Favoris et Récents (elles sautent à ces pages), puis une tuile par plateforme de la bibliothèque, qui ouvre la bibliothèque d'Argosy sur cette console. Sans pack, ou pour une plateforme absente du pack, la tuile affiche le nom. B revient aux pages de jeux ; Y et X ne font rien sur cette page.
+- Autre écran : `HelaGameDetail` affiche la bannière `hero` du dossier sur le fond d'écran Cocoon, et son `logo` au centre (le nom à défaut). Le dossier est publié par `HelaHomeViewModel` sous un propriétaire à lui (`setCompanionDetail`), la fiche de jeu de `HomeViewModel` étant retirée pendant ce temps ; marqueur `platformSlug = "hela:folder"`.
+- La position sur la page Consoles est gardée en mémoire dans `HelaHomeStore` : Argosy recrée l'accueil au retour de la bibliothèque, et chaque écran a son propre ViewModel.
+- Code : `data/hela/theme/CocoonSmartFolders.kt`, `PackSmartFolders` et `PackFolderArt` dans `CocoonThemePack.kt`, `ui/hela/home/HelaHomeFolders.kt`, plus des ajouts dans `HelaHomeViewModel`, `HelaHomeInputHandler`, `HelaHomeScreen`, `HelaHomeGrid`, `HelaHomeFooter`, `HelaGameDetail`, `HelaThemeStore`, `HelaThemesViewModel`, `HelaThemesScreen`, `CocoonPackImporter`. Retouche d'Argosy : une condition dans `PresentationSlotContent`. Tests : `CocoonSmartFoldersTest`.
+- Vérifié sur la Thor avec « Iisu interpreted - Smart Folders » (233 Mo, importé en moins de 30 s) : import, choix de l'emplacement, page Consoles, bannière et logo sur l'autre écran, ouverture d'une console, retour sur la page Consoles, tuile Favoris, retour de la fiche de jeu sur les pages de jeux.
+- Non vérifié : inversion des écrans sur la page Consoles, toucher sur une tuile de console, les sept autres packs (dont les GIF animés de Pixel UI et les fichiers parasites de Cocoonix), retrait du pack. Non fait : dossiers Plus joués, Nouveautés et Jeux Android ; visuels des dossiers dans la bibliothèque.
+
 ## Lancement Vita
 
 - Cause : Vita3K 0.2.1 n'accepte plus l'activité `org.vita3k.emulator.Emulator` sans identifiant de jeu (`No title ID provided`, fermeture en deux secondes), et les zips No-Intro de la bibliothèque (`work.bin` + un `.pkg` au nom aléatoire) n'exposaient l'identifiant ni dans leur nom ni dans leurs entrées.
@@ -93,7 +105,7 @@ Réglages > Thème > « Accueil Hela » remplace l'accueil d'Argosy par celui de
 
 1. Décider si les pastilles de favori et de téléchargement reviennent sur les tuiles carrées.
 2. Nouvel écran d'accueil inspiré d'iiSU : plan dans `plan-accueil-iisu.md`. Les quatre étapes du plan sont faites (voir plus haut). Suite : grille modifiable, liste par console, dossiers intelligents.
-3. Dossiers intelligents des packs (`smart_folders/`) : dépendent du nouvel écran d'accueil.
+3. Dossiers intelligents des packs : faits pour les consoles, Favoris et Récents (voir plus haut) ; restent Plus joués, Nouveautés, Jeux Android.
 4. Problème de lancement Switch (voir `CLAUDE.md`) ; Vita corrigé côté Hela, sauvegardes comprises (restauration à vérifier).
 
 ## Précautions apprises

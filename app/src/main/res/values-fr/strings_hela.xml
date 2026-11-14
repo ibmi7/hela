@@ -72,4 +72,11 @@
     <string name="hela_home_footer_unfavorite">Retirer des favoris</string>
     <string name="hela_home_footer_details">Détails</string>
     <string name="hela_home_footer_library">Bibliothèque</string>
+    <string name="hela_themes_slot_folders">dossiers</string>
+    <string name="hela_themes_action_use_folders">Utiliser ses dossiers</string>
+    <string name="hela_themes_action_use_folders_subtitle">Visuels des consoles sur la page Consoles de l\'accueil Hela et sur l\'autre écran</string>
+    <string name="hela_home_page_consoles">Consoles</string>
+    <string name="hela_home_folder_favorites">Favoris</string>
+    <string name="hela_home_folder_recent">Récents</string>
+    <string name="hela_home_footer_open">Ouvrir</string>
 </resources>

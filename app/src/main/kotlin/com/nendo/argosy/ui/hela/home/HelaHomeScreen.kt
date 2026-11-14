@@ -56,8 +56,42 @@ fun HelaHomeScreen(
     val downloadIndicators = viewModel.downloadIndicators.collectAsState()
     val pages = uiState.helaPages
 
+    val folderTargets = remember(uiState.platforms, pages) { uiState.helaFolders() }
+    val folderPack = rememberHelaFolders()
+    val onConsoles = helaState.onConsoles && folderTargets.isNotEmpty()
+
     LaunchedEffect(pages, uiState.currentRow) {
         if (pages.isNotEmpty() && uiState.currentRow !in pages) viewModel.selectRow(pages.first())
+    }
+    LaunchedEffect(pages.isEmpty(), folderTargets.isEmpty(), uiState.isLoading) {
+        if (!uiState.isLoading && pages.isEmpty() && folderTargets.isNotEmpty()) helaViewModel.enterConsoles()
+    }
+
+    val openFolder: (HelaFolderTarget) -> Unit = remember(onNavigateToLibrary, viewModel, helaViewModel) {
+        { target ->
+            when (target) {
+                is HelaFolderTarget.Platform -> onNavigateToLibrary(target.platform.id, null, null)
+                is HelaFolderTarget.Special -> {
+                    helaViewModel.leaveConsoles()
+                    viewModel.selectRow(target.row)
+                }
+            }
+        }
+    }
+
+    val focusedFolder = folderTargets.getOrNull(helaState.consoleIndex).takeIf { onConsoles }
+    val folderDetail = focusedFolder?.let { helaFolderDetail(it.label(), it.art(folderPack)) }
+    LaunchedEffect(onConsoles, folderDetail) {
+        if (onConsoles) {
+            viewModel.clearCompanionDetail()
+            helaViewModel.publishFolder(folderDetail)
+        } else {
+            helaViewModel.publishFolder(null)
+            viewModel.republishCompanionDetail()
+        }
+    }
+    DisposableEffect(helaViewModel) {
+        onDispose { helaViewModel.publishFolder(null) }
     }
 
     val openTab: (HelaHomeTab) -> Unit = remember(
@@ -87,6 +121,7 @@ fun HelaHomeScreen(
         viewModel = viewModel,
         helaViewModel = helaViewModel,
         openTab = openTab,
+        openFolder = openFolder,
         onGameSelect = onGameSelect,
         onNavigateToDefault = onNavigateToDefault,
         onDrawerToggle = onDrawerToggle
@@ -114,7 +149,7 @@ fun HelaHomeScreen(
                     openTab(tab)
                 }
             )
-            if (pages.isEmpty()) {
+            if (pages.isEmpty() && folderTargets.isEmpty()) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -129,7 +164,23 @@ fun HelaHomeScreen(
                     )
                 }
             } else {
-                HelaHomeGrid(
+                if (onConsoles) HelaFoldersGrid(
+                    targets = folderTargets,
+                    folders = folderPack,
+                    focusedIndex = helaState.consoleIndex.takeIf { !onTabs },
+                    onColumns = helaViewModel::setColumns,
+                    onTap = { index ->
+                        helaViewModel.focusGrid()
+                        if (index == helaState.consoleIndex) {
+                            folderTargets.getOrNull(index)?.let(openFolder)
+                        } else {
+                            helaViewModel.setConsoleIndex(index)
+                        }
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) else HelaHomeGrid(
                     items = if (uiState.currentRow in pages) uiState.currentItems else emptyList(),
                     page = uiState.currentRow,
                     focusedIndex = uiState.focusedGameIndex.takeIf { !onTabs },
@@ -152,13 +203,19 @@ fun HelaHomeScreen(
                     current = uiState.currentRow,
                     onSelect = { row ->
                         helaViewModel.focusGrid()
+                        helaViewModel.leaveConsoles()
                         viewModel.selectRow(row)
-                    }
+                    },
+                    hasConsoles = folderTargets.isNotEmpty(),
+                    onConsoles = onConsoles,
+                    onSelectConsoles = { helaViewModel.enterConsoles() }
                 )
                 HelaHomeFooter(
                     uiState = uiState,
                     onTabs = onTabs,
-                    pageCount = pages.size,
+                    pageCount = pages.size + if (folderTargets.isEmpty()) 0 else 1,
+                    onConsoles = onConsoles,
+                    onOpenFolder = { focusedFolder?.let(openFolder) },
                     downloadIndicators = downloadIndicators,
                     viewModel = viewModel,
                     onGameSelect = onGameSelect
@@ -213,6 +270,7 @@ private fun HelaHomeLifecycle(
     viewModel: HomeViewModel,
     helaViewModel: HelaHomeViewModel,
     openTab: (HelaHomeTab) -> Unit,
+    openFolder: (HelaFolderTarget) -> Unit,
     onGameSelect: (Long) -> Unit,
     onNavigateToDefault: () -> Unit,
     onDrawerToggle: () -> Unit
@@ -220,6 +278,7 @@ private fun HelaHomeLifecycle(
     val dockIsRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val inputDispatcher = LocalInputDispatcher.current
     val currentOpenTab by rememberUpdatedState(openTab)
+    val currentOpenFolder by rememberUpdatedState(openFolder)
     val inputHandler = remember(onGameSelect, onDrawerToggle, dockIsRtl) {
         HelaHomeInputHandler(
             home = viewModel.createInputHandler(
@@ -234,7 +293,8 @@ private fun HelaHomeLifecycle(
             ),
             homeViewModel = viewModel,
             helaViewModel = helaViewModel,
-            onTab = { tab -> currentOpenTab(tab) }
+            onTab = { tab -> currentOpenTab(tab) },
+            onFolder = { target -> currentOpenFolder(target) }
         )
     }
 
@@ -248,6 +308,10 @@ private fun HelaHomeLifecycle(
                 viewModel.refreshFavorites()
                 viewModel.refreshRecentGames()
                 viewModel.republishCompanionDetail()
+                if (helaViewModel.uiState.value.onConsoles) {
+                    viewModel.clearCompanionDetail()
+                    helaViewModel.republishFolder()
+                }
                 viewModel.onHomeShown()
             }
         }

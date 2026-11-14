@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.nendo.argosy.R
 import com.nendo.argosy.ui.screens.home.GameDownloadIndicator
 import com.nendo.argosy.ui.screens.home.HomeRow
 import com.nendo.argosy.ui.screens.home.HomeRowItem
@@ -47,11 +48,7 @@ fun HelaHomeGrid(
 ) {
     BoxWithConstraints(modifier = modifier) {
         val gap = Dimens.spacingMd
-        val tile = ComponentDefaults.HelaHome.tileSizeDp.dp
-        val columns = maxOf(
-            ComponentDefaults.HelaHome.minColumns,
-            ((maxWidth + gap) / (tile + gap)).toInt()
-        )
+        val columns = helaGridColumns(maxWidth, gap)
         val tileHeight = (maxWidth - gap * (columns - 1)) / columns
         LaunchedEffect(columns) { onColumns(columns) }
 
@@ -100,15 +97,19 @@ fun HelaHomePageDots(
     pages: List<HomeRow>,
     current: HomeRow,
     onSelect: (HomeRow) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    hasConsoles: Boolean = false,
+    onConsoles: Boolean = false,
+    onSelectConsoles: () -> Unit = {}
 ) {
-    if (pages.isEmpty()) return
+    if (pages.isEmpty() && !hasConsoles) return
     Row(
         modifier = modifier.padding(vertical = Dimens.spacingSm),
         horizontalArrangement = Arrangement.spacedBy(Dimens.spacingSm),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        current.shortLabelRes?.let { label ->
+        val pageLabel = if (onConsoles) R.string.hela_home_page_consoles else current.shortLabelRes
+        pageLabel?.let { label ->
             Text(
                 text = stringResource(label),
                 style = MaterialTheme.typography.labelLarge,
@@ -117,7 +118,7 @@ fun HelaHomePageDots(
             )
         }
         pages.forEach { page ->
-            val color = if (page == current) {
+            val color = if (page == current && !onConsoles) {
                 MaterialTheme.colorScheme.primary
             } else {
                 MaterialTheme.colorScheme.onSurfaceVariant
@@ -126,6 +127,22 @@ fun HelaHomePageDots(
                 modifier = Modifier
                     .size(ComponentDefaults.HelaHome.pageDotDp.dp * 2)
                     .clickableNoFocus { onSelect(page) },
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(ComponentDefaults.HelaHome.pageDotDp.dp)
+                        .clip(CircleShape)
+                        .background(color)
+                )
+            }
+        }
+        if (hasConsoles) {
+            val color = if (onConsoles) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+            Box(
+                modifier = Modifier
+                    .size(ComponentDefaults.HelaHome.pageDotDp.dp * 2)
+                    .clickableNoFocus(onClick = onSelectConsoles),
                 contentAlignment = Alignment.Center
             ) {
                 Box(

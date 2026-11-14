@@ -103,7 +103,7 @@ class SettingsBackupKeysTest {
 
     private val helaLocalPacksAndLayout = setOf(
         "hela_wallpaper_main_pack", "hela_wallpaper_external_pack", "hela_colors_pack",
-        "hela_sounds_pack", "hela_music_pack", "hela_icons_pack", "hela_wallpaper_animate",
+        "hela_sounds_pack", "hela_music_pack", "hela_icons_pack", "hela_folders_pack", "hela_wallpaper_animate",
         "hela_home_enabled"
     )
 

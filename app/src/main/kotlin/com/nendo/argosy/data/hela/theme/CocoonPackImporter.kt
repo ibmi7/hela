@@ -22,7 +22,8 @@ object CocoonPackImporter {
         CocoonWallpaperResolver.WALLPAPERS_DIR,
         CocoonSounds.SOUNDS_DIR,
         CocoonMusic.MUSIC_DIR,
-        CocoonIcons.ICONS_DIR
+        CocoonIcons.ICONS_DIR,
+        CocoonSmartFolders.FOLDERS_DIR
     )
     private const val MAX_TOTAL_BYTES = 1024L * 1024L * 1024L
     private const val MAX_ENTRIES = 5000
@@ -32,7 +33,7 @@ object CocoonPackImporter {
     /**
      * Extracts the pack folder of [zip] into [themesDir]/<id>, replacing a pack of the same id.
      * The pack folder is the parent of the shallowest theme.json or metadata.json, or of the
-     * shallowest wallpapers/, sounds/, music/ or icon_overlays/ folder in an archive without one.
+     * shallowest wallpapers/, sounds/, music/, icon_overlays/ or smart_folders/ folder in an archive without one.
      */
     fun import(zip: File, themesDir: File): PackImportResult {
         val archive = try {

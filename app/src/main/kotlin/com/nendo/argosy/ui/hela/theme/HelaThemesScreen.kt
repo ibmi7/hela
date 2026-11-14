@@ -20,6 +20,7 @@ import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.FileOpen
+import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.HideImage
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.MusicNote
@@ -238,6 +239,9 @@ private fun packSubtitle(pack: InstalledThemePack, selection: HelaThemeSelection
         if (pack.icons.isNotEmpty() && selection.iconsPackId == pack.id) {
             add(stringResource(R.string.hela_themes_slot_icons))
         }
+        if (!pack.folders.isEmpty && selection.foldersPackId == pack.id) {
+            add(stringResource(R.string.hela_themes_slot_folders))
+        }
     }
     val usage = if (slots.isEmpty()) {
         stringResource(R.string.hela_themes_pack_not_in_use)
@@ -326,6 +330,13 @@ private fun PackActionsModal(
                     subtitle = stringResource(R.string.hela_themes_action_use_icons_subtitle),
                     isFocused = index == focusedIndex,
                     icon = Icons.Outlined.Apps,
+                    onClick = { onAction(action) }
+                )
+                HelaPackAction.USE_FOLDERS -> ActionPreference(
+                    title = stringResource(R.string.hela_themes_action_use_folders),
+                    subtitle = stringResource(R.string.hela_themes_action_use_folders_subtitle),
+                    isFocused = index == focusedIndex,
+                    icon = Icons.Outlined.Folder,
                     onClick = { onAction(action) }
                 )
                 HelaPackAction.DELETE -> ActionPreference(

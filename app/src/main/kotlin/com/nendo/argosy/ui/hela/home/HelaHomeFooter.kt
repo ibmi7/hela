@@ -17,14 +17,18 @@ fun HelaHomeFooter(
     uiState: HomeUiState,
     onTabs: Boolean,
     pageCount: Int,
+    onConsoles: Boolean,
+    onOpenFolder: () -> Unit,
     downloadIndicators: State<Map<Long, GameDownloadIndicator>>,
     viewModel: HomeViewModel,
     onGameSelect: (Long) -> Unit
 ) {
     val pagesLabel = stringResource(R.string.hela_home_footer_pages)
-    val focusedGame = uiState.focusedGame.takeIf { !onTabs && !uiState.showGameMenu }
-    val focusedViewAll = (uiState.focusedItem as? HomeRowItem.ViewAll).takeIf { !onTabs }
+    val focusedGame = uiState.focusedGame.takeIf { !onTabs && !onConsoles && !uiState.showGameMenu }
+    val focusedViewAll = (uiState.focusedItem as? HomeRowItem.ViewAll).takeIf { !onTabs && !onConsoles }
+    val onFolder = onConsoles && !onTabs
     val confirmLabel = when {
+        onFolder -> stringResource(R.string.hela_home_footer_open)
         focusedGame == null -> if (focusedViewAll != null) stringResource(R.string.hela_home_footer_library) else null
         focusedGame.needsInstall -> stringResource(R.string.hela_home_footer_install)
         focusedGame.isDownloaded -> stringResource(R.string.hela_home_footer_play)
@@ -48,6 +52,7 @@ fun HelaHomeFooter(
         onHintClick = { button ->
             when (button) {
                 InputButton.A -> when {
+                    onFolder -> onOpenFolder()
                     focusedGame != null -> viewModel.activateFocusedGame(focusedGame)
                     focusedViewAll != null -> viewModel.handleItemTap(uiState.focusedGameIndex, onGameSelect)
                 }

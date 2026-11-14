@@ -46,6 +46,8 @@ import com.nendo.argosy.ui.dualscreen.CompanionDetail
 import com.nendo.argosy.ui.dualscreen.rememberShowcaseBackdrop
 import com.nendo.argosy.ui.dualscreen.showcaseMotionDurations
 import com.nendo.argosy.ui.dualscreen.withLiveArt
+import com.nendo.argosy.ui.hela.theme.HelaWallpaperLayer
+import com.nendo.argosy.ui.hela.theme.rememberHelaWallpaper
 import com.nendo.argosy.ui.theme.Dimens
 import com.nendo.argosy.ui.theme.LocalArgosyTheme
 import com.nendo.argosy.ui.theme.LocalMotionTier
@@ -66,33 +68,11 @@ fun HelaGameDetail(detail: CompanionDetail, bottomInset: Dp, modifier: Modifier 
     val reduced = LocalMotionTier.current == MotionTier.Reduced
 
     BoxWithConstraints(modifier = modifier.fillMaxSize().background(theme.surfaceBase)) {
-        val backdropPath = live.backdropUrl ?: live.artUrl
-        if (backdropPath != null) {
-            val backdrop = rememberShowcaseBackdrop(
-                path = backdropPath,
-                crossfadeMs = showcaseMotionDurations(reduced).backdropCrossfadeMs,
-                stackedScreenshot = live.backdropUrl != null && live.backdropIsScreenshotOrArt
-            )
-            AsyncImage(
-                model = backdrop.request,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                onSuccess = backdrop.onSuccess,
-                modifier = Modifier.fillMaxSize()
-            )
+        if (live.platformSlug == HELA_FOLDER_SLUG) {
+            HelaFolderBackdrop(heroPath = live.backdropUrl)
+        } else {
+            HelaGameBackdrop(detail = live, reduced = reduced)
         }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            theme.surfaceBase.copy(alpha = ComponentDefaults.HelaHome.detailScrimTopAlpha),
-                            theme.surfaceBase.copy(alpha = ComponentDefaults.HelaHome.detailScrimBottomAlpha)
-                        )
-                    )
-                )
-        )
 
         val logoMaxWidth = maxWidth * ComponentDefaults.HelaHome.detailLogoWidthRatio
         val logoMaxHeight = maxHeight * ComponentDefaults.HelaHome.detailLogoHeightRatio
@@ -129,6 +109,54 @@ fun HelaGameDetail(detail: CompanionDetail, bottomInset: Dp, modifier: Modifier 
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun HelaGameBackdrop(detail: CompanionDetail, reduced: Boolean) {
+    val theme = LocalArgosyTheme.current
+    val backdropPath = detail.backdropUrl ?: detail.artUrl
+    if (backdropPath != null) {
+        val backdrop = rememberShowcaseBackdrop(
+            path = backdropPath,
+            crossfadeMs = showcaseMotionDurations(reduced).backdropCrossfadeMs,
+            stackedScreenshot = detail.backdropUrl != null && detail.backdropIsScreenshotOrArt
+        )
+        AsyncImage(
+            model = backdrop.request,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            onSuccess = backdrop.onSuccess,
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        theme.surfaceBase.copy(alpha = ComponentDefaults.HelaHome.detailScrimTopAlpha),
+                        theme.surfaceBase.copy(alpha = ComponentDefaults.HelaHome.detailScrimBottomAlpha)
+                    )
+                )
+            )
+    )
+}
+
+@Composable
+private fun HelaFolderBackdrop(heroPath: String?) {
+    val wallpaper = rememberHelaWallpaper()
+    if (wallpaper != null) {
+        HelaWallpaperLayer(wallpaper = wallpaper, modifier = Modifier.fillMaxSize(), scrim = true)
+    }
+    if (heroPath != null) {
+        AsyncImage(
+            model = rememberFileImageModel(heroPath),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
 

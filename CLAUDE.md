@@ -68,4 +68,4 @@ Ces analyses datent du 11/11/2026 (Argosy 2.31.0, commit `29e350f`) et reposent 
 
 ## Prochaine étape
 
-L'accueil inspiré d'iiSU est fait (les quatre étapes de `docs/hela/plan-accueil-iisu.md`, vérifiées sur la Thor) ; détail dans `docs/hela/etat-des-travaux.md`. Pistes suivantes, à choisir : dossiers intelligents des packs Cocoon (`smart_folders/`) et liste par console, grille modifiable, problèmes de lancement Vita et Switch.
+L'accueil inspiré d'iiSU est fait (les quatre étapes de `docs/hela/plan-accueil-iisu.md`, vérifiées sur la Thor) ; détail dans `docs/hela/etat-des-travaux.md`. Les dossiers intelligents des packs Cocoon alimentent une page « Consoles » de cet accueil. Pistes suivantes, à choisir : grille modifiable, dossiers Plus joués et Nouveautés, problème de lancement Switch, lecture automatique du `pref-path` de Vita3K.

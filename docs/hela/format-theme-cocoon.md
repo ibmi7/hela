@@ -59,7 +59,7 @@ assets/<catégorie>/<identifiant>/
 - `category` vaut `music`, `icon_overlays`, `smart_folders` ou `sounds`.
 - `settings` est `null` sauf pour la musique, où il porte `music_mode`, `music_playback_mode`, `music_playlist` et `music_time_schedule` (chemins relatifs au pack, par exemple `music/track.mp3`).
 - Icônes : `icon_overlays/<plateforme>/mask.png` et `overlay.png`, en 1024×1024 ; le masque découpe l'image du jeu, la surcouche est un cadre (avec le logo de la plateforme dans le pack iiSU). Le pack 3DS n'a qu'un dossier `global`.
-- Dossiers intelligents : `smart_folders/by_platform/<plateforme>/icon`, `logo` et parfois `hero`, en PNG ou WebP.
+- Dossiers intelligents (huit packs examinés le 14/11/2026) : `smart_folders/by_platform/<plateforme>/` et des dossiers spéciaux (`favorites` dans six packs, `recent` dans deux, `most_played`, `newly_added`, `android_games` dans un seul), avec `icon` (1024×1024), `logo` et parfois `hero` (1920×1080), en PNG, WebP, JPG ou GIF animé. De 29 à 116 plateformes par pack. Certains packs contiennent des fichiers parasites (`switch2.png`, `ico2n.png`).
 - Hela importe ces ZIP comme les thèmes : le dossier du pack est le parent de `metadata.json`.
 
 ## Sons

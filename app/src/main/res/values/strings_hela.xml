@@ -74,4 +74,11 @@
     <string name="hela_home_footer_unfavorite">Unfavorite</string>
     <string name="hela_home_footer_details">Details</string>
     <string name="hela_home_footer_library">Library</string>
+    <string name="hela_themes_slot_folders">folders</string>
+    <string name="hela_themes_action_use_folders">Use its folders</string>
+    <string name="hela_themes_action_use_folders_subtitle">Console art on the Consoles page of the Hela home and on the other screen</string>
+    <string name="hela_home_page_consoles">Consoles</string>
+    <string name="hela_home_folder_favorites">Favorites</string>
+    <string name="hela_home_folder_recent">Recent</string>
+    <string name="hela_home_footer_open">Open</string>
 </resources>

@@ -71,10 +71,16 @@ object CocoonIcons {
      * Overlay for an Argosy platform slug: the slug itself, then its canonical slug, then the
      * Cocoon names of that platform, then the pack's global overlay. Null when none exists.
      */
-    fun resolve(icons: Map<String, PackIconOverlay>, platformSlug: String): PackIconOverlay? {
+    fun resolve(icons: Map<String, PackIconOverlay>, platformSlug: String): PackIconOverlay? =
+        cocoonNames(platformSlug).firstNotNullOfOrNull { icons[it] } ?: icons[GLOBAL]
+
+    /**
+     * Cocoon folder names to try for an Argosy platform slug, most specific first: the slug
+     * itself, its canonical slug, then the names Cocoon uses for that platform.
+     */
+    fun cocoonNames(platformSlug: String): List<String> {
         val slug = platformSlug.lowercase()
         val canonical = PlatformDefinitions.getCanonicalSlug(slug)
-        val candidates = listOf(slug, canonical) + COCOON_IDS[canonical].orEmpty()
-        return candidates.firstNotNullOfOrNull { icons[it] } ?: icons[GLOBAL]
+        return (listOf(slug, canonical) + COCOON_IDS[canonical].orEmpty()).distinct()
     }
 }
