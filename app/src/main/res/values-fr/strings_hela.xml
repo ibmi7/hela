@@ -89,4 +89,11 @@
     <string name="hela_vita_auto_release_subtitle">Après une session, supprime le zip d\'un jeu installé dans Vita3K et le garde jouable</string>
     <string name="hela_vita_link_title">Relier les jeux installés dans Vita3K</string>
     <string name="hela_vita_link_subtitle">Rend jouables les jeux déjà installés dans Vita3K, sans les télécharger</string>
+    <string name="hela_vita_link_unreadable">Impossible de lire le dossier des jeux installés dans Vita3K</string>
+    <string name="hela_vita_link_failed">Impossible de relier les jeux installés dans Vita3K</string>
+    <string name="hela_vita_link_none">Aucun jeu à relier</string>
+    <plurals name="hela_vita_link_done">
+        <item quantity="one">%1$d jeu relié</item>
+        <item quantity="other">%1$d jeux reliés</item>
+    </plurals>
 </resources>

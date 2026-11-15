@@ -91,4 +91,11 @@
     <string name="hela_vita_auto_release_subtitle">After a session, delete the zip of a game installed in Vita3K and keep it playable</string>
     <string name="hela_vita_link_title">Link games installed in Vita3K</string>
     <string name="hela_vita_link_subtitle">Make games already installed in Vita3K playable without downloading them</string>
+    <string name="hela_vita_link_unreadable">Cannot read the folder of games installed in Vita3K</string>
+    <string name="hela_vita_link_failed">Could not link the games installed in Vita3K</string>
+    <string name="hela_vita_link_none">No game to link</string>
+    <plurals name="hela_vita_link_done">
+        <item quantity="one">%1$d game linked</item>
+        <item quantity="other">%1$d games linked</item>
+    </plurals>
 </resources>
