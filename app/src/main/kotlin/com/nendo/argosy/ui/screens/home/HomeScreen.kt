@@ -46,6 +46,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.filled.Download
@@ -1488,6 +1489,14 @@ fun HomeScreen(
                         viewModel.toggleGameMenu()
                         viewModel.deleteLocalFile(focusedGame.id)
                     },
+                    onReleaseZip = if (uiState.gameMenuCanReleaseZip) {
+                        {
+                            viewModel.toggleGameMenu()
+                            viewModel.releaseZip(focusedGame.id)
+                        }
+                    } else {
+                        null
+                    },
                     onRemoveFromHome = {
                         viewModel.toggleGameMenu()
                         viewModel.removeFromHome(focusedGame.id)
@@ -2001,6 +2010,7 @@ internal fun GameSelectOverlay(
     onRefresh: () -> Unit,
     onResyncPlatform: () -> Unit,
     onDelete: () -> Unit,
+    onReleaseZip: (() -> Unit)? = null,
     onRemoveFromHome: () -> Unit,
     onRemoveFromLibrary: () -> Unit,
     onHide: () -> Unit
@@ -2075,6 +2085,9 @@ internal fun GameSelectOverlay(
         }
         if (isPlatformRow && game.platformId > 0) {
             add(MenuEntry(Icons.Default.Refresh, resyncPlatformLabel, onClick = onResyncPlatform))
+        }
+        if (onReleaseZip != null) {
+            add(MenuEntry(Icons.Default.Archive, stringResource(R.string.hela_vita_release_zip), onClick = onReleaseZip))
         }
     }
     val dangerousOptions = buildList {

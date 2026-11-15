@@ -1520,6 +1520,7 @@ private fun routePlatformDetailConfirm(vm: SettingsViewModel, state: SettingsUiS
             val current = storageConfig?.skipFullSync ?: false
             vm.togglePlatformSkipFullSync(config.platform.id, !current)
         }
+        PlatformDetailItem.VitaZipRelease -> vm.toggleHelaVitaAutoReleaseZip()
         PlatformDetailItem.SyncNow -> vm.syncPlatform(config.platform.id, config.platform.getDisplayName())
         PlatformDetailItem.RemoveFiles -> vm.requestRemoveLocalFiles()
         PlatformDetailItem.BiosDownload -> vm.downloadBiosForPlatform(config.platform.slug)

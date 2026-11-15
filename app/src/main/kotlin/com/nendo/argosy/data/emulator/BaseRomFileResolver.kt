@@ -31,6 +31,7 @@ class BaseRomFileResolver @Inject constructor(
      * provably update/dlc content, preferring an m3u so multi-disc folders keep their playlist.
      */
     suspend fun resolve(game: GameEntity, romFile: File): File {
+        if (Vita3kStub.isStub(romFile)) return romFile
         val excluded = game.platformSlug in VariantCategory.TITLE_ID_PLATFORMS
         val parent = romFile.parentFile ?: return romFile
         val inContentSubfolder = parent.name.lowercase() in ZipExtractor.ADDON_FOLDERS

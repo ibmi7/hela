@@ -99,6 +99,7 @@ internal sealed class PlatformDetailItem(
     data object SyncNow : PlatformDetailItem("sync_now", "sync", { it.syncEnabled })
     data object SkipFullSync : PlatformDetailItem("skip_full_sync", "sync", { it.syncEnabled })
     data object DownloadDefaults : PlatformDetailItem("download_defaults", "sync", { !it.isAndroid })
+    data object VitaZipRelease : PlatformDetailItem("vita_zip_release", "sync", { it.showVitaZipRelease })
     data object PackagePath : PlatformDetailItem("package_path", "sync", { it.showSavePath && !it.isAndroid })
     data object RemoveFiles : PlatformDetailItem("remove_files", "sync", { it.hasDownloads && !it.isAndroid })
 
@@ -118,7 +119,7 @@ internal sealed class PlatformDetailItem(
                 Header("header_bios", "bios", R.string.settings_platform_section_bios, { it.hasBios && !it.isAndroid }),
                 InfoItem("info_bios_status", "bios", { it.hasBios && !it.isAndroid }), BiosDownload, BiosInstall, BiosCopy,
                 Header("header_sync", "sync", R.string.settings_platform_section_sync),
-                SyncToggle, SyncNow, SkipFullSync, DownloadDefaults, CombineContent,
+                SyncToggle, SyncNow, SkipFullSync, DownloadDefaults, VitaZipRelease, CombineContent,
                 InfoItem("info_package_path", "sync", { it.showSavePath && !it.isBuiltin && !it.isRetroArch }),
                 RomPath, SavePath, MemoryCard, StatePath,
                 RemoveFiles
@@ -145,6 +146,7 @@ internal data class PlatformDetailVisibility(
     val canDistribute: Boolean = false,
     val showMemoryCard: Boolean = false,
     val showCombineContent: Boolean = false,
+    val showVitaZipRelease: Boolean = false,
     /**
      * Installed apps, not rom files. Nothing on this platform is downloaded, emulated or stored
      * by us, so the emulator, BIOS and storage rows have nothing to act on and an emulator
@@ -164,6 +166,10 @@ internal data class PlatformDetailVisibility(
             showExtension = config.showExtensionSelection,
             showDisplayTarget = config.showDisplayTargetOption,
             showLegacyMode = config.showLegacyModeOption,
+            showVitaZipRelease = com.nendo.argosy.ui.hela.vita.showsVitaZipRelease(
+                config.platform.slug,
+                config.effectiveEmulatorId
+            ),
             isBuiltin = config.effectiveEmulatorId == EmulatorRegistry.BUILTIN_ID,
             isRetroArch = config.effectiveEmulatorIsRetroArch,
             showSavePath = config.showSavePath,
@@ -713,6 +719,13 @@ fun PlatformDetailSection(
                     isEnabled = storageConfig?.skipFullSync ?: false,
                     isFocused = isFocused(item),
                     onToggle = { viewModel.togglePlatformSkipFullSync(config.platform.id, it) }
+                )
+                PlatformDetailItem.VitaZipRelease -> SwitchPreference(
+                    title = stringResource(R.string.hela_vita_auto_release_title),
+                    subtitle = stringResource(R.string.hela_vita_auto_release_subtitle),
+                    isEnabled = com.nendo.argosy.ui.hela.vita.rememberHelaVitaAutoReleaseZip(),
+                    isFocused = isFocused(item),
+                    onToggle = { viewModel.setHelaVitaAutoReleaseZip(it) }
                 )
                 PlatformDetailItem.PackagePath -> {}
                 PlatformDetailItem.DownloadDefaults -> ActionPreference(

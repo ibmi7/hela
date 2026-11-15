@@ -95,7 +95,11 @@ class SessionEndCoordinatorTest {
         savePathValidator = savePathValidator,
         gameLauncher = gameLauncher,
         launchProgressTracker = launchProgressTracker,
-        keepAlivePolicy = mockk(relaxed = true)
+        keepAlivePolicy = mockk(relaxed = true),
+        helaVitaStore = mockk(relaxed = true) {
+            every { autoReleaseZip } returns kotlinx.coroutines.flow.MutableStateFlow(false)
+        },
+        vita3kZipRelease = mockk(relaxed = true)
     )
 
     private fun TestScope.recordRunning(coordinator: SessionEndCoordinator): List<Boolean> {

@@ -82,4 +82,9 @@
     <string name="hela_home_folder_most_played">Plus joués</string>
     <string name="hela_home_folder_newly_added">Nouveautés</string>
     <string name="hela_vita_not_installed">Jeu non installé dans %1$s. Installez-le avec le bouton +.</string>
+    <string name="hela_vita_release_zip">Libérer le zip</string>
+    <string name="hela_vita_zip_released">Zip supprimé, le jeu reste installé dans Vita3K</string>
+    <string name="hela_vita_zip_release_failed">Impossible de libérer le zip</string>
+    <string name="hela_vita_auto_release_title">Libérer les zips une fois installés</string>
+    <string name="hela_vita_auto_release_subtitle">Après une session, supprime le zip d\'un jeu installé dans Vita3K et le garde jouable</string>
 </resources>

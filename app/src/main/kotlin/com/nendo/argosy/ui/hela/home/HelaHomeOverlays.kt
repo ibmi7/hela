@@ -78,6 +78,14 @@ fun HelaHomeOverlays(
                     viewModel.toggleGameMenu()
                     viewModel.deleteLocalFile(focusedGame.id)
                 },
+                onReleaseZip = if (uiState.gameMenuCanReleaseZip) {
+                    {
+                        viewModel.toggleGameMenu()
+                        viewModel.releaseZip(focusedGame.id)
+                    }
+                } else {
+                    null
+                },
                 onRemoveFromHome = {
                     viewModel.toggleGameMenu()
                     viewModel.removeFromHome(focusedGame.id)

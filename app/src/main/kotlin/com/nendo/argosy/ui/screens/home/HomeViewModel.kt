@@ -23,6 +23,7 @@ import com.nendo.argosy.ui.navigation.GameNavigationContext
 import com.nendo.argosy.core.notification.NotificationManager
 import com.nendo.argosy.core.notification.NotificationText
 import com.nendo.argosy.core.notification.showError
+import com.nendo.argosy.core.notification.showSuccess
 import com.nendo.argosy.core.event.AchievementUpdateBus
 import com.nendo.argosy.ui.screens.common.CollectionModalDelegate
 import com.nendo.argosy.ui.screens.common.GradientExtractionDelegate
@@ -144,7 +145,8 @@ class HomeViewModel @Inject constructor(
     private val quickNavigationSource: com.nendo.argosy.data.preferences.QuickNavigationSource,
     private val firstFrameCache: HomeFirstFrameCache,
     private val monthlyRecap: com.nendo.argosy.ui.components.recap.MonthlyRecapController,
-    gameActions: com.nendo.argosy.ui.screens.common.GameActionsDelegate
+    gameActions: com.nendo.argosy.ui.screens.common.GameActionsDelegate,
+    private val vita3kZipRelease: com.nendo.argosy.data.emulator.Vita3kZipRelease
 ) : ViewModel(), HomeInputActions {
 
     val gameConfirm = com.nendo.argosy.ui.common.GameConfirmController(
@@ -2065,6 +2067,19 @@ class HomeViewModel @Inject constructor(
         gameMenuDelegate.refreshAndroidGameData(viewModelScope, gameId) { refreshCurrentRowInternal() }
     }
 
+    fun releaseZip(gameId: Long) {
+        viewModelScope.launch {
+            val released = vita3kZipRelease.release(gameId)
+            if (released) {
+                notificationManager.showSuccess(NotificationText.Res(R.string.hela_vita_zip_released))
+            } else {
+                notificationManager.showError(NotificationText.Res(R.string.hela_vita_zip_release_failed))
+            }
+            libraryDelegate.invalidateRecentGamesCache()
+            refreshCurrentRowInternal()
+        }
+    }
+
     fun deleteLocalFile(gameId: Long) {
         gameConfirm.requestDelete(gameId) { withSoundtrack ->
             downloadDelegate.deleteLocalFile(viewModelScope, gameId, withSoundtrack) {
@@ -2093,7 +2108,7 @@ class HomeViewModel @Inject constructor(
     override fun toggleGameMenu() {
         if (gameMenuDelegate.state.value.showGameMenu) {
             gameMenuOpenJob?.cancel()
-            _uiState.update { it.copy(gameMenuDisplays = emptyList()) }
+            _uiState.update { it.copy(gameMenuDisplays = emptyList(), gameMenuCanReleaseZip = false) }
             gameMenuDelegate.toggleGameMenu()
             return
         }
@@ -2101,6 +2116,7 @@ class HomeViewModel @Inject constructor(
         val gameId = _uiState.value.focusedGame?.id
         gameMenuOpenJob = viewModelScope.launch {
             val hasChoice = gameId != null && siblingChoice.hasChoice(gameId)
+            val canReleaseZip = gameId != null && vita3kZipRelease.candidate(gameId) != null
             if (_uiState.value.focusedGame?.id != gameId) return@launch
             val displays = DualScreenManagerHolder.instance
                 ?.focusableDisplays()
@@ -2108,7 +2124,9 @@ class HomeViewModel @Inject constructor(
                     com.nendo.argosy.ui.components.AppLaunchTarget(screen.displayId, screen.number)
                 }
                 .orEmpty()
-            _uiState.update { it.copy(gameMenuDisplays = displays, gameMenuHasSiblingGroup = hasChoice) }
+            _uiState.update {
+                it.copy(gameMenuDisplays = displays, gameMenuHasSiblingGroup = hasChoice, gameMenuCanReleaseZip = canReleaseZip)
+            }
             gameMenuDelegate.toggleGameMenu()
         }
     }
@@ -2126,7 +2144,8 @@ class HomeViewModel @Inject constructor(
             state.focusedGame,
             isPlatformRow,
             extraRows,
-            state.gameMenuHasSiblingGroup
+            state.gameMenuHasSiblingGroup,
+            state.gameMenuCanReleaseZip
         )
     }
 
@@ -2153,7 +2172,8 @@ class HomeViewModel @Inject constructor(
             game,
             isPlatformRow,
             state.gameMenuDisplays.map { it.displayId },
-            state.gameMenuHasSiblingGroup
+            state.gameMenuHasSiblingGroup,
+            state.gameMenuCanReleaseZip
         )
         when (action) {
             is GameMenuAction.Play -> {
@@ -2184,6 +2204,10 @@ class HomeViewModel @Inject constructor(
             is GameMenuAction.ResyncPlatform -> {
                 toggleGameMenu()
                 syncPlatform(action.platformId, action.platformName)
+            }
+            is GameMenuAction.ReleaseZip -> {
+                toggleGameMenu()
+                releaseZip(action.gameId)
             }
             is GameMenuAction.Delete -> {
                 toggleGameMenu()

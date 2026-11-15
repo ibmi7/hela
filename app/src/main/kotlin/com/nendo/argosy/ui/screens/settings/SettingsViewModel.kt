@@ -168,7 +168,8 @@ class SettingsViewModel @Inject constructor(
     private val savePathValidator: com.nendo.argosy.data.emulator.SavePathValidator,
     internal val jellyfinConnectionManager: JellyfinConnectionManager,
     private val downloadFileStatusRepository: com.nendo.argosy.data.repository.DownloadFileStatusRepository,
-    private val helaHomeStore: com.nendo.argosy.data.hela.home.HelaHomeStore
+    private val helaHomeStore: com.nendo.argosy.data.hela.home.HelaHomeStore,
+    private val helaVitaStore: com.nendo.argosy.data.hela.vita.HelaVitaStore
 ) : ViewModel() {
 
     private var jellyfinSignInJob: Job? = null
@@ -882,6 +883,10 @@ class SettingsViewModel @Inject constructor(
     fun setHelaHomeEnabled(enabled: Boolean) = helaHomeStore.setEnabled(enabled)
 
     fun toggleHelaHome() = helaHomeStore.setEnabled(helaHomeStore.enabled.value != true)
+
+    fun setHelaVitaAutoReleaseZip(enabled: Boolean) = helaVitaStore.setAutoReleaseZip(enabled)
+
+    fun toggleHelaVitaAutoReleaseZip() = helaVitaStore.setAutoReleaseZip(!helaVitaStore.autoReleaseZip.value)
 
     fun requestCustomFramePicker() {
         viewModelScope.launch { _openCustomFramePickerEvent.emit(Unit) }

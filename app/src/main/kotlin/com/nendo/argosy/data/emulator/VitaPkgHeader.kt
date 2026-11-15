@@ -41,9 +41,13 @@ object VitaPkgHeader {
     }
 
     fun titleIdResultOf(romFile: File, platformSlug: String): TitleIdResult? {
-        if (PlatformDefinitions.getCanonicalSlug(platformSlug) != "vita") return null
-        if (!romFile.extension.equals("zip", ignoreCase = true) || !romFile.isFile) return null
-        val titleId = runCatching { ZipFile(romFile).use { titleIdIn(it) } }.getOrNull() ?: return null
+        if (PlatformDefinitions.getCanonicalSlug(platformSlug) != "vita" || !romFile.isFile) return null
+        val titleId = when {
+            Vita3kStub.isStub(romFile) -> Vita3kStub.read(romFile)
+            romFile.extension.equals("zip", ignoreCase = true) ->
+                runCatching { ZipFile(romFile).use { titleIdIn(it) } }.getOrNull()
+            else -> null
+        } ?: return null
         return TitleIdResult(titleId = titleId, fromBinary = true)
     }
 }

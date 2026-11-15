@@ -41,7 +41,9 @@ class SessionEndCoordinator @Inject constructor(
     private val savePathValidator: SavePathValidator,
     private val gameLauncher: GameLauncher,
     private val launchProgressTracker: LaunchProgressTracker,
-    private val keepAlivePolicy: KeepAlivePolicy
+    private val keepAlivePolicy: KeepAlivePolicy,
+    private val helaVitaStore: com.nendo.argosy.data.hela.vita.HelaVitaStore,
+    private val vita3kZipRelease: com.nendo.argosy.data.emulator.Vita3kZipRelease
 ) {
     private val scope = SafeCoroutineScope(Dispatchers.Main.immediate, "SessionEnd")
 
@@ -166,7 +168,11 @@ class SessionEndCoordinator @Inject constructor(
                 Log.d(TAG, "[DualSync] endSession result: ${result::class.simpleName}")
 
                 when (result) {
-                    is SessionEndResult.Success, is SessionEndResult.Duplicate, is SessionEndResult.Skipped -> Unit
+                    is SessionEndResult.Success, is SessionEndResult.Duplicate, is SessionEndResult.Skipped -> {
+                        if (helaVitaStore.autoReleaseZip.value) {
+                            scope.launch { vita3kZipRelease.release(session.gameId) }
+                        }
+                    }
                     is SessionEndResult.SaveUnreadable -> {
                         stopEmulatorAfterSession(session)
                         showBlockedOverlay(

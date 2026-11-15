@@ -1679,6 +1679,9 @@ class GameLauncher @Inject constructor(
         game: GameEntity
     ): EffectiveLaunchCommand {
         val titleId = extractVitaTitleId(romFile)
+            ?: Vita3kStub.stubFor(romFile).takeIf { it.isFile }?.let(Vita3kStub::read)
+            ?: game.saveId?.takeIf { it.isNotBlank() }
+            ?: game.titleId?.takeIf { it.isNotBlank() }
         val installed = titleId?.let { vitaAppInstalled(emulator, game, it) }
         if (titleId != null && installed != false) {
             Logger.debug(TAG, "Vita3K: titleId=$titleId from ${romFile.name}")
@@ -1727,6 +1730,7 @@ class GameLauncher @Inject constructor(
     }
 
     private fun extractVitaTitleId(romFile: File): String? {
+        if (Vita3kStub.isStub(romFile)) return Vita3kStub.read(romFile)
         val filename = romFile.nameWithoutExtension
 
         val bracketPattern = Regex("""\[([A-Z]{4}\d{5})\]""")

@@ -2081,7 +2081,8 @@ private fun SettingsFooter(
                 add(InputButton.Y to resetPlatformDetailHint)
             }
             val aLabel = when (focusedItem) {
-                is PlatformDetailItem.SyncToggle, is PlatformDetailItem.LegacyMode -> toggleLabelHint
+                is PlatformDetailItem.SyncToggle, is PlatformDetailItem.LegacyMode,
+                is PlatformDetailItem.VitaZipRelease -> toggleLabelHint
                 is PlatformDetailItem.BuiltinVideo, is PlatformDetailItem.BuiltinControls,
                 is PlatformDetailItem.BuiltinSaves, is PlatformDetailItem.BuiltinCoreOptions -> openLabelHint
                 else -> selectLabelHint
