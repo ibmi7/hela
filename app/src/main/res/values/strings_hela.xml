@@ -81,4 +81,6 @@
     <string name="hela_home_folder_favorites">Favorites</string>
     <string name="hela_home_folder_recent">Recent</string>
     <string name="hela_home_footer_open">Open</string>
+    <string name="hela_home_folder_most_played">Most played</string>
+    <string name="hela_home_folder_newly_added">Newly added</string>
 </resources>

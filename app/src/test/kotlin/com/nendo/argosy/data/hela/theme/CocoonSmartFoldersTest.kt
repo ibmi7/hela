@@ -69,4 +69,23 @@ class CocoonSmartFoldersTest {
         assertEquals(n3ds, CocoonSmartFolders.resolve(folders, "3ds")?.iconPath)
         assertNull(CocoonSmartFolders.resolve(folders, "switch"))
     }
+
+    @Test
+    fun `a special folder reusing the icon of one ranked before it has no icon`() {
+        val pack = temp.newFolder("pack")
+        val recent = file(pack, "smart_folders/recent/icon.png")
+        file(pack, "smart_folders/newly_added/icon.png")
+        val newlyAddedLogo = file(pack, "smart_folders/newly_added/logo.png")
+        file(pack, "smart_folders/android_games/icon.png")
+        val mostPlayed = File(pack, "smart_folders/most_played/icon.png")
+        mostPlayed.parentFile?.mkdirs()
+        mostPlayed.writeBytes(byteArrayOf(2))
+
+        val folders = CocoonSmartFolders.find(pack)
+
+        assertEquals(recent, folders.special["recent"]?.iconPath)
+        assertEquals(mostPlayed.absolutePath, folders.special["most_played"]?.iconPath)
+        assertEquals(PackFolderArt(logoPath = newlyAddedLogo), folders.special["newly_added"])
+        assertNull(folders.special["android_games"])
+    }
 }

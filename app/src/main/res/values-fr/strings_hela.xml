@@ -79,4 +79,6 @@
     <string name="hela_home_folder_favorites">Favoris</string>
     <string name="hela_home_folder_recent">Récents</string>
     <string name="hela_home_footer_open">Ouvrir</string>
+    <string name="hela_home_folder_most_played">Plus joués</string>
+    <string name="hela_home_folder_newly_added">Nouveautés</string>
 </resources>

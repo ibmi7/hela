@@ -4,16 +4,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.NewReleases
+import androidx.compose.material.icons.filled.Whatshot
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -33,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.nendo.argosy.R
 import com.nendo.argosy.data.hela.theme.CocoonSmartFolders
+import com.nendo.argosy.data.model.SortOption
 import com.nendo.argosy.data.model.hela.PackFolderArt
 import com.nendo.argosy.data.model.hela.PackSmartFolders
 import com.nendo.argosy.ui.common.rememberFileImageModel
@@ -56,6 +66,7 @@ fun rememberHelaFolders(): PackSmartFolders? {
 
 fun HelaFolderTarget.art(folders: PackSmartFolders?): PackFolderArt? = when (this) {
     is HelaFolderTarget.Special -> folders?.special?.get(artKey)
+    is HelaFolderTarget.Sorted -> folders?.special?.get(artKey)
     is HelaFolderTarget.Platform -> folders?.let { CocoonSmartFolders.resolve(it, platform.slug) }
 }
 
@@ -65,6 +76,9 @@ fun HelaFolderTarget.label(): String = when (this) {
     is HelaFolderTarget.Special ->
         if (row == HomeRow.Favorites) stringResource(R.string.hela_home_folder_favorites)
         else stringResource(R.string.hela_home_folder_recent)
+    is HelaFolderTarget.Sorted ->
+        if (sort == SortOption.PLAY_TIME) stringResource(R.string.hela_home_folder_most_played)
+        else stringResource(R.string.hela_home_folder_newly_added)
 }
 
 fun helaFolderDetail(label: String, art: PackFolderArt?): CompanionDetail = CompanionDetail(
@@ -112,6 +126,7 @@ fun HelaFoldersGrid(
                 HelaFolderTile(
                     label = target.label(),
                     iconPath = target.art(folders)?.iconPath,
+                    symbol = target.symbol(),
                     isFocused = index == focusedIndex,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -125,11 +140,25 @@ fun HelaFoldersGrid(
 
 private fun HelaFolderTarget.stableKey(): String = when (this) {
     is HelaFolderTarget.Special -> "special-$artKey"
+    is HelaFolderTarget.Sorted -> "sorted-$artKey"
     is HelaFolderTarget.Platform -> "platform-${platform.id}"
 }
 
 @Composable
-private fun HelaFolderTile(label: String, iconPath: String?, isFocused: Boolean, modifier: Modifier) {
+private fun HelaFolderTarget.symbol(): ImageVector? = when (this) {
+    is HelaFolderTarget.Platform -> null
+    is HelaFolderTarget.Special -> if (row == HomeRow.Favorites) Icons.Default.Favorite else Icons.Default.History
+    is HelaFolderTarget.Sorted -> if (sort == SortOption.PLAY_TIME) Icons.Default.Whatshot else Icons.Default.NewReleases
+}
+
+@Composable
+private fun HelaFolderTile(
+    label: String,
+    iconPath: String?,
+    symbol: ImageVector?,
+    isFocused: Boolean,
+    modifier: Modifier
+) {
     val shape = RoundedCornerShape(Dimens.radiusLg)
     Box(
         modifier = modifier
@@ -146,15 +175,29 @@ private fun HelaFolderTile(label: String, iconPath: String?, isFocused: Boolean,
                 modifier = Modifier.fillMaxSize()
             )
         } else {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(Dimens.spacingSm)
-            )
+            ) {
+                if (symbol != null) {
+                    Icon(
+                        imageVector = symbol,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .padding(bottom = Dimens.spacingSm)
+                            .size(Dimens.iconXl)
+                    )
+                }
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }

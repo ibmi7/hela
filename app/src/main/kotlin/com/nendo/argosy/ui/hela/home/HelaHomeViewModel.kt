@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.nendo.argosy.DualScreenManagerHolder
 import com.nendo.argosy.data.hela.home.HelaHomeStore
 import com.nendo.argosy.data.hela.theme.CocoonSmartFolders
+import com.nendo.argosy.data.model.SortOption
 import com.nendo.argosy.ui.dualscreen.CompanionDetail
 import com.nendo.argosy.ui.dualscreen.SlotOwner
 import com.nendo.argosy.ui.screens.home.HomePlatformUi
@@ -89,14 +90,16 @@ class HelaHomeViewModel @Inject constructor(
 
 sealed interface HelaFolderTarget {
     data class Special(val row: HomeRow, val artKey: String) : HelaFolderTarget
+    data class Sorted(val sort: SortOption, val artKey: String) : HelaFolderTarget
     data class Platform(val platform: HomePlatformUi) : HelaFolderTarget
 }
 
 const val HELA_FOLDER_SLUG = "hela:folder"
 
 /**
- * The tiles of the consoles page: the favorites and recent pages when they exist, then one
- * tile per platform. Empty when the library has no platform.
+ * The tiles of the consoles page: the favorites and recent pages when they exist, the library
+ * sorted by play time and by date added, then one tile per platform. Empty when the library
+ * has no platform.
  */
 fun HomeUiState.helaFolders(): List<HelaFolderTarget> {
     if (platforms.isEmpty()) return emptyList()
@@ -104,6 +107,8 @@ fun HomeUiState.helaFolders(): List<HelaFolderTarget> {
     return buildList {
         if (HomeRow.Favorites in pages) add(HelaFolderTarget.Special(HomeRow.Favorites, CocoonSmartFolders.FAVORITES))
         if (HomeRow.Continue in pages) add(HelaFolderTarget.Special(HomeRow.Continue, CocoonSmartFolders.RECENT))
+        add(HelaFolderTarget.Sorted(SortOption.PLAY_TIME, CocoonSmartFolders.MOST_PLAYED))
+        add(HelaFolderTarget.Sorted(SortOption.RECENTLY_ADDED, CocoonSmartFolders.NEWLY_ADDED))
         platforms.forEach { add(HelaFolderTarget.Platform(it)) }
     }
 }

@@ -21,6 +21,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.nendo.argosy.data.model.ActiveSort
+import com.nendo.argosy.domain.model.LibraryLinkFilters
 import com.nendo.argosy.domain.model.RequiredAction
 import com.nendo.argosy.ui.hela.theme.HelaWallpaperLayer
 import com.nendo.argosy.ui.hela.theme.rememberHelaWallpaper
@@ -71,6 +73,11 @@ fun HelaHomeScreen(
         { target ->
             when (target) {
                 is HelaFolderTarget.Platform -> onNavigateToLibrary(target.platform.id, null, null)
+                is HelaFolderTarget.Sorted -> onNavigateToLibrary(
+                    null,
+                    null,
+                    LibraryFilterArgs.encode(LibraryLinkFilters(sort = ActiveSort(target.sort)))
+                )
                 is HelaFolderTarget.Special -> {
                     helaViewModel.leaveConsoles()
                     viewModel.selectRow(target.row)
