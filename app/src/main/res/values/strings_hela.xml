@@ -94,6 +94,11 @@
     <string name="hela_vita_link_unreadable">Cannot read the folder of games installed in Vita3K</string>
     <string name="hela_vita_link_failed">Could not link the games installed in Vita3K</string>
     <string name="hela_vita_link_none">No game to link</string>
+    <string name="hela_vita_link_modal_title">Found by title</string>
+    <string name="hela_vita_link_modal_subtitle">Check each game that matches the one installed in Vita3K</string>
+    <string name="hela_vita_link_modal_row_subtitle">Vita3K: %1$s (%2$s)</string>
+    <string name="hela_vita_link_modal_cancel">Cancel</string>
+    <string name="hela_vita_link_modal_confirm">Link</string>
     <plurals name="hela_vita_link_done">
         <item quantity="one">%1$d game linked</item>
         <item quantity="other">%1$d games linked</item>

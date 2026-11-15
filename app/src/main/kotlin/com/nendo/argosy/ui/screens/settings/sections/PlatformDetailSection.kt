@@ -837,6 +837,15 @@ fun PlatformDetailSection(
         if (detail.showDownloadDefaults) {
             DownloadDefaultsModal(detail = detail, viewModel = viewModel)
         }
+        val helaVitaLink by viewModel.helaVitaLinkState.collectAsState()
+        if (helaVitaLink.visible) {
+            com.nendo.argosy.ui.hela.vita.HelaVitaLinkModal(
+                state = helaVitaLink,
+                onToggle = viewModel::setHelaVitaLinkChecked,
+                onConfirm = viewModel::confirmHelaVitaLink,
+                onDismiss = viewModel::dismissHelaVitaLink
+            )
+        }
 
         if (emulators.showEmulatorPicker && emulators.emulatorPickerInfo != null) {
             EmulatorPickerPopup(

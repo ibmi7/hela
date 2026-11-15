@@ -891,6 +891,23 @@ class SettingsViewModel @Inject constructor(
 
     fun linkHelaVitaInstalled(platformId: Long) = helaVitaLink.start(viewModelScope, platformId)
 
+    val helaVitaLinkState: kotlinx.coroutines.flow.StateFlow<com.nendo.argosy.ui.hela.vita.HelaVitaLinkState> =
+        helaVitaLink.state
+
+    fun isHelaVitaLinkOpen(): Boolean = helaVitaLink.state.value.visible
+
+    fun moveHelaVitaLinkFocus(delta: Int) = helaVitaLink.moveFocus(delta)
+
+    fun moveHelaVitaLinkHorizontal(delta: Int) = helaVitaLink.moveHorizontal(delta)
+
+    fun activateHelaVitaLinkRow() = helaVitaLink.activateFocused(viewModelScope)
+
+    fun setHelaVitaLinkChecked(gameId: Long, checked: Boolean) = helaVitaLink.setChecked(gameId, checked)
+
+    fun confirmHelaVitaLink() = helaVitaLink.confirm(viewModelScope)
+
+    fun dismissHelaVitaLink() = helaVitaLink.dismiss()
+
     fun requestCustomFramePicker() {
         viewModelScope.launch { _openCustomFramePickerEvent.emit(Unit) }
     }

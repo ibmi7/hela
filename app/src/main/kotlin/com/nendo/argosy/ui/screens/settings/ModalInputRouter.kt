@@ -46,6 +46,7 @@ internal class ModalInputRouter(private val viewModel: SettingsViewModel) {
         interceptGameNativeFoldersModal(state, method)?.let { return it }
         interceptEmulatorPicker(state, method)?.let { return it }
         interceptDownloadDefaultsModal(state, method)?.let { return it }
+        interceptHelaVitaLinkModal(method)?.let { return it }
         interceptShaderReorder(method)?.let { return it }
         interceptPlatformReorder(state, method)?.let { return it }
         interceptShaderPicker(method)?.let { return it }
@@ -119,6 +120,19 @@ internal class ModalInputRouter(private val viewModel: SettingsViewModel) {
                 InputResult.HANDLED
             }
             InputMethod.BACK -> { viewModel.closeScreenRoleModal(); InputResult.handled(SoundType.BACK) }
+            else -> InputResult.HANDLED
+        }
+    }
+
+    private fun interceptHelaVitaLinkModal(method: InputMethod): InputResult? {
+        if (!viewModel.isHelaVitaLinkOpen()) return null
+        return when (method) {
+            InputMethod.UP -> { viewModel.moveHelaVitaLinkFocus(-1); InputResult.HANDLED }
+            InputMethod.DOWN -> { viewModel.moveHelaVitaLinkFocus(1); InputResult.HANDLED }
+            InputMethod.LEFT -> { viewModel.moveHelaVitaLinkHorizontal(-1); InputResult.HANDLED }
+            InputMethod.RIGHT -> { viewModel.moveHelaVitaLinkHorizontal(1); InputResult.HANDLED }
+            InputMethod.CONFIRM -> { viewModel.activateHelaVitaLinkRow(); InputResult.HANDLED }
+            InputMethod.BACK -> { viewModel.dismissHelaVitaLink(); InputResult.handled(SoundType.BACK) }
             else -> InputResult.HANDLED
         }
     }
