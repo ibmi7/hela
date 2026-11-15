@@ -9,6 +9,7 @@ enum class LibraryQuickMenuRow(val isDangerous: Boolean = false) {
     ACTIVE_VARIANT,
     REFRESH,
     RESYNC_PLATFORM,
+    RELEASE_ZIP,
     DELETE(isDangerous = true),
     REMOVE_FROM_LIBRARY(isDangerous = true),
     HIDE(isDangerous = true)
@@ -17,7 +18,8 @@ enum class LibraryQuickMenuRow(val isDangerous: Boolean = false) {
 fun libraryQuickMenuRows(
     game: LibraryGameUi,
     isCustomGridHome: Boolean,
-    hasSiblingGroup: Boolean
+    hasSiblingGroup: Boolean,
+    canReleaseZip: Boolean = false
 ): List<LibraryQuickMenuRow> = buildList {
     add(LibraryQuickMenuRow.PRIMARY)
     add(LibraryQuickMenuRow.FAVORITE)
@@ -27,6 +29,7 @@ fun libraryQuickMenuRows(
     if (hasSiblingGroup) add(LibraryQuickMenuRow.ACTIVE_VARIANT)
     if (game.isRommGame || game.isAndroidApp) add(LibraryQuickMenuRow.REFRESH)
     add(LibraryQuickMenuRow.RESYNC_PLATFORM)
+    if (canReleaseZip && game.isDownloaded) add(LibraryQuickMenuRow.RELEASE_ZIP)
     if (game.isDownloaded || game.needsInstall) add(LibraryQuickMenuRow.DELETE)
     if (game.canRemoveFromLibrary) add(LibraryQuickMenuRow.REMOVE_FROM_LIBRARY)
     add(LibraryQuickMenuRow.HIDE)

@@ -284,6 +284,7 @@ data class LibraryUiState(
     val showQuickMenu: Boolean = false,
     val quickMenuFocusIndex: Int = 0,
     val quickMenuHasSiblingGroup: Boolean = false,
+    val quickMenuCanReleaseZip: Boolean = false,
     val isCustomGridHome: Boolean = false,
     val gridDensity: GridDensity = GridDensity.NORMAL,
     val libraryLayout: LibraryLayout = LibraryLayout.GRID,
@@ -1978,9 +1979,15 @@ class LibraryViewModel @Inject constructor(
         val gameId = _uiState.value.focusedGame?.id ?: return
         quickMenuOpenJob = viewModelScope.launch {
             val hasChoice = siblingChoice.hasChoice(gameId)
+            val canReleaseZip = gameActions.canReleaseZip(gameId)
             if (_uiState.value.focusedGame?.id != gameId) return@launch
             _uiState.update {
-                it.copy(showQuickMenu = true, quickMenuFocusIndex = 0, quickMenuHasSiblingGroup = hasChoice)
+                it.copy(
+                    showQuickMenu = true,
+                    quickMenuFocusIndex = 0,
+                    quickMenuHasSiblingGroup = hasChoice,
+                    quickMenuCanReleaseZip = canReleaseZip
+                )
             }
             soundManager.play(SoundType.OPEN_MODAL)
         }
@@ -1988,7 +1995,12 @@ class LibraryViewModel @Inject constructor(
 
     private fun quickMenuRows(state: LibraryUiState): List<LibraryQuickMenuRow> {
         val game = state.focusedGame ?: return emptyList()
-        return libraryQuickMenuRows(game, state.isCustomGridHome, state.quickMenuHasSiblingGroup)
+        return libraryQuickMenuRows(
+            game,
+            state.isCustomGridHome,
+            state.quickMenuHasSiblingGroup,
+            state.quickMenuCanReleaseZip
+        )
     }
 
     fun moveQuickMenuFocus(delta: Int) {
@@ -2048,6 +2060,11 @@ class LibraryViewModel @Inject constructor(
             LibraryQuickMenuRow.RESYNC_PLATFORM -> {
                 syncCurrentPlatform()
                 toggleQuickMenu()
+                InputResult.HANDLED
+            }
+            LibraryQuickMenuRow.RELEASE_ZIP -> {
+                toggleQuickMenu()
+                releaseZip(game.id)
                 InputResult.HANDLED
             }
             LibraryQuickMenuRow.DELETE -> {
@@ -2124,6 +2141,17 @@ class LibraryViewModel @Inject constructor(
                 }
             }
             toggleQuickMenu()
+        }
+    }
+
+    fun releaseZip(gameId: Long) {
+        viewModelScope.launch {
+            if (gameActions.releaseZip(gameId)) {
+                notificationManager.showSuccess(NotificationText.Res(R.string.hela_vita_zip_released))
+                loadGames()
+            } else {
+                notificationManager.showError(NotificationText.Res(R.string.hela_vita_zip_release_failed))
+            }
         }
     }
 

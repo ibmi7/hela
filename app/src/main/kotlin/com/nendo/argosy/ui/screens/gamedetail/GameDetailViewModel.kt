@@ -1320,13 +1320,36 @@ class GameDetailViewModel @Inject constructor(
     fun toggleMoreOptions() {
         val opening = !_uiState.value.showMoreOptions
         val targets = if (opening) launchDisplayTargets() else emptyList()
-        _uiState.update { it.copy(launchDisplayNumbers = targets.map { target -> target.number }) }
+        _uiState.update {
+            it.copy(launchDisplayNumbers = targets.map { target -> target.number }, canReleaseZip = false)
+        }
         moreOptionsDelegate.toggleMoreOptions()
+        if (opening) refreshCanReleaseZip(currentGameId)
         val dsm = com.nendo.argosy.DualScreenManagerHolder.instance
         if (opening && targets.size > 1) {
             dsm?.showScreenNumbers(com.nendo.argosy.hardware.DisplayBadgeSize.SMALL)
         } else {
             dsm?.hideScreenNumbers()
+        }
+    }
+
+    private fun refreshCanReleaseZip(gameId: Long) {
+        viewModelScope.launch {
+            val canRelease = gameActions.canReleaseZip(gameId)
+            if (currentGameId == gameId && moreOptionsDelegate.state.value.showMoreOptions) {
+                _uiState.update { it.copy(canReleaseZip = canRelease) }
+            }
+        }
+    }
+
+    private fun releaseZip(gameId: Long) {
+        viewModelScope.launch {
+            if (gameActions.releaseZip(gameId)) {
+                notificationManager.showSuccess(NotificationText.Res(R.string.hela_vita_zip_released))
+                loadGame(gameId)
+            } else {
+                notificationManager.showError(NotificationText.Res(R.string.hela_vita_zip_release_failed))
+            }
         }
     }
 
@@ -1346,7 +1369,8 @@ class GameDetailViewModel @Inject constructor(
             hasUpdates = state.updateFiles.isNotEmpty() || state.dlcFiles.isNotEmpty(),
             hasManageableFiles = state.hasManageableFiles,
             platformSlug = state.game?.platformSlug,
-            launchDisplayCount = state.launchDisplayNumbers.size
+            launchDisplayCount = state.launchDisplayNumbers.size,
+            canReleaseZip = state.canReleaseZip
         )
     }
 
@@ -1443,6 +1467,10 @@ class GameDetailViewModel @Inject constructor(
             }
             MoreOptionAction.AddToCollection -> showAddToCollectionModal()
             MoreOptionAction.Artwork -> showArtwork()
+            MoreOptionAction.ReleaseZip -> {
+                toggleMoreOptions()
+                releaseZip(currentGameId)
+            }
             MoreOptionAction.Delete -> {
                 toggleMoreOptions()
                 val gameUi = _uiState.value.game

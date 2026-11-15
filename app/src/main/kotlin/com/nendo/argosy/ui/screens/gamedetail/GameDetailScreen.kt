@@ -927,6 +927,7 @@ private fun GameDetailModals(
             hasManageableFiles = uiState.hasManageableFiles,
             launchDisplayNumbers = uiState.launchDisplayNumbers,
             launchDisplayIndex = uiState.launchDisplayIndex,
+            canReleaseZip = uiState.canReleaseZip,
             onAction = { action -> viewModel.handleMoreOptionAction(action, onBack, onNavigateToPlatformSettings) },
             onDismiss = viewModel::toggleMoreOptions
         )

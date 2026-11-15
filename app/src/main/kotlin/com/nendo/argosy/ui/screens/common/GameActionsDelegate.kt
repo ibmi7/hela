@@ -36,7 +36,8 @@ class GameActionsDelegate @Inject constructor(
     private val imageCacheManager: ImageCacheManager,
     private val artSourceRecorder: ArtSourceRecorder,
     private val storageBreakdown: GameStorageBreakdownUseCase,
-    private val filePickerFlowUseCase: FilePickerFlowUseCase
+    private val filePickerFlowUseCase: FilePickerFlowUseCase,
+    private val vita3kZipRelease: com.nendo.argosy.data.emulator.Vita3kZipRelease
 ) {
     suspend fun toggleFavorite(gameId: Long): Boolean? {
         val game = gameRepository.getById(gameId) ?: return null
@@ -65,6 +66,10 @@ class GameActionsDelegate @Inject constructor(
         deleteGameUseCase(gameId)
         if (withSoundtrack) filePickerFlowUseCase.purgeSoundtrack(gameId)
     }
+
+    suspend fun canReleaseZip(gameId: Long): Boolean = vita3kZipRelease.candidate(gameId) != null
+
+    suspend fun releaseZip(gameId: Long): Boolean = vita3kZipRelease.release(gameId)
 
     suspend fun deleteDownloadConfirm(gameId: Long): GameConfirm.DeleteDownload? =
         storageBreakdown.deleteSummary(gameId)?.let {

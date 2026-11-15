@@ -42,6 +42,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
+import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.filled.Download
@@ -659,7 +660,8 @@ fun LibraryScreen(
                     rows = libraryQuickMenuRows(
                         game = game,
                         isCustomGridHome = uiState.isCustomGridHome,
-                        hasSiblingGroup = uiState.quickMenuHasSiblingGroup
+                        hasSiblingGroup = uiState.quickMenuHasSiblingGroup,
+                        canReleaseZip = uiState.quickMenuCanReleaseZip
                     ),
                     focusIndex = uiState.quickMenuFocusIndex,
                     onDismiss = { viewModel.toggleQuickMenu() },
@@ -690,6 +692,10 @@ fun LibraryScreen(
                     onResyncPlatform = {
                         viewModel.toggleQuickMenu()
                         viewModel.syncCurrentPlatform()
+                    },
+                    onReleaseZip = {
+                        viewModel.toggleQuickMenu()
+                        viewModel.releaseZip(game.id)
                     },
                     onDelete = {
                         viewModel.toggleQuickMenu()
@@ -1756,6 +1762,7 @@ private fun QuickMenuOverlay(
     onActiveVariant: () -> Unit,
     onRefresh: () -> Unit,
     onResyncPlatform: () -> Unit,
+    onReleaseZip: () -> Unit,
     onDelete: () -> Unit,
     onRemoveFromLibrary: () -> Unit,
     onHide: () -> Unit
@@ -1789,6 +1796,7 @@ private fun QuickMenuOverlay(
     val activeVariantLabel = stringResource(R.string.library_quickmenu_active_variant)
     val refreshLabel = stringResource(R.string.library_quickmenu_refresh_data)
     val resyncLabel = stringResource(R.string.library_quickmenu_resync_platform)
+    val releaseZipLabel = stringResource(R.string.hela_vita_release_zip)
     val deleteLabel = if (game.isAndroidApp && game.isDownloaded) {
         stringResource(R.string.library_quickmenu_uninstall)
     } else {
@@ -1822,6 +1830,7 @@ private fun QuickMenuOverlay(
         )
         LibraryQuickMenuRow.REFRESH -> MenuEntry(Icons.Default.Refresh, refreshLabel, onClick = onRefresh)
         LibraryQuickMenuRow.RESYNC_PLATFORM -> MenuEntry(Icons.Default.Refresh, resyncLabel, onClick = onResyncPlatform)
+        LibraryQuickMenuRow.RELEASE_ZIP -> MenuEntry(Icons.Default.Archive, releaseZipLabel, onClick = onReleaseZip)
         LibraryQuickMenuRow.DELETE -> MenuEntry(
             Icons.Default.DeleteOutline,
             deleteLabel,

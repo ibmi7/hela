@@ -211,7 +211,8 @@ data class MoreOptionsContext(
     val hasUpdates: Boolean = false,
     val hasManageableFiles: Boolean = false,
     val platformSlug: String? = null,
-    val launchDisplayCount: Int = 0
+    val launchDisplayCount: Int = 0,
+    val canReleaseZip: Boolean = false
 )
 
 /**
@@ -236,6 +237,7 @@ fun buildMoreOptions(ctx: MoreOptionsContext): List<MoreOptionAction> = buildLis
     if (canTrackProgress) add(MoreOptionAction.RefreshData)
     add(MoreOptionAction.AddToCollection)
     add(MoreOptionAction.Artwork)
+    if (ctx.canReleaseZip && ctx.isDownloaded) add(MoreOptionAction.ReleaseZip)
     if (ctx.isDownloaded || ctx.isAndroidApp) add(MoreOptionAction.Delete)
     if (ctx.isSteamGame || ctx.canRemoveFromLibrary) add(MoreOptionAction.RemoveFromLibrary)
     add(MoreOptionAction.ToggleHide)
@@ -262,6 +264,7 @@ sealed class MoreOptionAction {
     data object RefreshTitleId : MoreOptionAction()
     data object SpeedrunSplits : MoreOptionAction()
     data object Artwork : MoreOptionAction()
+    data object ReleaseZip : MoreOptionAction()
     data object Delete : MoreOptionAction()
     data object RemoveFromLibrary : MoreOptionAction()
     data object ToggleHide : MoreOptionAction()
@@ -295,6 +298,7 @@ data class GameDetailUiState(
     val isRefreshingGameData: Boolean = false,
     val downloadStatus: GameDownloadStatus = GameDownloadStatus.NOT_DOWNLOADED,
     val hasManageableFiles: Boolean = false,
+    val canReleaseZip: Boolean = false,
     val isAwaitingServer: Boolean = false,
     val downloadSizeBytes: Long? = null,
     val selectedCoreId: String? = null,
