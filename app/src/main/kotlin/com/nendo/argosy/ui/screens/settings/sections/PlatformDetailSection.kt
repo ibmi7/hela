@@ -100,6 +100,7 @@ internal sealed class PlatformDetailItem(
     data object SkipFullSync : PlatformDetailItem("skip_full_sync", "sync", { it.syncEnabled })
     data object DownloadDefaults : PlatformDetailItem("download_defaults", "sync", { !it.isAndroid })
     data object VitaZipRelease : PlatformDetailItem("vita_zip_release", "sync", { it.showVitaZipRelease })
+    data object VitaLinkInstalled : PlatformDetailItem("vita_link_installed", "sync", { it.showVitaZipRelease })
     data object PackagePath : PlatformDetailItem("package_path", "sync", { it.showSavePath && !it.isAndroid })
     data object RemoveFiles : PlatformDetailItem("remove_files", "sync", { it.hasDownloads && !it.isAndroid })
 
@@ -119,7 +120,7 @@ internal sealed class PlatformDetailItem(
                 Header("header_bios", "bios", R.string.settings_platform_section_bios, { it.hasBios && !it.isAndroid }),
                 InfoItem("info_bios_status", "bios", { it.hasBios && !it.isAndroid }), BiosDownload, BiosInstall, BiosCopy,
                 Header("header_sync", "sync", R.string.settings_platform_section_sync),
-                SyncToggle, SyncNow, SkipFullSync, DownloadDefaults, VitaZipRelease, CombineContent,
+                SyncToggle, SyncNow, SkipFullSync, DownloadDefaults, VitaZipRelease, VitaLinkInstalled, CombineContent,
                 InfoItem("info_package_path", "sync", { it.showSavePath && !it.isBuiltin && !it.isRetroArch }),
                 RomPath, SavePath, MemoryCard, StatePath,
                 RemoveFiles
@@ -726,6 +727,12 @@ fun PlatformDetailSection(
                     isEnabled = com.nendo.argosy.ui.hela.vita.rememberHelaVitaAutoReleaseZip(),
                     isFocused = isFocused(item),
                     onToggle = { viewModel.setHelaVitaAutoReleaseZip(it) }
+                )
+                PlatformDetailItem.VitaLinkInstalled -> ActionPreference(
+                    title = stringResource(R.string.hela_vita_link_title),
+                    subtitle = stringResource(R.string.hela_vita_link_subtitle),
+                    isFocused = isFocused(item),
+                    onClick = { viewModel.linkHelaVitaInstalled(config.platform.id) }
                 )
                 PlatformDetailItem.PackagePath -> {}
                 PlatformDetailItem.DownloadDefaults -> ActionPreference(

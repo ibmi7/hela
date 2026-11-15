@@ -169,7 +169,8 @@ class SettingsViewModel @Inject constructor(
     internal val jellyfinConnectionManager: JellyfinConnectionManager,
     private val downloadFileStatusRepository: com.nendo.argosy.data.repository.DownloadFileStatusRepository,
     private val helaHomeStore: com.nendo.argosy.data.hela.home.HelaHomeStore,
-    private val helaVitaStore: com.nendo.argosy.data.hela.vita.HelaVitaStore
+    private val helaVitaStore: com.nendo.argosy.data.hela.vita.HelaVitaStore,
+    private val helaVitaLink: com.nendo.argosy.ui.hela.vita.HelaVitaLinkController
 ) : ViewModel() {
 
     private var jellyfinSignInJob: Job? = null
@@ -887,6 +888,8 @@ class SettingsViewModel @Inject constructor(
     fun setHelaVitaAutoReleaseZip(enabled: Boolean) = helaVitaStore.setAutoReleaseZip(enabled)
 
     fun toggleHelaVitaAutoReleaseZip() = helaVitaStore.setAutoReleaseZip(!helaVitaStore.autoReleaseZip.value)
+
+    fun linkHelaVitaInstalled(platformId: Long) = helaVitaLink.start(viewModelScope, platformId)
 
     fun requestCustomFramePicker() {
         viewModelScope.launch { _openCustomFramePickerEvent.emit(Unit) }

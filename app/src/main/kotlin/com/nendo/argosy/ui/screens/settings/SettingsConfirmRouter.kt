@@ -1521,6 +1521,7 @@ private fun routePlatformDetailConfirm(vm: SettingsViewModel, state: SettingsUiS
             vm.togglePlatformSkipFullSync(config.platform.id, !current)
         }
         PlatformDetailItem.VitaZipRelease -> vm.toggleHelaVitaAutoReleaseZip()
+        PlatformDetailItem.VitaLinkInstalled -> vm.linkHelaVitaInstalled(config.platform.id)
         PlatformDetailItem.SyncNow -> vm.syncPlatform(config.platform.id, config.platform.getDisplayName())
         PlatformDetailItem.RemoveFiles -> vm.requestRemoveLocalFiles()
         PlatformDetailItem.BiosDownload -> vm.downloadBiosForPlatform(config.platform.slug)

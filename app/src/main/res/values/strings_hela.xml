@@ -89,4 +89,6 @@
     <string name="hela_vita_zip_release_failed">Could not free up the zip</string>
     <string name="hela_vita_auto_release_title">Free up zips once installed</string>
     <string name="hela_vita_auto_release_subtitle">After a session, delete the zip of a game installed in Vita3K and keep it playable</string>
+    <string name="hela_vita_link_title">Link games installed in Vita3K</string>
+    <string name="hela_vita_link_subtitle">Make games already installed in Vita3K playable without downloading them</string>
 </resources>

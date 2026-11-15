@@ -87,4 +87,6 @@
     <string name="hela_vita_zip_release_failed">Impossible de libérer le zip</string>
     <string name="hela_vita_auto_release_title">Libérer les zips une fois installés</string>
     <string name="hela_vita_auto_release_subtitle">Après une session, supprime le zip d\'un jeu installé dans Vita3K et le garde jouable</string>
+    <string name="hela_vita_link_title">Relier les jeux installés dans Vita3K</string>
+    <string name="hela_vita_link_subtitle">Rend jouables les jeux déjà installés dans Vita3K, sans les télécharger</string>
 </resources>
