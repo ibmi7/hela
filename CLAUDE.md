@@ -15,7 +15,7 @@ Garder l'intégration RomM d'Argosy (parcours de la bibliothèque, téléchargem
 ## Décisions prises
 
 - Base : Argosy, pas NeoStation (Flutter, plus lourd), ni Cocoon ou iiSU (code de l'app non publié). Détail dans `docs/hela/comparatif-bases.md`.
-- Branches : `main` reste identique à l'amont ; tout le travail se fait sur `hela`. Remote `upstream` = `rommapp/argosy-launcher`.
+- Branches : tout le travail se fait sur `hela` ; il n'y a pas de branche `main` locale, l'amont se lit sur `upstream/main` (remote `upstream` = `rommapp/argosy-launcher`). Mise à jour depuis l'amont : `git fetch upstream`, fusion (merge, pas rebase : `hela` est poussée) de `upstream/main` dans une branche temporaire, conflits résolus en gardant les deux côtés, tests et Thor, puis `hela` avancée dessus. Dernière fusion : Argosy 3.0.0-beta.5 (15/11/2026, schéma de base 224).
 - Pour limiter les conflits de fusion, ajouter de nouveaux fichiers et écrans à côté de l'existant plutôt que modifier en profondeur les fichiers d'Argosy. L'amont avance très vite.
 - Ordre des chantiers : thèmes Cocoon d'abord (lecture du pack, fonds d'écran, couleurs, sons, musique), écran d'accueil ensuite.
 - Ne pas toucher sans nécessité aux zones signalées comme fragiles dans `AGENTS.md` : synchro des sauvegardes, conformité RetroAchievements, module natif `libretrodroid`.
@@ -45,6 +45,7 @@ Deux machines, SDK Android en ligne de commande dans les deux cas (Android Studi
 - `local.properties` (ignoré par git) : `sdk.dir=/home/brams/Android/Sdk`.
 - `~/.bashrc` exporte `JAVA_HOME`, `ANDROID_HOME` et ajoute `platform-tools` et `cmdline-tools/latest/bin` au `PATH`.
 - Compiler : `./gradlew assembleDebug`. Compiler et installer : `./gradlew installDebug`. Tests : `./gradlew testDebugUnitTest` (`assembleDebug` ne compile pas les tests).
+- Mémoire (14 Go) : les réglages du projet (Kotlin 8 Go, 8 JVM de tests à 2 Go) ont gelé le PC pendant la suite de tests. `~/.gradle/gradle.properties` (hors dépôt, prioritaire) les réduit : Kotlin 4 Go, `org.gradle.workers.max=2`. `~/.local/bin/hela-gradle-safe <tâches>` lance Gradle en `nice -n 15` et coupe Gradle si la mémoire disponible passe sous 1,8 Go (journal dans `~/Workspace/hela-logs`). Suite complète ainsi : environ 2 min, au moins 7 Go restés libres. Ne jamais lancer `pkill -f` avec un motif écrit en clair dans la même commande : il tue son propre shell (utiliser `[K]otlinCompileDaemon`).
 - La clé de debug `~/.android/debug.keystore` est celle du PC Windows (empreinte SHA-256 `94:36:99:CF:…:D7:22`) : sans elle, `installDebug` échoue sur la Thor avec `INSTALL_FAILED_UPDATE_INCOMPATIBLE`.
 
 ### Commun

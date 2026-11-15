@@ -1,6 +1,12 @@
 # État des travaux Hela
 
-État au 15/11/2026, branche `hela`, au-dessus d'Argosy 2.31.0 (`29e350f7b`).
+État au 15/11/2026, branche `hela`, au-dessus d'Argosy 3.0.0-beta.5 (fusion `93f4a562a` de `upstream/main` `d1172c465` ; base précédente 2.31.0, `29e350f7b`).
+
+## Fusion Argosy 3.0.0-beta.5 (15/11)
+
+- 114 commits de l'amont, 13 fichiers en conflit, tous des ajouts concurrents aux mêmes menus (Stream, jeu en cours, déplacement d'écran côté Argosy ; « Libérer le zip » côté Hela) : les deux gardés. Après fusion : `Vita3kLink` lit `DownloadQueueDao.getRecoverableDownloads()` (l'ancienne requête a disparu ; celle-ci inclut les téléchargements en échec, que la 3.0 reprend) ; `HelaHomeOverlays` passe à `GameSelectOverlay` les nouveaux paramètres comme l'accueil d'Argosy. Sous-module `sigil` à la version de l'amont.
+- Base debug de la Thor migrée en schéma 224 (277 jeux, 12 jeux Vita locaux conservés). Copie d'avant migration : `~/hela-backup/db-avant-3.0-20261115-1143` (base et DataStore).
+- Vérifié : `assembleDebug`, `testDebugUnitTest` (6 614 tests, 0 échec) ; sur la Thor, accueil Hela et page Consoles, menu de jeu de l'accueil (entrées 3.0 et « Libérer le zip »), lancement de Persona 4 Golden avec négociation `NO_OP`. Non revérifiés après fusion : « Relier », menu de la bibliothèque, fiche du jeu, thèmes (sons, musique).
 
 ## Reprendre sur un autre ordinateur
 
