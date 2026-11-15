@@ -14,7 +14,7 @@ import com.nendo.argosy.data.emulator.SavePathConfig
 import com.nendo.argosy.data.emulator.SavePathRegistry
 import com.nendo.argosy.data.emulator.SwitchProfileParser
 import com.nendo.argosy.data.emulator.savepath.FlycastStandaloneConfig
-import com.nendo.argosy.data.emulator.savepath.PpssppMemoryStick
+import com.nendo.argosy.data.emulator.savepath.LiveSaveLocation
 import com.nendo.argosy.data.local.dao.EmulatorConfigDao
 import com.nendo.argosy.data.local.dao.GameDao
 import com.nendo.argosy.data.local.entity.GameEntity
@@ -560,7 +560,7 @@ class SigilSaveHandler @Inject constructor(
         )
         val chosen = emulatorSaveConfigRepository.resolveUserSavePath(config.emulatorId, game.platformSlug)
             ?.takeIf { it.isNotBlank() }
-            ?: PpssppMemoryStick.liveSaveData(config, registered, fal)
+            ?: LiveSaveLocation.liveSaveData(config, registered, fal)
             ?: emulatorSaveConfigRepository.resolveEvaluatedSavePath(config.emulatorId)
         val candidates = listOfNotNull(chosen) + registered
         val roots = candidates.mapNotNull {

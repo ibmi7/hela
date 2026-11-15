@@ -178,7 +178,7 @@ open class SavePathAuthority @Inject constructor(
         }
 
         val candidates = candidatePaths(config, request.emulatorPackage)
-        val preferred = PpssppMemoryStick.liveSaveData(config, candidates, fal) ?: candidates.firstOrNull()
+        val preferred = LiveSaveLocation.liveSaveData(config, candidates, fal) ?: candidates.firstOrNull()
         val evaluated = configId
             ?.let { emulatorSaveConfigRepository.resolveEvaluatedSavePath(it) }
             ?.let { followLiveStick(config, it, candidates) }
@@ -206,7 +206,7 @@ open class SavePathAuthority @Inject constructor(
         emulatorSaveConfigRepository.resolveEvaluatedSavePath(configId)
             ?.let { return followLiveStick(config, it, candidates) }
 
-        val chosen = PpssppMemoryStick.liveSaveData(config, candidates, fal)
+        val chosen = LiveSaveLocation.liveSaveData(config, candidates, fal)
             ?: candidates.firstOrNull { isReadable(it) && holdsEntries(it) }
             ?: candidates.firstOrNull { isReadable(it) && fal.exists(it) }
             ?: candidates.firstOrNull { isReadable(it) }
@@ -216,7 +216,7 @@ open class SavePathAuthority @Inject constructor(
     }
 
     private suspend fun followLiveStick(config: SavePathConfig, evaluated: String, candidates: List<String>): String {
-        val live = PpssppMemoryStick.liveSaveData(config, listOf(evaluated) + candidates, fal)
+        val live = LiveSaveLocation.liveSaveData(config, listOf(evaluated) + candidates, fal)
         if (live == null || live == evaluated.trimEnd('/')) return evaluated
         emulatorSaveConfigRepository.setEvaluatedSavePath(config.emulatorId, live)
         return live

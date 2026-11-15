@@ -53,7 +53,7 @@ Deux machines, SDK Android en ligne de commande dans les deux cas (Android Studi
 
 ## Problèmes ouverts
 
-- **Vita** : corrigé côté Hela (voir `docs/hela/etat-des-travaux.md`). Les zips No-Intro (un `.pkg` au nom aléatoire et `work.bin`) ne portaient pas d'identifiant visible ; Hela le lit maintenant dans l'en-tête du `.pkg` (`VitaPkgHeader`) et l'envoie à Vita3K. Sans identifiant, il ouvre la liste de jeux de Vita3K au lieu de l'activité `Emulator`, qui se ferme à vide depuis Vita3K 0.2.1. Les sauvegardes Vita se synchronisent (envoi et négociation vérifiés sur Killzone) à condition de régler le chemin de sauvegarde de la plateforme sur `<pref-path de Vita3K>/ux0/user/00/savedata` ; restauration non vérifiée. Restent hors de Hela : Trails of Cold Steel I et II plantent dans Vita3K 0.2.1 quelques secondes après le démarrage (`std::terminate()`, même plantage lancé par `adb`) ; un jeu doit être installé dans Vita3K (`ux0/app`), Hela ne passe jamais le fichier.
+- **Vita** : corrigé côté Hela (voir `docs/hela/etat-des-travaux.md`). Les zips No-Intro (un `.pkg` au nom aléatoire et `work.bin`) ne portaient pas d'identifiant visible ; Hela le lit maintenant dans l'en-tête du `.pkg` (`VitaPkgHeader`) et l'envoie à Vita3K. Sans identifiant, il ouvre la liste de jeux de Vita3K au lieu de l'activité `Emulator`, qui se ferme à vide depuis Vita3K 0.2.1. Les sauvegardes Vita se synchronisent (envoi et négociation vérifiés sur Killzone) dans le dossier que Hela lit dans le `config.yml` de Vita3K (`pref-path`), sans réglage manuel ; restauration non vérifiée. Restent hors de Hela : Trails of Cold Steel I et II plantent dans Vita3K 0.2.1 quelques secondes après le démarrage (`std::terminate()`, même plantage lancé par `adb`) ; un jeu doit être installé dans Vita3K (`ux0/app`), Hela ne passe jamais le fichier.
 - **Switch** : écran noir quelques secondes puis fermeture, y compris en lançant le jeu directement depuis Eden. Ce n'est donc pas un problème de frontend. Pistes côté émulateur : clés et firmware, pilote graphique, intégrité du fichier, essai avec un autre jeu.
 
 ## Documents
@@ -68,4 +68,4 @@ Ces analyses datent du 11/11/2026 (Argosy 2.31.0, commit `29e350f`) et reposent 
 
 ## Prochaine étape
 
-L'accueil inspiré d'iiSU est fait (les quatre étapes de `docs/hela/plan-accueil-iisu.md`, vérifiées sur la Thor) ; détail dans `docs/hela/etat-des-travaux.md`. Les dossiers intelligents des packs Cocoon alimentent une page « Consoles » de cet accueil. Pistes suivantes, à choisir : grille modifiable, problème de lancement Switch, lecture automatique du `pref-path` de Vita3K.
+L'accueil inspiré d'iiSU est fait (les quatre étapes de `docs/hela/plan-accueil-iisu.md`, vérifiées sur la Thor) ; détail dans `docs/hela/etat-des-travaux.md`. Les dossiers intelligents des packs Cocoon alimentent une page « Consoles » de cet accueil. Pistes suivantes, à choisir : grille modifiable, problème de lancement Switch.
