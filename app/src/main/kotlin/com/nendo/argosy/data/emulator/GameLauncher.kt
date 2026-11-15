@@ -1054,7 +1054,7 @@ class GameLauncher @Inject constructor(
             }
             is LaunchConfig.RetroArch -> commandForRetroArch(emulator, romFile, game, config, forResume)
             is LaunchConfig.CustomScheme -> commandForCustomScheme(emulator, romFile, config, forResume)
-            is LaunchConfig.Vita3K -> commandForVita3K(emulator, romFile, config)
+            is LaunchConfig.Vita3K -> commandForVita3K(emulator, romFile, config, game)
             is LaunchConfig.ScummVM -> commandForScummVM(emulator, romFile, forResume)
             is LaunchConfig.BuiltIn -> null
         } ?: return null
@@ -1672,13 +1672,15 @@ class GameLauncher @Inject constructor(
         )
     }
 
-    private fun commandForVita3K(
+    private suspend fun commandForVita3K(
         emulator: EmulatorDef,
         romFile: File,
-        config: LaunchConfig.Vita3K
+        config: LaunchConfig.Vita3K,
+        game: GameEntity
     ): EffectiveLaunchCommand {
         val titleId = extractVitaTitleId(romFile)
-        if (titleId != null) {
+        val installed = titleId?.let { vitaAppInstalled(emulator, game, it) }
+        if (titleId != null && installed != false) {
             Logger.debug(TAG, "Vita3K: titleId=$titleId from ${romFile.name}")
             return EffectiveLaunchCommand(
                 action = emulator.launchAction,
@@ -1694,7 +1696,15 @@ class GameLauncher @Inject constructor(
             .getLaunchIntentForPackage(emulator.packageName)
             ?.component
             ?.className
-        Logger.debug(TAG, "Vita3K: no titleId in ${romFile.name}, opening game list via $launcherActivity")
+        if (titleId != null) {
+            Logger.debug(TAG, "Vita3K: titleId=$titleId is not installed, opening game list via $launcherActivity")
+            val message = context.getString(com.nendo.argosy.R.string.hela_vita_not_installed, emulator.displayName)
+            withContext(Dispatchers.Main) {
+                android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_LONG).show()
+            }
+        } else {
+            Logger.debug(TAG, "Vita3K: no titleId in ${romFile.name}, opening game list via $launcherActivity")
+        }
         return EffectiveLaunchCommand(
             action = Intent.ACTION_MAIN,
             packageName = emulator.packageName,
@@ -1702,6 +1712,18 @@ class GameLauncher @Inject constructor(
             categories = listOf(Intent.CATEGORY_LAUNCHER),
             intentFlags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         )
+    }
+
+    private suspend fun vitaAppInstalled(emulator: EmulatorDef, game: GameEntity, titleId: String): Boolean? {
+        val saveData = savePathAuthority.resolve(
+            com.nendo.argosy.data.emulator.savepath.SavePathRequest(
+                platformSlug = game.platformSlug,
+                emulatorId = emulator.id,
+                emulatorPackage = emulator.packageName,
+                platformId = game.platformId
+            )
+        ).basePath
+        return Vita3kInstalledApps.isInstalled(saveData, titleId) { dir -> File(dir).list()?.toList() }
     }
 
     private fun extractVitaTitleId(romFile: File): String? {

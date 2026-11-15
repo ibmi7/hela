@@ -81,4 +81,5 @@
     <string name="hela_home_footer_open">Ouvrir</string>
     <string name="hela_home_folder_most_played">Plus joués</string>
     <string name="hela_home_folder_newly_added">Nouveautés</string>
+    <string name="hela_vita_not_installed">Jeu non installé dans %1$s. Installez-le avec le bouton +.</string>
 </resources>
