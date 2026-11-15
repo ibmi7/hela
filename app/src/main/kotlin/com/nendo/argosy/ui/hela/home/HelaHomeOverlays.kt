@@ -51,12 +51,31 @@ fun HelaHomeOverlays(
                 onDismiss = { viewModel.toggleGameMenu() },
                 onPrimaryAction = {
                     viewModel.toggleGameMenu()
-                    viewModel.activateFocusedGame(focusedGame)
+                    if (uiState.gameMenuStream?.leads == true) {
+                        viewModel.downloadFocusedGame(focusedGame)
+                    } else {
+                        viewModel.activateFocusedGame(focusedGame)
+                    }
+                },
+                stream = uiState.gameMenuStream,
+                onStream = {
+                    viewModel.toggleGameMenu()
+                    viewModel.streamLauncher.open(focusedGame.id)
                 },
                 playDisplays = uiState.gameMenuDisplays,
                 onPlayOnDisplay = { index ->
                     viewModel.moveGameMenuFocus(index + 1 - uiState.gameMenuFocusIndex)
                     viewModel.confirmGameMenuSelection(onGameSelect)
+                },
+                moveTargets = uiState.gameMenuMoveTargets.takeIf { uiState.gameMenuRunning != null }.orEmpty(),
+                onMoveToDisplay = { target ->
+                    viewModel.moveRunningGame(target)
+                    viewModel.toggleGameMenu()
+                },
+                isRunning = uiState.gameMenuRunning != null,
+                onCloseGame = {
+                    viewModel.requestCloseRunningGame()
+                    viewModel.toggleGameMenu()
                 },
                 onFavorite = { viewModel.toggleFavorite(focusedGame.id) },
                 onDetails = {

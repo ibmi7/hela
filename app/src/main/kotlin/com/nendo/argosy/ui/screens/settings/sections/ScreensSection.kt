@@ -117,8 +117,16 @@ fun ScreensSection(uiState: SettingsUiState, viewModel: SettingsViewModel) {
             val internalSpan =
                 if (attached.isEmpty()) maxWidth else maxWidth * INTERNAL_WIDTH_SHARE
             val externalSpan = maxWidth * (1f - INTERNAL_WIDTH_SHARE) - Dimens.spacingLg
-            val internalPerPixel = internalSpan / widestInternalPx.toFloat()
-            val externalPerPixel = externalSpan / widestExternalPx.toFloat()
+            val internalGaps = Dimens.spacingSm * (builtIn.size - 1).coerceAtLeast(0)
+            val internalPerPixel = minOf(
+                internalSpan / widestInternalPx.toFloat(),
+                (maxHeight - internalGaps) / builtIn.sumOf { it.heightPx }.coerceAtLeast(1).toFloat()
+            )
+            val externalGaps = Dimens.spacingSm * (attached.size - 1).coerceAtLeast(0)
+            val externalPerPixel = minOf(
+                externalSpan / widestExternalPx.toFloat(),
+                (maxHeight - externalGaps) / attached.sumOf { it.heightPx }.coerceAtLeast(1).toFloat()
+            )
 
             Row(
                 modifier = Modifier.fillMaxSize(),
@@ -168,7 +176,7 @@ fun ScreensSection(uiState: SettingsUiState, viewModel: SettingsViewModel) {
 
     ScreenSetupIdentity(
         number = hereNumber,
-        modifier = Modifier.align(Alignment.BottomEnd).padding(Dimens.spacingLg)
+        modifier = Modifier.align(Alignment.TopEnd).padding(Dimens.spacingLg)
     )
     }
 
@@ -192,7 +200,8 @@ internal fun ScreenCard(
     screen: ScreenAssignment,
     perPixel: Dp,
     isFocused: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    roleLabelRes: Int = screenRoleTitleRes(screen.role)
 ) {
     val dimmed = screen.role == ScreenRole.OFF
     Box(
@@ -221,7 +230,7 @@ internal fun ScreenCard(
                 .padding(Dimens.spacingSm)
         )
         Text(
-            text = stringResource(screenRoleTitleRes(screen.role)),
+            text = stringResource(roleLabelRes),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,

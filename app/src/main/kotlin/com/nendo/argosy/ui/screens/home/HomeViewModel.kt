@@ -44,6 +44,7 @@ import com.nendo.argosy.domain.model.MediaTilePlayback
 import com.nendo.argosy.ui.components.AutoGridMove
 import com.nendo.argosy.ui.components.autoGridMove
 import com.nendo.argosy.ui.screens.home.delegates.GameMenuAction
+import com.nendo.argosy.ui.screens.home.delegates.GameMenuRunningRows
 import com.nendo.argosy.ui.screens.home.delegates.HomeDockDelegate
 import com.nendo.argosy.ui.screens.home.delegates.HomeDownloadDelegate
 import com.nendo.argosy.ui.screens.home.delegates.HomeGameMenuDelegate
@@ -69,6 +70,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import com.nendo.argosy.ui.common.toRunningGamesUi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
@@ -146,12 +148,17 @@ class HomeViewModel @Inject constructor(
     private val firstFrameCache: HomeFirstFrameCache,
     private val monthlyRecap: com.nendo.argosy.ui.components.recap.MonthlyRecapController,
     gameActions: com.nendo.argosy.ui.screens.common.GameActionsDelegate,
+    runningGames: com.nendo.argosy.data.emulator.background.RunningGames,
+    val runningGameMenu: com.nendo.argosy.ui.screens.running.RunningGameMenu,
+    streamLaunch: com.nendo.argosy.ui.screens.stream.StreamLaunchController.Factory,
     private val vita3kZipRelease: com.nendo.argosy.data.emulator.Vita3kZipRelease
 ) : ViewModel(), HomeInputActions {
 
     val gameConfirm = com.nendo.argosy.ui.common.GameConfirmController(
         gameActions::deleteDownloadConfirm, gameActions::hideConfirm, viewModelScope
     )
+
+    val streamLauncher = streamLaunch.create(viewModelScope)
 
     private val selectDoubleTap = com.nendo.argosy.ui.screens.home.delegates.SelectDoubleTap(
         scope = viewModelScope,
@@ -268,6 +275,20 @@ class HomeViewModel @Inject constructor(
             gameMenuDelegate.resetMenu()
             siblingChoice.reset()
         }.launchIn(viewModelScope)
+
+        runningGames.state
+            .map { snapshot ->
+                snapshot.toRunningGamesUi().games.associate { it.gameId to it.order }
+            }
+            .distinctUntilChanged()
+            .onEach { order ->
+                _uiState.update { state ->
+                    val anchor = if (state.currentRow == HomeRow.Continue) state.focusedGame?.id else null
+                    val next = state.copy(runningOrder = order)
+                    if (anchor != null) next.keepingFocusOn(anchor) else next
+                }
+            }
+            .launchIn(viewModelScope)
 
         _uiState
             .map { HomeFocusSnapshot(it.currentRow, it.focusedGameIndex, it.customGrid.page, it.customGrid.cell) }
@@ -1559,7 +1580,9 @@ class HomeViewModel @Inject constructor(
 
     fun setTilePickerQuery(query: String) = customGrid.setPickerQuery(query)
 
-    override fun toggleTilePickerSearch() = customGrid.togglePickerSearch()
+    override fun openTilePickerSearch() = customGrid.openPickerSearch()
+
+    fun closeTilePickerKeyboard() = customGrid.closePickerKeyboard()
 
     override fun moveTilePickerFocus(delta: Int) = customGrid.movePickerFocus(delta)
 
@@ -1879,6 +1902,12 @@ class HomeViewModel @Inject constructor(
 
     fun setPageChooserQuery(query: String) = customGrid.setPageChooserQuery(query)
 
+    fun focusPageChooserEntry(index: Int) = customGrid.focusPageChooserEntry(index)
+
+    fun openPageChooserKeyboard() = customGrid.openPageChooserKeyboard()
+
+    fun closePageChooserKeyboard() = customGrid.closePageChooserKeyboard()
+
     fun closePageChooser() = customGrid.closePageChooser()
 
     override fun moveFocusedTile(
@@ -1977,13 +2006,19 @@ class HomeViewModel @Inject constructor(
     fun activateFocusedGame(game: HomeGameUi) =
         activate(game, exactRow = _uiState.value.layoutKind == HomeLayoutKind.CUSTOM_GRID)
 
-    private fun activate(game: HomeGameUi, exactRow: Boolean) {
+    fun downloadFocusedGame(game: HomeGameUi) =
+        activate(game, exactRow = _uiState.value.layoutKind == HomeLayoutKind.CUSTOM_GRID, allowStream = false)
+
+    private fun activate(game: HomeGameUi, exactRow: Boolean, allowStream: Boolean = true) {
         val indicator = downloadIndicators.value[game.id] ?: GameDownloadIndicator.NONE
-        when (homeGameActivation(game, indicator, exactRow)) {
+        val leads = allowStream &&
+            streamLauncher.leadsWithStream(game.platformSlug, game.isRommGame, game.isOnDevice(indicator))
+        when (homeGameActivation(game, indicator, exactRow, leads)) {
             HomeGameActivation.INSTALL -> installApk(game.id)
             HomeGameActivation.LAUNCH -> launchGame(game.id)
             HomeGameActivation.RESUME_DOWNLOAD -> resumeDownload(game.id)
             HomeGameActivation.STEAM_LINK_LAUNCHER -> linkSteamLauncher(game.id)
+            HomeGameActivation.STREAM -> streamLauncher.open(game.id)
             HomeGameActivation.DOWNLOAD_EXACT -> downloadDelegate.queueDownload(viewModelScope, game.id)
             HomeGameActivation.DOWNLOAD_WITH_CHOICE -> queueDownload(game.id)
         }
@@ -2108,14 +2143,31 @@ class HomeViewModel @Inject constructor(
     override fun toggleGameMenu() {
         if (gameMenuDelegate.state.value.showGameMenu) {
             gameMenuOpenJob?.cancel()
-            _uiState.update { it.copy(gameMenuDisplays = emptyList(), gameMenuCanReleaseZip = false) }
+            _uiState.update {
+                it.copy(
+                    gameMenuDisplays = emptyList(),
+                    gameMenuRunning = null,
+                    gameMenuMoveTargets = emptyList(),
+                    gameMenuStream = null,
+                    gameMenuCanReleaseZip = false
+                )
+            }
             gameMenuDelegate.toggleGameMenu()
             return
         }
         if (gameMenuOpenJob?.isActive == true) return
-        val gameId = _uiState.value.focusedGame?.id
+        val focused = _uiState.value.focusedGame
+        val gameId = focused?.id
+        val stream = focused
+            ?.takeIf { it.isRommGame && !it.isDownloaded && !it.needsInstall }
+            ?.let { game ->
+                val indicator = downloadIndicators.value[game.id] ?: GameDownloadIndicator.NONE
+                streamLauncher.offerFor(game.id, game.platformSlug, game.isOnDevice(indicator))
+            }
         gameMenuOpenJob = viewModelScope.launch {
             val hasChoice = gameId != null && siblingChoice.hasChoice(gameId)
+            val running = gameId?.let { runningGameMenu.markFor(it) }
+            val moveTargets = runningGameMenu.moveTargets(running)
             val canReleaseZip = gameId != null && vita3kZipRelease.candidate(gameId) != null
             if (_uiState.value.focusedGame?.id != gameId) return@launch
             val displays = DualScreenManagerHolder.instance
@@ -2125,7 +2177,14 @@ class HomeViewModel @Inject constructor(
                 }
                 .orEmpty()
             _uiState.update {
-                it.copy(gameMenuDisplays = displays, gameMenuHasSiblingGroup = hasChoice, gameMenuCanReleaseZip = canReleaseZip)
+                it.copy(
+                    gameMenuDisplays = displays,
+                    gameMenuHasSiblingGroup = hasChoice,
+                    gameMenuStream = stream,
+                    gameMenuRunning = running,
+                    gameMenuMoveTargets = moveTargets,
+                    gameMenuCanReleaseZip = canReleaseZip
+                )
             }
             gameMenuDelegate.toggleGameMenu()
         }
@@ -2134,19 +2193,33 @@ class HomeViewModel @Inject constructor(
     override fun moveGameMenuFocus(delta: Int) {
         val state = _uiState.value
         val isPlatformRow = state.currentRow is HomeRow.Platform
-        val extraRows = if (state.gameMenuDisplays.size > 1 && state.focusedGame?.isDownloaded == true) {
-            state.gameMenuDisplays.size
-        } else {
-            0
-        }
         gameMenuDelegate.moveGameMenuFocus(
             delta,
             state.focusedGame,
             isPlatformRow,
-            extraRows,
+            state.gameMenuRunningRows(),
             state.gameMenuHasSiblingGroup,
+            state.gameMenuStream != null,
             state.gameMenuCanReleaseZip
         )
+    }
+
+    private fun HomeUiState.gameMenuRunningRows(): GameMenuRunningRows = GameMenuRunningRows(
+        playDisplays = gameMenuDisplays.map { it.displayId },
+        moveTargets = gameMenuMoveTargets.takeIf { gameMenuRunning != null }.orEmpty(),
+        closesGame = gameMenuRunning != null
+    )
+
+    fun requestCloseRunningGame() {
+        val state = _uiState.value
+        runningGameMenu.requestClose(state.gameMenuRunning, state.focusedGame?.title)
+    }
+
+    fun moveRunningGame(target: com.nendo.argosy.ui.screens.running.RunningMoveTarget) {
+        val state = _uiState.value
+        val running = state.gameMenuRunning ?: return
+        val title = state.focusedGame?.title ?: return
+        runningGameMenu.moveTo(viewModelScope, running, target, title)
     }
 
     fun openActiveVariant(gameId: Long) {
@@ -2171,11 +2244,29 @@ class HomeViewModel @Inject constructor(
             state.gameMenuFocusIndex,
             game,
             isPlatformRow,
-            state.gameMenuDisplays.map { it.displayId },
+            state.gameMenuRunningRows(),
             state.gameMenuHasSiblingGroup,
+            state.gameMenuStream != null,
+            state.gameMenuStream?.leads == true,
             state.gameMenuCanReleaseZip
         )
         when (action) {
+            is GameMenuAction.Stream -> {
+                toggleGameMenu()
+                streamLauncher.open(action.gameId)
+            }
+            is GameMenuAction.Download -> {
+                toggleGameMenu()
+                downloadFocusedGame(game)
+            }
+            is GameMenuAction.MoveToDisplay -> {
+                moveRunningGame(action.target)
+                toggleGameMenu()
+            }
+            is GameMenuAction.CloseGame -> {
+                requestCloseRunningGame()
+                toggleGameMenu()
+            }
             is GameMenuAction.Play -> {
                 toggleGameMenu()
                 activateFocusedGame(game)

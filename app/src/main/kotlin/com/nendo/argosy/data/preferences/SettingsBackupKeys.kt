@@ -143,6 +143,7 @@ object SettingsBackupKeys {
         SettingsBackupKey("nav_bar_auto_hide", SettingsBackupType.BOOLEAN),
         SettingsBackupKey("ignore_controller_touchpad", SettingsBackupType.BOOLEAN),
         SettingsBackupKey("system_hotkeys_enabled", SettingsBackupType.BOOLEAN),
+        SettingsBackupKey("home_button_in_games", SettingsBackupType.BOOLEAN),
         SettingsBackupKey("system_home_combo", SettingsBackupType.STRING),
         SettingsBackupKey("system_back_combo", SettingsBackupType.STRING),
         SettingsBackupKey("grip_reserve_enabled", SettingsBackupType.BOOLEAN),
@@ -155,6 +156,7 @@ object SettingsBackupKeys {
         SettingsBackupKey("builtin_core_selections", SettingsBackupType.STRING),
         SettingsBackupKey("builtin_ingame_menu_two_column", SettingsBackupType.BOOLEAN),
         SettingsBackupKey("builtin_limit_hotkeys_to_player1", SettingsBackupType.BOOLEAN),
+        SettingsBackupKey("builtin_confirm_return_home", SettingsBackupType.BOOLEAN),
         SettingsBackupKey("builtin_default_to_hardcore", SettingsBackupType.BOOLEAN),
         SettingsBackupKey("builtin_default_to_hardcore_mode", SettingsBackupType.STRING),
         SettingsBackupKey("builtin_auto_save_state", SettingsBackupType.BOOLEAN),
@@ -288,11 +290,19 @@ object SettingsBackupKeys {
         SettingsBackupKey("monthly_recap_enabled", SettingsBackupType.BOOLEAN)
     )
 
+    private val NOTIFICATIONS = listOf(
+        SettingsBackupKey("notifications_enabled", SettingsBackupType.BOOLEAN),
+        SettingsBackupKey("notify_downloads_finished", SettingsBackupType.BOOLEAN),
+        SettingsBackupKey("notify_battery", SettingsBackupType.BOOLEAN),
+        SettingsBackupKey("notify_charging", SettingsBackupType.BOOLEAN),
+        SettingsBackupKey("notify_controllers", SettingsBackupType.BOOLEAN)
+    )
+
     val EXPORTED: List<SettingsBackupKey> =
         APPEARANCE + BACKDROP + BOX_ART + BACKGROUND + HOME_AND_LIBRARY + APP_SHELVES +
             FEEDBACK + NAVIGATION + BUILTIN_GENERAL + BUILTIN_VIDEO + BUILTIN_AUDIO +
             BUILTIN_MOTION + BUILTIN_INPUT + BUILTIN_TOUCH + BUILTIN_HUD + BUILTIN_SPEEDRUN +
-            DOWNLOADS_AND_CACHES + SYNC_FILTERS + MEDIA_PLAYBACK + UPDATES + SESSIONS
+            DOWNLOADS_AND_CACHES + SYNC_FILTERS + MEDIA_PLAYBACK + UPDATES + SESSIONS + NOTIFICATIONS
 
     val BY_NAME: Map<String, SettingsBackupKey> = EXPORTED.associateBy { it.name }
 }

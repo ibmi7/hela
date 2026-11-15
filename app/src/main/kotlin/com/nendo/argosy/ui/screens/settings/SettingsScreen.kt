@@ -60,6 +60,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.nendo.argosy.libretro.frame.FrameRegistry
 import androidx.compose.ui.text.input.KeyboardType
 import com.nendo.argosy.ui.common.rememberStorageAccessRequest
+import com.nendo.argosy.ui.components.permissions.rememberPermissionGrantLauncher
+import com.nendo.argosy.ui.common.androidNameRes
 import com.nendo.argosy.ui.components.CustomTileMenuModal
 import com.nendo.argosy.ui.components.FooterHints
 import com.nendo.argosy.ui.screens.settings.components.ControllerOrderModal
@@ -123,6 +125,9 @@ import com.nendo.argosy.ui.screens.settings.sections.ControllerGripSection
 import com.nendo.argosy.ui.screens.settings.sections.HomeScreenSection
 import com.nendo.argosy.ui.screens.settings.sections.InterfaceSection
 import com.nendo.argosy.ui.screens.settings.sections.JellyfinSection
+import com.nendo.argosy.ui.screens.settings.sections.NetworkSection
+import com.nendo.argosy.ui.components.connections.quickConnectionsCanForget
+import com.nendo.argosy.ui.components.connections.quickConnectionsFocusedRow
 import com.nendo.argosy.ui.screens.settings.sections.MainSettingsSection
 import com.nendo.argosy.ui.screens.settings.sections.PermissionsSection
 import com.nendo.argosy.ui.screens.settings.sections.RASettingsSection
@@ -169,6 +174,8 @@ import com.nendo.argosy.ui.util.observeTouchDown
 import com.nendo.argosy.ui.screens.settings.components.LocalSettingsTouchFocus
 import com.nendo.argosy.ui.screens.settings.components.SettingsTouchFocus
 import com.nendo.argosy.ui.screens.settings.sections.LibrarySection
+import com.nendo.argosy.ui.screens.common.ClientCertPasswordModal
+import com.nendo.argosy.ui.screens.settings.components.ClientCertManagerModal
 
 @Composable
 fun SettingsScreen(
@@ -181,6 +188,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val networkState by viewModel.networkConnections.state.collectAsState()
     val imageCacheProgress by viewModel.imageCacheProgress.collectAsState()
     val context = LocalContext.current
 
@@ -241,17 +249,12 @@ fun SettingsScreen(
     var fileBrowserCallback by remember { mutableStateOf<((String) -> Unit)?>(null) }
     var showSettingsBackupBrowser by remember { mutableStateOf(false) }
     var showCertBrowser by remember { mutableStateOf(false) }
+    var showClientCertBrowser by remember { mutableStateOf(false) }
     var showCustomFrameBrowser by remember { mutableStateOf(false) }
     var showHelaThemes by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.openHelaThemesEvent.collect { showHelaThemes = true }
-    }
-
-    val notificationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        viewModel.onNotificationPermissionResult(granted)
     }
 
     val blePermissionLauncher = rememberLauncherForActivityResult(
@@ -316,6 +319,12 @@ fun SettingsScreen(
     }
 
     LaunchedEffect(Unit) {
+        viewModel.openClientCertPickerEvent.collect {
+            showClientCertBrowser = true
+        }
+    }
+
+    LaunchedEffect(Unit) {
         viewModel.openCustomFramePickerEvent.collect {
             showCustomFrameBrowser = true
         }
@@ -344,12 +353,6 @@ fun SettingsScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.downloadUpdateEvent.collect {
-            viewModel.downloadAndInstallUpdate(context)
-        }
-    }
-
     val requestStorageAccess = rememberStorageAccessRequest(onResult = {
         viewModel.checkStoragePermission()
         viewModel.refreshPermissions()
@@ -359,14 +362,15 @@ fun SettingsScreen(
         viewModel.requestStoragePermissionEvent.collect { requestStorageAccess() }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.requestNotificationPermissionEvent.collect {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-            } else {
-                viewModel.onNotificationPermissionResult(true)
-            }
-        }
+    val grantPermission = rememberPermissionGrantLauncher(
+        grantFor = viewModel::permissionGrantFor,
+        onRootGrant = viewModel::grantPermissionOnRoot,
+        onPrivilegedEnable = viewModel::enablePrivilegedAccess,
+        onResult = viewModel::refreshPermissions
+    )
+
+    LaunchedEffect(grantPermission) {
+        viewModel.grantPermissionEvent.collect { permission -> grantPermission(permission) }
     }
 
     LaunchedEffect(Unit) {
@@ -661,6 +665,7 @@ fun SettingsScreen(
                         SettingsSection.SYNC_SETTINGS -> SyncSettingsSection(uiState, viewModel, imageCacheProgress)
                         SettingsSection.STEAM_SETTINGS -> SteamSection(uiState, viewModel)
                         SettingsSection.JELLYFIN -> JellyfinSection(uiState, viewModel)
+                        SettingsSection.NETWORK_BLUETOOTH -> NetworkSection(viewModel)
                         SettingsSection.RETRO_ACHIEVEMENTS -> RASettingsSection(uiState, viewModel)
                         SettingsSection.STORAGE -> StorageSection(uiState, viewModel)
                         SettingsSection.STORAGE_GAMES -> StorageGamesSection(uiState, viewModel)
@@ -736,6 +741,9 @@ fun SettingsScreen(
                     viewModel.getFrameRegistry().getAllFrames()
                         .getOrNull(uiState.focusedIndex - 2)
                         ?.source == FrameRegistry.Source.CUSTOM,
+                networkForgetFocused = uiState.currentSection == SettingsSection.NETWORK_BLUETOOTH &&
+                    quickConnectionsFocusedRow(networkState)
+                        ?.let { quickConnectionsCanForget(networkState, it) } == true,
                 onHintClick = { button ->
                     when (button) {
                         InputButton.A -> { inputHandler.onConfirm() }
@@ -807,6 +815,8 @@ fun SettingsScreen(
             onLoadMore = { viewModel.loadChangelogPage() },
             onDismiss = { viewModel.closeChangelog() }
         )
+
+        com.nendo.argosy.ui.screens.settings.components.AboutToolsOverlays(tools = viewModel.aboutTools)
 
         uiState.rootScriptDialog?.let { dialog ->
             com.nendo.argosy.ui.screens.settings.dialogs.RootScriptDialog(
@@ -903,6 +913,19 @@ fun SettingsScreen(
         confirmLabel = stringResource(R.string.settings_shell_modal_import_settings_confirm),
         onConfirm = { viewModel.confirmImportSettings() },
         onDismiss = { viewModel.cancelImportSettings() }
+    )
+
+    val syncWarning = uiState.permissions.saveSyncWarning
+    val syncWarningName = syncWarning?.androidNameRes?.let { stringResource(it) }.orEmpty()
+    ArgosyConfirmModalHost(
+        visible = syncWarning != null,
+        title = stringResource(R.string.permissions_sync_warning_title),
+        message = stringResource(R.string.permissions_sync_warning_message, syncWarningName),
+        confirmLabel = stringResource(R.string.permissions_sync_warning_confirm),
+        cancelLabel = stringResource(R.string.permissions_sync_warning_keep),
+        destructive = true,
+        onConfirm = { viewModel.confirmPermissionSyncWarning() },
+        onDismiss = { viewModel.dismissPermissionSyncWarning() }
     )
 
     ArgosyConfirmModalHost(
@@ -1247,6 +1270,33 @@ fun SettingsScreen(
         }
     }
 
+    if (uiState.clientCert.managerOpenFor != null) {
+        ClientCertManagerModal(
+            state = uiState.clientCert,
+            onSelect = { viewModel.selectClientCertAction(it) },
+            onDismiss = { viewModel.closeClientCertManager() }
+        )
+    }
+
+    ArgosyConfirmModalHost(
+        visible = uiState.clientCert.confirmingRemoval,
+        title = stringResource(R.string.settings_client_cert_remove_title),
+        message = stringResource(R.string.settings_client_cert_remove_message),
+        confirmLabel = stringResource(R.string.settings_client_cert_remove_confirm),
+        destructive = true,
+        onConfirm = { viewModel.confirmClientCertRemoval() },
+        onDismiss = { viewModel.cancelClientCertRemoval() }
+    )
+
+    uiState.clientCert.passwordEntry?.let { entry ->
+        ClientCertPasswordModal(
+            entry = entry,
+            onDraftChange = { viewModel.setClientCertPassword(it) },
+            onSubmit = { viewModel.submitClientCertPassword() },
+            onDismiss = { viewModel.closeClientCertPassword() }
+        )
+    }
+
     uiState.retroAchievements.webApiKeyEditor?.let { editor ->
         RAWebApiKeyModal(
             editor = editor,
@@ -1286,6 +1336,19 @@ fun SettingsScreen(
                 fileBrowserTitle = null
                 fileBrowserCallback = null
             }
+        )
+    }
+
+    if (showClientCertBrowser) {
+        FileBrowserScreen(
+            mode = FileBrowserMode.FILE_SELECTION,
+            title = stringResource(R.string.settings_client_cert_filebrowser_title),
+            fileFilter = com.nendo.argosy.ui.filebrowser.FileFilter.CLIENT_CERTIFICATE,
+            onPathSelected = { path ->
+                showClientCertBrowser = false
+                viewModel.onClientCertFilePicked(path)
+            },
+            onDismiss = { showClientCertBrowser = false }
         )
     }
 
@@ -1493,6 +1556,7 @@ private fun settingsSectionTitle(uiState: SettingsUiState): String = when (uiSta
     SettingsSection.SYNC_SETTINGS -> stringResource(R.string.settings_shell_header_sync_settings)
     SettingsSection.STEAM_SETTINGS -> stringResource(R.string.settings_shell_header_steam)
     SettingsSection.JELLYFIN -> stringResource(R.string.settings_shell_header_jellyfin)
+    SettingsSection.NETWORK_BLUETOOTH -> stringResource(R.string.settings_shell_header_network)
     SettingsSection.RETRO_ACHIEVEMENTS -> stringResource(R.string.settings_shell_header_retroachievements)
     SettingsSection.STORAGE -> stringResource(R.string.settings_shell_header_storage)
     SettingsSection.STORAGE_GAMES -> stringResource(R.string.settings_shell_header_storage_games)
@@ -1784,6 +1848,7 @@ private fun SettingsFooter(
     uiState: SettingsUiState,
     shaderStack: ShaderStackState,
     customFrameFocused: Boolean = false,
+    networkForgetFocused: Boolean = false,
     onHintClick: ((InputButton) -> Unit)? = null
 ) {
     if (uiState.emulators.showSavePathModal || uiState.emulators.showEmulatorPicker ||
@@ -1879,6 +1944,8 @@ private fun SettingsFooter(
     val resetSystemComboHint = stringResource(R.string.settings_shell_footer_reset_system_combo)
     val launchTargetsScreenHint = stringResource(R.string.settings_shell_footer_launch_targets_screen)
     val launchTargetsResetHint = stringResource(R.string.settings_shell_footer_launch_targets_reset)
+    val networkForgetHint = stringResource(R.string.settings_shell_footer_network_forget)
+    val networkGroupHint = stringResource(R.string.settings_shell_footer_network_group)
     val launchTargetRows = remember(uiState.launchTargets) { launchTargetsLayout(uiState.launchTargets) }
 
     val hints = buildList {
@@ -1925,6 +1992,12 @@ private fun SettingsFooter(
         }
         if (customFrameFocused) {
             add(InputButton.Y to removeFrameHint)
+        }
+        if (uiState.currentSection == SettingsSection.NETWORK_BLUETOOTH) {
+            add(InputButton.LB_RB to networkGroupHint)
+        }
+        if (networkForgetFocused) {
+            add(InputButton.X to networkForgetHint)
         }
         if (uiState.currentSection == SettingsSection.NAVIGATION) {
             val focusedNavigationItem = navigationItemAtFocusIndex(uiState.focusedIndex, uiState.controls)

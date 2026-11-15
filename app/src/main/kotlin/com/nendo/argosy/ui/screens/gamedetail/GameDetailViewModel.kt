@@ -27,6 +27,9 @@ import com.nendo.argosy.data.remote.romm.RomMCoverArtType
 import com.nendo.argosy.data.remote.romm.RomMRepository
 import com.nendo.argosy.data.remote.romm.RomMResult
 import com.nendo.argosy.data.repository.GameRepository
+import com.nendo.argosy.ui.components.TEXT_ENTRY_CANCEL_BUTTON
+import com.nendo.argosy.ui.components.TEXT_ENTRY_CONFIRM_BUTTON
+import com.nendo.argosy.ui.components.TextEntryRow
 import com.nendo.argosy.ui.screens.gamedetail.components.MenuItem
 import com.nendo.argosy.ui.screens.gamedetail.components.MenuLayoutState
 import com.nendo.argosy.ui.screens.gamedetail.components.menuLayout
@@ -71,9 +74,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import com.nendo.argosy.ui.common.toRunningGamesUi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -141,10 +146,15 @@ class GameDetailViewModel @Inject constructor(
     private val gameThemeAudio: com.nendo.argosy.ui.audio.GameThemeAudioCoordinator,
     private val siblingChoice: com.nendo.argosy.ui.screens.common.SiblingChoiceDelegate,
     private val steamInstallReports: com.nendo.argosy.data.launcher.SteamInstallReports,
-    private val appsRepository: com.nendo.argosy.data.repository.AppsRepository
+    private val appsRepository: com.nendo.argosy.data.repository.AppsRepository,
+    private val runningGames: com.nendo.argosy.data.emulator.background.RunningGames,
+    val runningGameMenu: com.nendo.argosy.ui.screens.running.RunningGameMenu,
+    streamLaunch: com.nendo.argosy.ui.screens.stream.StreamLaunchController.Factory
 ) : ViewModel() {
 
     val siblingChoiceState = siblingChoice.state
+
+    val streamLauncher = streamLaunch.create(viewModelScope)
 
     private val companionOwner = com.nendo.argosy.ui.dualscreen.SlotOwner.of("game.detail", this)
     private var isDescribing = false
@@ -253,6 +263,34 @@ class GameDetailViewModel @Inject constructor(
         modalResetSignal.signal.onEach { resetAllModals() }.launchIn(viewModelScope)
 
         viewModelScope.launch {
+            kotlinx.coroutines.flow.combine(
+                runningGames.state,
+                _uiState.map { it.game?.id }.distinctUntilChanged()
+            ) { snapshot, gameId ->
+                gameId?.let { snapshot.toRunningGamesUi().markFor(it) }
+            }.distinctUntilChanged().collect { mark -> applyRunningMark(mark) }
+        }
+
+        viewModelScope.launch {
+            kotlinx.coroutines.flow.combine(
+                streamLauncher.offers.onStart { emit(Unit) },
+                _uiState.map { state ->
+                    state.game?.takeIf {
+                        it.isRommGame && state.downloadStatus == GameDownloadStatus.NOT_DOWNLOADED
+                    }?.let { it.id to it.platformSlug }
+                }.distinctUntilChanged()
+            ) { _, streamable ->
+                streamable?.let { (gameId, platformSlug) -> streamLauncher.offerFor(gameId, platformSlug) }
+            }.distinctUntilChanged().collect { offer ->
+                _uiState.update { state ->
+                    val next = state.copy(stream = offer)
+                    val maxIndex = menuLayout.maxFocusIndex(next.menuLayoutState)
+                    if (next.menuFocusIndex > maxIndex) next.copy(menuFocusIndex = maxIndex) else next
+                }
+            }
+        }
+
+        viewModelScope.launch {
             _uiState.map { state -> state.game?.toCompanionDetail(state.friendsActivity) }
                 .distinctUntilChanged()
                 .collect { publishCompanionDetail(it) }
@@ -351,7 +389,7 @@ class GameDetailViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         downloadStatus = dlState.downloadStatus,
-                        isAwaitingServer = dlState.isAwaitingServer,
+                        downloadWaitStatus = dlState.downloadWaitStatus,
                         downloadSizeBytes = dlState.downloadSizeBytes,
                         isRefreshingGameData = dlState.isRefreshingGameData,
                         showExtractionFailedPrompt = dlState.showExtractionFailedPrompt,
@@ -1170,6 +1208,11 @@ class GameDetailViewModel @Inject constructor(
         lastActionTime = now
 
         val state = _uiState.value
+        if (state.running?.isClosing == true) return
+        if (state.stream?.leads == true) {
+            streamLauncher.open(currentGameId)
+            return
+        }
         when (state.downloadStatus) {
             GameDownloadStatus.NO_FILE -> notificationManager.showError(
                 NotificationText.Res(R.string.gamedetail_notice_no_file)
@@ -1370,6 +1413,7 @@ class GameDetailViewModel @Inject constructor(
             hasManageableFiles = state.hasManageableFiles,
             platformSlug = state.game?.platformSlug,
             launchDisplayCount = state.launchDisplayNumbers.size,
+            offersDownload = state.stream?.leads == true,
             canReleaseZip = state.canReleaseZip
         )
     }
@@ -1441,6 +1485,10 @@ class GameDetailViewModel @Inject constructor(
     ) {
         val isAndroidApp = _uiState.value.game?.isAndroidApp == true
         when (action) {
+            MoreOptionAction.Download -> {
+                toggleMoreOptions()
+                promptOrDownload()
+            }
             MoreOptionAction.LaunchOnDisplay -> launchOnSelectedDisplay()
             MoreOptionAction.ManageSaves -> showSaveCacheDialog()
             MoreOptionAction.PlatformSettings -> {
@@ -1992,6 +2040,10 @@ class GameDetailViewModel @Inject constructor(
 
     fun setArtPickerQuery(query: String) = pickerModalDelegate.setArtPickerQuery(query)
 
+    fun openArtPickerKeyboard() = pickerModalDelegate.openArtPickerKeyboard()
+
+    fun closeArtPickerKeyboard() = pickerModalDelegate.closeArtPickerKeyboard()
+
     fun openArtFileBrowser() = pickerModalDelegate.openArtFileBrowser()
 
     /**
@@ -2066,6 +2118,10 @@ class GameDetailViewModel @Inject constructor(
 
     private fun confirmArtPickerSelection() {
         val picker = pickerModalDelegate.state.value
+        if (picker.artPickerSearchFocused) {
+            pickerModalDelegate.openArtPickerKeyboard()
+            return
+        }
         val candidate = picker.artCandidates.getOrNull(picker.artPickerFocusIndex)
         if (candidate == null) openArtFileBrowser() else selectArtCandidate(candidate)
     }
@@ -2258,8 +2314,10 @@ class GameDetailViewModel @Inject constructor(
 
     fun executeMenuAction() {
         val state = menuLayoutState()
-        when (menuLayout.itemAtFocusIndex(_uiState.value.menuFocusIndex, state)) {
+        when (val item = menuLayout.itemAtFocusIndex(_uiState.value.menuFocusIndex, state)) {
             MenuItem.Play -> primaryAction()
+            MenuItem.Stream -> openStream()
+            is MenuItem.MoveToDisplay -> moveRunningGame(item.slot)
             MenuItem.Saves -> syncSavesNow()
             MenuItem.Favorite -> toggleFavorite()
             MenuItem.Privacy -> togglePrivacy()
@@ -2272,8 +2330,51 @@ class GameDetailViewModel @Inject constructor(
             MenuItem.Reviews -> showReviewList()
             MenuItem.Achievements -> showAchievementList()
             MenuItem.RelatedGames -> {}
+            MenuItem.CloseGame -> requestCloseRunningGame()
             null -> {}
         }
+    }
+
+    fun openStream() {
+        if (_uiState.value.stream == null) return
+        streamLauncher.open(currentGameId)
+    }
+
+    private var moveTargetsJob: kotlinx.coroutines.Job? = null
+
+    private fun applyRunningMark(mark: com.nendo.argosy.ui.common.RunningGameUi?) {
+        _uiState.update { state ->
+            val next = state.copy(
+                running = mark,
+                runningMoveTargets = if (mark == null) emptyList() else state.runningMoveTargets
+            )
+            val maxIndex = menuLayout.maxFocusIndex(next.menuLayoutState)
+            if (next.menuFocusIndex > maxIndex) next.copy(menuFocusIndex = maxIndex) else next
+        }
+        moveTargetsJob?.cancel()
+        if (mark == null) return
+        moveTargetsJob = viewModelScope.launch {
+            val targets = runningGameMenu.moveTargets(mark)
+            _uiState.update { state ->
+                if (state.running?.taskId != mark.taskId) return@update state
+                val next = state.copy(runningMoveTargets = targets)
+                val maxIndex = menuLayout.maxFocusIndex(next.menuLayoutState)
+                if (next.menuFocusIndex > maxIndex) next.copy(menuFocusIndex = maxIndex) else next
+            }
+        }
+    }
+
+    fun requestCloseRunningGame() {
+        val state = _uiState.value
+        runningGameMenu.requestClose(state.running, state.game?.title)
+    }
+
+    fun moveRunningGame(slot: Int) {
+        val state = _uiState.value
+        val running = state.running ?: return
+        val target = state.runningMoveTargets.getOrNull(slot) ?: return
+        val title = state.game?.title ?: return
+        runningGameMenu.moveTo(viewModelScope, running, target, title)
     }
 
     private fun loadRelatedGames(game: com.nendo.argosy.data.local.entity.GameEntity) {
@@ -2599,7 +2700,12 @@ class GameDetailViewModel @Inject constructor(
             val pickerState = pickerModalDelegate.state.value
             return when {
                 state.reviewEditor != null -> { moveReviewEditorSection(direction); InputResult.HANDLED }
-                saveState.showRenameDialog -> InputResult.UNHANDLED
+                saveState.showRenameDialog -> {
+                    saveManagement.saveChannelDelegate.moveRenameRow(
+                        if (direction < 0) TextEntryRow.FIELD else TextEntryRow.BUTTONS
+                    )
+                    InputResult.HANDLED
+                }
                 saveState.showRestoreConfirmation -> InputResult.UNHANDLED
                 saveState.showDeleteConfirmation -> InputResult.UNHANDLED
                 saveState.isVisible -> { moveSaveCacheFocus(direction); InputResult.HANDLED }
@@ -2644,6 +2750,10 @@ class GameDetailViewModel @Inject constructor(
             val pickerState = pickerModalDelegate.state.value
             when {
                 state.reviewEditor != null -> { adjustReviewEditor(-1); return InputResult.HANDLED }
+                saveState.showRenameDialog -> {
+                    saveManagement.saveChannelDelegate.moveRenameButton(TEXT_ENTRY_CANCEL_BUTTON)
+                    return InputResult.HANDLED
+                }
                 saveState.showRestoreConfirmation || saveState.showDeleteConfirmation || saveState.showRenameDialog || saveState.showMigrateConfirmation || saveState.showDeleteLegacyConfirmation -> return InputResult.HANDLED
                 saveState.isVisible -> {
                     when (saveState.selectedTab) {
@@ -2681,6 +2791,10 @@ class GameDetailViewModel @Inject constructor(
             val pickerState = pickerModalDelegate.state.value
             when {
                 state.reviewEditor != null -> { adjustReviewEditor(1); return InputResult.HANDLED }
+                saveState.showRenameDialog -> {
+                    saveManagement.saveChannelDelegate.moveRenameButton(TEXT_ENTRY_CONFIRM_BUTTON)
+                    return InputResult.HANDLED
+                }
                 saveState.showRestoreConfirmation || saveState.showDeleteConfirmation || saveState.showRenameDialog || saveState.showMigrateConfirmation || saveState.showDeleteLegacyConfirmation -> return InputResult.HANDLED
                 saveState.isVisible -> {
                     when (saveState.selectedTab) {
@@ -2764,7 +2878,7 @@ class GameDetailViewModel @Inject constructor(
             val pickerState = pickerModalDelegate.state.value
             when {
                 state.reviewEditor != null -> confirmReviewEditorAction()
-                saveState.showRenameDialog -> confirmRename()
+                saveState.showRenameDialog -> saveManagement.saveChannelDelegate.confirmRenameFocus(viewModelScope)
                 saveState.showDeleteConfirmation -> confirmDelete()
                 saveState.showRestoreConfirmation -> restoreSave(syncToServer = false)
                 saveState.showMigrateConfirmation -> confirmMigrateChannel()
@@ -2875,6 +2989,7 @@ class GameDetailViewModel @Inject constructor(
             val state = _uiState.value
             val saveState = state.saveChannel
             if (state.reviewEditor != null) { promptReviewDelete(); return InputResult.HANDLED }
+            if (saveState.showRenameDialog) return InputResult.HANDLED
             if (pickerModalDelegate.state.value.showArtPicker) {
                 openArtFileBrowser(); return InputResult.HANDLED
             }
@@ -2889,6 +3004,7 @@ class GameDetailViewModel @Inject constructor(
             val state = _uiState.value
             val saveState = state.saveChannel
             if (state.reviewEditor != null) return InputResult.HANDLED
+            if (saveState.showRenameDialog) return InputResult.HANDLED
             if (pickerModalDelegate.state.value.showArtPicker) {
                 searchArtwork(); return InputResult.HANDLED
             }

@@ -45,7 +45,7 @@ class Vita3kLink @Inject constructor(
         val games = gameDao.getByPlatform(platformId, syncPreferencesRepository.getRommUserId())
             .filter { PlatformDefinitions.getCanonicalSlug(it.platformSlug) == VITA }
         val held = games.filter { it.localPath != null }.flatMap(::heldIds).toSet()
-        val queued = downloadQueueDao.getPendingDownloads().map { it.gameId }.toSet()
+        val queued = downloadQueueDao.getRecoverableDownloads().map { it.gameId }.toSet()
         val candidates = games.filter { it.localPath == null && it.rommId != null && it.id !in queued }
         val byAppsDir = candidates.groupBy { appsDirFor(it) }
         val readable = byAppsDir.keys.filterNotNull().associateWith(::installedApps).filterValues { it != null }
@@ -75,7 +75,7 @@ class Vita3kLink @Inject constructor(
         val id = titleId.uppercase()
         if (PlatformDefinitions.getCanonicalSlug(game.platformSlug) != VITA) return@withContext refuse(game, "not vita")
         if (game.localPath != null || game.rommId == null) return@withContext refuse(game, "already local or not romm")
-        if (downloadQueueDao.getPendingDownloads().any { it.gameId == gameId }) return@withContext refuse(game, "queued")
+        if (downloadQueueDao.getRecoverableDownloads().any { it.gameId == gameId }) return@withContext refuse(game, "queued")
         val appsDir = appsDirFor(game) ?: return@withContext refuse(game, "emulator is not Vita3K")
         if (installedApps(appsDir)?.any { it.titleId == id } != true) return@withContext refuse(game, "$id not installed")
         val holders = gameDao.getByPlatform(game.platformId, syncPreferencesRepository.getRommUserId())

@@ -55,6 +55,11 @@
     <!-- Owned but the user has decided never to play it. -->
     <string name="completion_status_never_playing">Won\'t Play</string>
 
+    <!-- Where a play session happened, shown in place of a device name for sessions played
+         by streaming the game from the RomM server instead of on a device. "RomM" is a product
+         name and stays as is. -->
+    <string name="play_session_device_romm_streaming">RomM streaming</string>
+
     <!-- Save manager (ui/common/savechannel) -->
 
     <!-- Heading of the modal that manages a game's saves and save states. Noun phrase naming
@@ -184,10 +189,6 @@
     <string name="ui_save_channel_rename_prompt_new_slot">Enter a name for this save slot</string>
     <!-- Prompt above the text field when renaming an existing slot. -->
     <string name="ui_save_channel_rename_prompt_rename">Enter a new name</string>
-    <!-- Footer hint accepting the typed name. Verb. -->
-    <string name="ui_save_channel_rename_footer_confirm">Confirm</string>
-    <!-- Footer hint abandoning the typed name. Verb. -->
-    <string name="ui_save_channel_rename_footer_cancel">Cancel</string>
     <!-- Placeholder inside the empty text field. Noun phrase naming what to type. -->
     <string name="ui_save_channel_rename_placeholder">Slot name</string>
     <!-- Button beside the confirm button. Verb: abandons the typed name. -->
@@ -322,6 +323,8 @@
     <string name="ui_save_channel_notice_state_not_cached">State not found in cache</string>
     <!-- Brief message when Argosy has no state location for the emulator the game runs on. -->
     <string name="ui_save_channel_notice_state_no_config">No state configuration for this emulator</string>
+    <!-- Error shown when restoring a save state that a different emulator core wrote. "State" is a save state; "core" is the emulator engine. -->
+    <string name="ui_save_channel_notice_state_other_core">This state was saved by a different core and can\'t load here</string>
     <!-- Names the state that was erased, when it is the automatic one. Lower case. -->
     <string name="ui_save_channel_notice_delete_target_auto">auto state</string>
     <!-- Names the state that was erased, when it is a numbered slot. %1$d is the slot number.
@@ -430,6 +433,36 @@
 
     <!-- Placeholder in a modal's search field when nothing has been typed. -->
     <string name="ui_modal_search_placeholder">Search...</string>
+    <!-- Enter key of the on-screen controller keyboard while typing in a picker's search field. Verb. -->
+    <string name="ui_modal_search_keyboard_submit">Search</string>
+
+    <!-- Controller keyboard: spoken names of its function keys, read by screen readers. -->
+    <!-- The key that types the next letter in upper case. -->
+    <string name="ui_keyboard_key_shift">Shift</string>
+    <!-- The same key once it is locked so every letter types in upper case. -->
+    <string name="ui_keyboard_key_caps_lock">Caps lock</string>
+    <!-- The key that deletes the character before the cursor. -->
+    <string name="ui_keyboard_key_backspace">Backspace</string>
+    <!-- The key that types a space character. -->
+    <string name="ui_keyboard_key_space">Space</string>
+    <!-- The key that switches to the page of punctuation and symbols. -->
+    <string name="ui_keyboard_key_symbols">Symbols</string>
+    <!-- The key that switches back from the symbols page to the letters page. -->
+    <string name="ui_keyboard_key_letters">Letters</string>
+    <!-- The key that switches to the next keyboard language layout. Verb phrase. -->
+    <string name="ui_keyboard_key_layout">Switch layout</string>
+    <!-- Button above the controller keyboard that inserts the clipboard text. -->
+    <string name="ui_keyboard_paste">Paste</string>
+    <!-- Default label of the key that finishes typing and submits the text. Verb, as in "I am done". -->
+    <string name="ui_keyboard_key_enter_default">Done</string>
+    <!-- Spoken instead of a password's characters. %d is how many characters have been typed. -->
+    <plurals name="ui_keyboard_password_announce">
+        <item quantity="one">%d character</item>
+        <item quantity="other">%d characters</item>
+    </plurals>
+    <string name="ui_keyboard_label_symbols" translatable="false">&amp;123</string>
+    <string name="ui_keyboard_label_letters" translatable="false">ABC</string>
+    <string name="ui_keyboard_counter" translatable="false">%1$d/%2$d</string>
 
     <!-- Heading of the modal that asks which disc of a multi-disc game to start. Rendered in
          caps in English. -->
@@ -588,15 +621,26 @@
     <!-- Icon description on a folded settings group. Verb: opens it. -->
     <string name="ui_expandable_preference_expand">Expand</string>
 
-    <!-- Icon description on a permission row that has been allowed. Adjective describing the
-         permission. -->
-    <string name="ui_permission_card_granted">Granted</string>
 
     <!-- Icon description on the marker a game card shows when it is a favourite. Noun. -->
     <string name="ui_game_card_favorite">Favorite</string>
     <!-- Icon description on the marker a game card shows when the game is on the device.
          Adjective describing the game. -->
     <string name="ui_game_card_downloaded">Downloaded</string>
+    <!-- Description of the line a game card shows while the game is still running in the
+         background. Adjective describing the game. -->
+    <string name="ui_game_card_running">Running</string>
+    <!-- Description of the same line while the running game saves before closing. Verb in
+         progress. -->
+    <string name="ui_game_card_saving">Saving</string>
+    <!-- How long a running game has been played this run. h and m are the unit abbreviations
+         for hours and minutes. -->
+    <string name="ui_running_duration_hours_minutes">%1$dh %2$dm</string>
+    <!-- Same duration under an hour. m is the unit abbreviation for minutes. -->
+    <string name="ui_running_duration_minutes">%1$dm</string>
+    <!-- Description of the strip of game slots in the status bar. Tapping it opens the list of
+         running games. -->
+    <string name="ui_status_bar_running_desc">Running games</string>
 
     <!-- Icon description on the badge over a paused download. Adjective describing the
          download. -->
@@ -612,9 +656,6 @@
 
     <!-- Description of a rendered QR code. %1$s is the address the code encodes. -->
     <string name="ui_qr_code_description">QR Code for %1$s</string>
-    <!-- Instruction over the camera view while scanning a pairing code. "RomM" is the name of
-         the server software; leave it untranslated. -->
-    <string name="ui_qr_scanner_hint">Point at the RomM pairing QR code</string>
 
     <!-- Heading of the menu that opens over a tile on the curated home grid. Noun, singular,
          rendered in caps in English. -->
@@ -713,8 +754,6 @@
     <!-- Heading of the same modal while it is choosing which game the RetroAchievements tile
          tracks, instead of adding a fresh tile. Rendered in caps in English. -->
     <string name="ui_tile_picker_title_track_game">TRACK A GAME</string>
-    <!-- Second line under that heading while the list is filtered. %1$s is what was typed. -->
-    <string name="ui_tile_picker_subtitle_matching">Matching \"%1$s\"</string>
     <!-- Shown on the games tab when nothing is on the device. -->
     <string name="ui_tile_picker_empty_games">No installed games to add</string>
     <!-- Shown on the collections tab when the user has made none. -->
@@ -953,6 +992,8 @@
     <string name="ui_platform_filter_sort_least_games">Least Games</string>
     <!-- Placeholder in the platform list's search field. -->
     <string name="ui_platform_filter_search_placeholder">Search platforms...</string>
+    <!-- Enter key of the on-screen controller keyboard while searching platforms. Finishes typing. -->
+    <string name="ui_platform_filter_keyboard_submit">Done</string>
     <!-- Icon description on the cross that empties that field. Verb. -->
     <string name="ui_platform_filter_search_clear">Clear</string>
     <!-- Count of platforms shown left of the header's buttons. -->
@@ -1232,8 +1273,6 @@
     <string name="ui_quick_settings_bluetooth">Bluetooth</string>
     <!-- Value of a radio row. Adjective: the radio is switched on. -->
     <string name="ui_quick_settings_radio_on">On</string>
-    <!-- Value of a radio row. Adjective: the radio is switched off. -->
-    <string name="ui_quick_settings_radio_off">Off</string>
     <!-- Value of the Wi-Fi row. Adjective: joined to a wireless network. -->
     <string name="ui_quick_settings_wifi_connected">Connected</string>
     <!-- Value of the Wi-Fi row. Adjective: switched on but not joined to any network. -->
@@ -1262,9 +1301,6 @@
     <!-- Title of the page of that panel holding the Wi-Fi and Bluetooth rows. Noun, plural: the
          device's wireless links. -->
     <string name="ui_quick_settings_page_connections">Connections</string>
-    <!-- Connections page, on a device where Argosy cannot switch the radios or join networks.
-         Shown alone below the Wi-Fi and Bluetooth status rows. Full sentence. -->
-    <string name="ui_quick_connections_unsupported">This device doesn\'t allow direct Wi-Fi and Bluetooth control</string>
     <!-- Connections page switcher option that shows the Wi-Fi network lists. Name of the radio. -->
     <string name="ui_quick_connections_tab_wifi">Wi-Fi</string>
     <!-- Connections page switcher option that shows the paired Bluetooth devices. Name of the radio. -->
@@ -1282,9 +1318,6 @@
     <!-- Connections page heading over the Bluetooth devices paired with this device. Noun
          phrase. Shown in capitals. -->
     <string name="ui_quick_connections_paired">Paired devices</string>
-    <!-- Connections page, under Nearby networks while the device looks for networks in range.
-         Verb phrase in progress. -->
-    <string name="ui_quick_connections_scanning">Searching for networks</string>
     <!-- Connections page, under Nearby networks when the search found nothing to join. -->
     <string name="ui_quick_connections_no_networks">No networks found</string>
     <!-- Connections page, under Paired devices when no Bluetooth device is paired. -->
@@ -1299,6 +1332,27 @@
     <string name="ui_quick_connections_secured">Secured</string>
     <!-- Button on a saved network that makes the device stop remembering it. Verb. -->
     <string name="ui_quick_connections_forget">Forget</string>
+    <!-- Button on a paired Bluetooth device that unpairs it so this device stops remembering it.
+         Verb. -->
+    <string name="ui_quick_connections_forget_device">Forget</string>
+    <!-- Connections page row that starts searching for Bluetooth controllers to pair. Verb
+         phrase. -->
+    <string name="ui_quick_connections_pair_controller">Pair a controller</string>
+    <!-- Button on the pair row while a search runs; pressing it stops the search. Verb; keep
+         short. -->
+    <string name="ui_quick_connections_pair_stop">Stop</string>
+    <!-- Connections page heading over Bluetooth controllers found in pairing mode. Short phrase:
+         found close to this device. Shown in capitals. -->
+    <string name="ui_quick_connections_nearby_controllers">Found nearby</string>
+    <!-- Under Found nearby while the search runs and nothing has turned up yet. Tells the player
+         what to do with the controller. -->
+    <string name="ui_quick_connections_controllers_searching">Hold the pairing button on your controller</string>
+    <!-- Under Found nearby after a search that found nothing. -->
+    <string name="ui_quick_connections_no_controllers">No controllers found</string>
+    <!-- Value beside a found controller while it pairs. Verb, in progress; keep short. -->
+    <string name="ui_quick_connections_row_pairing">Pairing</string>
+    <!-- Value beside a found controller that did not pair. Keep short. -->
+    <string name="ui_quick_connections_row_pair_failed">Couldn\'t pair</string>
     <!-- Connections page notice when Argosy may not read the paired Bluetooth devices. Full
          sentence. -->
     <string name="ui_quick_connections_bluetooth_permission">Argosy needs permission to show paired devices.</string>
@@ -1329,6 +1383,72 @@
     <string name="ui_quick_connections_join_cancel">Cancel</string>
     <!-- Error in that dialog when the device refused to join the network. Full sentence. -->
     <string name="ui_quick_connections_join_failed">The device couldn\'t join this network.</string>
+    <!-- Status line under the Bluetooth switch when one device is linked. %1$s is the device
+         name. -->
+    <string name="ui_quick_connections_bluetooth_status_one">%1$s connected</string>
+    <!-- Status line under the Bluetooth switch when several devices are linked. %1$d is how
+         many. -->
+    <plurals name="ui_quick_connections_bluetooth_status_many">
+        <item quantity="one">%1$d device connected</item>
+        <item quantity="other">%1$d devices connected</item>
+    </plurals>
+    <!-- Status line under the Bluetooth switch when no paired device is linked. -->
+    <string name="ui_quick_connections_bluetooth_status_none">No devices connected</string>
+    <!-- Status line under the Wi-Fi switch. %1$s is the network name, %2$s its band, such as
+         "5 GHz". Keep the separator dot. -->
+    <string name="ui_quick_connections_wifi_status_network">%1$s · %2$s</string>
+    <!-- The pair row while a Bluetooth search for controllers runs. Verb, in progress; keep it
+         one short word, it shares the row with the Stop button. -->
+    <string name="ui_quick_connections_searching_controllers">Searching</string>
+    <!-- Button on a found controller that pairs it. Verb. -->
+    <string name="ui_quick_connections_found_pair">Pair</string>
+    <!-- Button on a found controller that did not pair; pairs it again. Verb phrase. -->
+    <string name="ui_quick_connections_retry_pair">Try again</string>
+    <!-- Button on a nearby network the device could not join; joins it again. Verb phrase. -->
+    <string name="ui_quick_connections_retry_join">Try again</string>
+    <!-- Row heading the nearby networks while the device looks for networks in range. Verb
+         phrase in progress. -->
+    <string name="ui_quick_connections_scan_running">Scanning for networks</string>
+    <!-- That same row once a scan has finished; pressing it scans again. Verb phrase. -->
+    <string name="ui_quick_connections_scan_again">Scan again</string>
+    <!-- Value beside a saved network the last scan did not see. Keep short. -->
+    <string name="ui_quick_connections_saved_out_of_range">Not in range</string>
+    <!-- Value beside the saved network the device is joined to right now. Adjective. -->
+    <string name="ui_quick_connections_saved_connected">Connected</string>
+    <!-- Button on a nearby network that connects to it. Verb. -->
+    <string name="ui_quick_connections_nearby_join">Join</string>
+    <!-- Button on a nearby network that opens the Android Wi-Fi panel to connect there. Verb
+         phrase. -->
+    <string name="ui_quick_connections_nearby_join_outside">Join in Wi-Fi settings</string>
+    <!-- Hint under "Bluetooth is off". "It" is Bluetooth. -->
+    <string name="ui_quick_connections_bluetooth_off_hint">Turn it on to pair controllers</string>
+    <!-- Hint under "Wi-Fi is off". "It" is Wi-Fi. -->
+    <string name="ui_quick_connections_wifi_off_hint">Turn it on to see nearby networks</string>
+    <!-- Line under the Bluetooth switch while it has focus, on devices where Android keeps
+         switching Bluetooth off to its own settings. "It" is Bluetooth. -->
+    <string name="ui_quick_connections_bluetooth_toggle_standard">Turn it off in Bluetooth settings</string>
+    <!-- Line under the paired devices on devices where Argosy cannot unpair them. -->
+    <string name="ui_quick_connections_forget_device_hint">Forget devices in Android Bluetooth settings</string>
+    <!-- Line under the Wi-Fi switch while it has focus, on devices where Android keeps the
+         switch to its own Wi-Fi panel. -->
+    <string name="ui_quick_connections_wifi_toggle_standard">Turn Wi-Fi on or off in the Wi-Fi panel</string>
+    <!-- Connections page notice asking for the location permission Android requires before it
+         shares Wi-Fi network names. Full sentence without a final period. -->
+    <string name="ui_quick_connections_wifi_permission">Allow location access to see network names and nearby networks</string>
+    <!-- Button beside that notice that asks for the permission. Verb. -->
+    <string name="ui_quick_connections_wifi_permission_allow">Allow</string>
+    <!-- Connections page notice after the player turned the location permission down for
+         good. -->
+    <string name="ui_quick_connections_wifi_permission_denied">Location access is off for Argosy</string>
+    <!-- Button beside that notice that opens Argosy\'s page in Android app settings. Verb
+         phrase. -->
+    <string name="ui_quick_connections_wifi_permission_settings">Open app permissions</string>
+    <!-- Connections page notice after the player turned the Bluetooth nearby devices permission
+         down for good. -->
+    <string name="ui_quick_connections_bluetooth_permission_denied">Nearby devices permission is off for Argosy</string>
+    <!-- Button beside that notice that opens Argosy\'s page in Android app settings. Verb
+         phrase. -->
+    <string name="ui_quick_connections_bluetooth_permission_settings">Open app permissions</string>
     <!-- Title of the page of that panel holding the background music row. Noun. -->
     <string name="ui_quick_settings_page_music">Music</string>
     <!-- Section heading on that panel over the theme and brightness rows. Noun. Shown in
@@ -1594,10 +1714,18 @@
     <string name="ui_launch_overlay_running_busy_message_game">%1$s is still running %2$s in the background.</string>
     <!-- Body of that question when the running game is not known. %1$s is the emulator's name. -->
     <string name="ui_launch_overlay_running_busy_message">%1$s is still open in the background.</string>
-    <!-- Title of the question shown when another game is still open in Argosy's built-in emulator. %1$s is the title of that game. -->
-    <string name="ui_launch_overlay_running_open_title">%1$s Is Still Open</string>
-    <!-- Body of that question. "It" is the open game. -->
-    <string name="ui_launch_overlay_running_open_message">Starting another game closes it.</string>
+    <!-- Title of the question shown when too many games are open in Argosy's built-in emulator to start another. %1$s is the title of the game being started. -->
+    <string name="ui_launch_overlay_makeroom_title">Make room for %1$s</string>
+    <!-- Line under that title. The player picks one open game; it saves its progress before it closes. -->
+    <string name="ui_launch_overlay_makeroom_subtitle">Pick a game to close. It saves first.</string>
+    <!-- Line under the focused open game. %1$s is when its progress was last saved, such as "5 minutes ago" or "Yesterday". "Saved" is a past-tense verb. -->
+    <string name="ui_launch_overlay_makeroom_saved">Saved %1$s</string>
+    <!-- Button that closes the chosen open game to make room. Verb. -->
+    <string name="ui_launch_overlay_makeroom_close">Close</string>
+    <!-- Status while the chosen game writes its progress before it closes. Verb in progress, not the noun "a save". -->
+    <string name="ui_launch_overlay_makeroom_saving">Saving</string>
+    <!-- Status once the chosen game has closed. Past tense: the game is now closed. -->
+    <string name="ui_launch_overlay_makeroom_closed">Closed</string>
     <!-- Choice that closes the running emulator and starts the chosen game. -->
     <string name="ui_launch_overlay_running_close_label">Close and Launch</string>
     <!-- Second line under that choice. -->
@@ -1780,6 +1908,8 @@
     <string name="ui_quick_menu_empty_random">No games available</string>
     <!-- Placeholder in the quick menu's search field. -->
     <string name="ui_quick_menu_search_placeholder">Search games...</string>
+    <!-- Enter key of the on-screen controller keyboard while typing in the quick menu search. Verb. -->
+    <string name="ui_quick_menu_search_keyboard_submit">Search</string>
     <!-- Shown under an almost-empty search field, saying how much to type. -->
     <string name="ui_quick_menu_search_prompt">Type at least 2 characters to search</string>
     <!-- Shown when a search matches nothing. %1$s is what was typed. -->
@@ -1792,6 +1922,12 @@
     <!-- Icon description on the tick shown on a quick menu list row when the game is on the
          device. Adjective describing the game. -->
     <string name="ui_quick_menu_row_downloaded">Downloaded</string>
+    <!-- Line on a quick menu list row for a game still running in the background. -->
+    <string name="ui_quick_menu_row_running">Running</string>
+    <!-- Same line for a game another emulator app holds. %1$s is the emulator name. -->
+    <string name="ui_quick_menu_row_running_in">Running in %1$s</string>
+    <!-- Same line while the running game saves and closes. Verb in progress. -->
+    <string name="ui_quick_menu_row_saving">Saving</string>
     <!-- Stands in for the platform name on the random game card, when the platform is no longer
          in the library. Adjective. -->
     <string name="ui_quick_menu_random_platform_unknown">Unknown</string>
@@ -1802,6 +1938,9 @@
     <string name="ui_quick_menu_random_action_reroll">Re-roll</string>
     <!-- Action on the random game card that starts the game. Verb, as in play a game. -->
     <string name="ui_quick_menu_random_action_play">Play</string>
+    <!-- Action on the random game card when the game is still running in the background. Verb,
+         brings the running game back to the front. -->
+    <string name="ui_quick_menu_random_action_resume_game">Resume</string>
     <!-- Action on the random game card when the game is not on the device yet. Verb. -->
     <string name="ui_quick_menu_random_action_download">Download</string>
     <!-- Action on the random game card when the Android app still has to be installed. Verb. -->
@@ -1857,6 +1996,8 @@
     <string name="ui_file_browser_new_folder_cancel">Cancel</string>
     <!-- Button on that modal. Verb: makes the folder. -->
     <string name="ui_file_browser_new_folder_confirm">Create</string>
+    <!-- Enter key of the on-screen controller keyboard while naming a new folder. Verb: create the folder. -->
+    <string name="ui_file_browser_new_folder_keyboard_submit">Create</string>
     <!-- Shown under that field when nothing was typed. -->
     <string name="ui_file_browser_new_folder_error_empty">Folder name cannot be empty</string>
     <!-- Shown under that field when the name holds a character a folder name cannot. -->
@@ -2108,6 +2249,10 @@
          sign. -->
     <string name="gamedetail_action_buttons_downloading_percent">%1$d%%</string>
     <string name="gamedetail_action_buttons_waiting_for_server">Waiting for server&#8230;</string>
+    <!-- Play button while a dropped download waits to try again. Verb in progress. -->
+    <string name="gamedetail_action_buttons_retrying">Retrying&#8230;</string>
+    <!-- Play button while a download waits for the device to get back online. -->
+    <string name="gamedetail_action_buttons_waiting_for_network">Waiting for network&#8230;</string>
     <string name="gamedetail_action_buttons_extracting">EXTRACTING...</string>
     <!-- Resumes a paused download. %1$d is a whole-number percent; the literal %% renders one
          percent sign. -->
@@ -2175,6 +2320,12 @@
     <string name="gamelist_row_playtime_of_hltb">%1$s / %2$s</string>
     <!-- Screen reader label for the mark showing the game is on this device. -->
     <string name="gamelist_row_cd_downloaded">Downloaded</string>
+    <!-- Second line of a list row for a game still running in the background. -->
+    <string name="gamelist_row_running">Running</string>
+    <!-- Same line for a game another emulator app holds. %1$s is the emulator name. -->
+    <string name="gamelist_row_running_in">Running in %1$s</string>
+    <!-- Same line while the running game saves and closes. Verb in progress. -->
+    <string name="gamelist_row_saving">Saving</string>
     <!-- Screen reader label for the mark showing the game's download is paused. -->
     <string name="gamelist_row_cd_download_paused">Download paused</string>
     <!-- Screen reader label for the mark showing the game is waiting to download. -->
@@ -2213,4 +2364,30 @@
     <string name="common_game_confirm_hide_message">Hidden games can be shown again in the Library by filtering Source to Hidden.</string>
     <!-- Confirm button of the hide dialog. Verb. -->
     <string name="common_game_confirm_hide_confirm">Hide</string>
+    <!-- Dialog title. Noun: the password protecting a .p12/.pfx certificate file. -->
+    <string name="ui_client_cert_password_title">Certificate Password</string>
+    <!-- Text field label. Noun. -->
+    <string name="ui_client_cert_password_label">Password</string>
+    <!-- Dialog message. %1$s is the chosen file's name. -->
+    <string name="ui_client_cert_password_message">Enter the password for %1$s. Leave it empty if the file has none.</string>
+    <!-- Confirm button. Verb: import the certificate. -->
+    <string name="ui_client_cert_password_import">Import</string>
+    <!-- Same button while the import runs. -->
+    <string name="ui_client_cert_password_import_busy">Importing…</string>
+    <!-- Cancel button of the password dialog. Verb. -->
+    <string name="ui_client_cert_password_cancel">Cancel</string>
+    <!-- Status line while the certificate is being imported. -->
+    <string name="ui_client_cert_password_status_importing">Importing the certificate…</string>
+    <!-- Error: the chosen file could not be opened. -->
+    <string name="ui_client_cert_password_error_not_a_file">That file could not be opened.</string>
+    <!-- Error: the password does not open the certificate file. -->
+    <string name="ui_client_cert_password_error_wrong_password">Wrong password for this certificate file.</string>
+    <!-- Error: the file holds a certificate but not its private key. -->
+    <string name="ui_client_cert_password_error_no_private_key">This file holds no private key. Export the certificate together with its key.</string>
+    <!-- Error: the file is not a PKCS#12 certificate. .p12 and .pfx are file extensions, do not translate. -->
+    <string name="ui_client_cert_password_error_unreadable">That file is not a readable .p12 or .pfx certificate.</string>
+    <!-- Error: the certificate's validity has ended. -->
+    <string name="ui_client_cert_password_error_expired">This certificate has expired.</string>
+    <!-- Error: the device keystore refused the key. RSA and EC are key algorithm names, do not translate. -->
+    <string name="ui_client_cert_password_error_unsupported_key">This device cannot store this key type. Use an RSA or EC key.</string>
 </resources>

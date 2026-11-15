@@ -176,6 +176,10 @@ class ControlsSettingsDelegate @Inject constructor(
         }
     }
 
+    fun setButtonCheckOpen(open: Boolean) {
+        _state.update { it.copy(showButtonCheck = open) }
+    }
+
     fun showNavRingModal() {
         _state.update {
             it.copy(
@@ -352,6 +356,13 @@ class ControlsSettingsDelegate @Inject constructor(
         scope.launch {
             preferencesRepository.setSystemHotkeysEnabled(enabled)
             _state.update { it.copy(systemHotkeysEnabled = enabled) }
+        }
+    }
+
+    fun setHomeButtonInGames(scope: CoroutineScope, enabled: Boolean) {
+        scope.launch {
+            preferencesRepository.setHomeButtonInGames(enabled)
+            _state.update { it.copy(homeButtonInGames = enabled) }
         }
     }
 

@@ -43,6 +43,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import com.nendo.argosy.ui.components.keyboard.ControllerKeyboardSession
+import com.nendo.argosy.ui.components.keyboard.ControllerKeyboardTapTarget
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.ContentScale
@@ -102,11 +105,20 @@ fun SearchScreen(
         }
     }
 
-    LaunchedEffect(uiState.showKeyboard) {
-        if (uiState.showKeyboard) {
-            focusRequester.requestFocus()
-        }
-    }
+    ControllerKeyboardSession(
+        open = uiState.showKeyboard,
+        label = if (uiState.mediaSearchable) {
+            stringResource(R.string.library_search_placeholder_games_and_media)
+        } else {
+            stringResource(R.string.library_search_placeholder_games)
+        },
+        text = uiState.query,
+        onTextChange = { viewModel.updateQuery(it) },
+        onSubmit = { viewModel.closeKeyboard() },
+        onClose = { viewModel.closeKeyboard() },
+        submitLabel = stringResource(R.string.library_search_keyboard_submit),
+        onSystemKeyboard = { focusRequester.requestFocus() }
+    )
 
     Column(
         modifier = Modifier
@@ -118,7 +130,10 @@ fun SearchScreen(
             onQueryChange = { viewModel.updateQuery(it) },
             isSearching = uiState.isSearching,
             mediaSearchable = uiState.mediaSearchable,
-            focusRequester = focusRequester
+            focusRequester = focusRequester,
+            isFocused = uiState.isFieldFocused,
+            onFieldFocused = { if (uiState.showKeyboard) viewModel.closeKeyboard() },
+            onTap = { viewModel.focusKeyboard() }
         )
 
         when {
@@ -169,8 +184,12 @@ private fun SearchHeader(
     onQueryChange: (String) -> Unit,
     isSearching: Boolean,
     mediaSearchable: Boolean,
-    focusRequester: FocusRequester
+    focusRequester: FocusRequester,
+    isFocused: Boolean,
+    onFieldFocused: () -> Unit,
+    onTap: () -> Unit
 ) {
+    val fieldShape = RoundedCornerShape(Dimens.radiusLg)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -178,58 +197,73 @@ private fun SearchHeader(
             .padding(Dimens.spacingMd),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .weight(1f)
-                .background(
-                    MaterialTheme.colorScheme.surfaceVariant,
-                    RoundedCornerShape(Dimens.radiusLg)
-                )
-                .padding(horizontal = Dimens.spacingMd, vertical = Dimens.radiusLg),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                Icons.Default.Search,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(Dimens.iconSm)
-            )
-            Spacer(modifier = Modifier.width(Dimens.radiusLg))
-
-            Box(modifier = Modifier.weight(1f)) {
-                if (query.isEmpty()) {
-                    Text(
-                        text = if (mediaSearchable) {
-                            stringResource(R.string.library_search_placeholder_games_and_media)
+        ControllerKeyboardTapTarget(onTap = onTap, modifier = Modifier.weight(1f)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .then(
+                        if (isFocused) {
+                            Modifier.border(Dimens.borderMedium, MaterialTheme.colorScheme.primary, fieldShape)
                         } else {
-                            stringResource(R.string.library_search_placeholder_games)
+                            Modifier
+                        }
+                    )
+                    .background(
+                        if (isFocused) {
+                            LocalArgosyTheme.current.focusAccent.copy(alpha = FOCUS_TINT_ALPHA)
+                                .compositeOver(MaterialTheme.colorScheme.surfaceVariant)
+                        } else {
+                            MaterialTheme.colorScheme.surfaceVariant
                         },
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                            .copy(alpha = PLACEHOLDER_ALPHA)
+                        fieldShape
+                    )
+                    .padding(horizontal = Dimens.spacingMd, vertical = Dimens.radiusLg),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(Dimens.iconSm)
+                )
+                Spacer(modifier = Modifier.width(Dimens.radiusLg))
+
+                Box(modifier = Modifier.weight(1f)) {
+                    if (query.isEmpty()) {
+                        Text(
+                            text = if (mediaSearchable) {
+                                stringResource(R.string.library_search_placeholder_games_and_media)
+                            } else {
+                                stringResource(R.string.library_search_placeholder_games)
+                            },
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                .copy(alpha = PLACEHOLDER_ALPHA)
+                        )
+                    }
+                    BasicTextField(
+                        value = query,
+                        onValueChange = onQueryChange,
+                        textStyle = TextStyle(
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = MaterialTheme.typography.bodyLarge.fontSize
+                        ),
+                        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                        singleLine = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .focusRequester(focusRequester)
+                            .onFocusChanged { if (it.isFocused) onFieldFocused() }
                     )
                 }
-                BasicTextField(
-                    value = query,
-                    onValueChange = onQueryChange,
-                    textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = MaterialTheme.typography.bodyLarge.fontSize
-                    ),
-                    cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester)
-                )
-            }
 
-            if (isSearching) {
-                Spacer(modifier = Modifier.width(Dimens.radiusLg))
-                CircularProgressIndicator(
-                    modifier = Modifier.size(Dimens.iconSm),
-                    strokeWidth = Dimens.borderMedium
-                )
+                if (isSearching) {
+                    Spacer(modifier = Modifier.width(Dimens.radiusLg))
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(Dimens.iconSm),
+                        strokeWidth = Dimens.borderMedium
+                    )
+                }
             }
         }
     }
@@ -378,9 +412,16 @@ private fun RowScope.GameResultContent(result: SearchResultUi.Game) {
         title = result.title,
         primaryDetail = result.platformName
             ?: stringResource(R.string.library_search_result_platform_unknown),
-        details = listOfNotNull(result.releaseYear?.toString(), result.developer)
+        details = listOfNotNull(result.releaseYear?.toString(), result.developer),
+        running = com.nendo.argosy.ui.common.LocalRunningGames.current.markFor(result.gameId)
     )
 }
+
+private val SEARCH_RUNNING_LABELS = com.nendo.argosy.ui.components.RunningLineLabels(
+    running = R.string.library_search_result_running,
+    runningIn = R.string.library_search_result_running_in,
+    saving = R.string.library_search_result_saving
+)
 
 /**
  * A title identifies itself by its library the way a game identifies itself by its platform. Where
@@ -429,7 +470,8 @@ private fun RowScope.MediaResultContent(result: SearchResultUi.Media) {
 private fun RowScope.ResultLabels(
     title: String,
     primaryDetail: String,
-    details: List<String>
+    details: List<String>,
+    running: com.nendo.argosy.ui.common.RunningGameUi? = null
 ) {
     Column(modifier = Modifier.weight(WEIGHT_FILL)) {
         Text(
@@ -464,6 +506,9 @@ private fun RowScope.ResultLabels(
                     overflow = TextOverflow.Ellipsis
                 )
             }
+        }
+        if (running != null) {
+            com.nendo.argosy.ui.components.RunningSubLine(running = running, labels = SEARCH_RUNNING_LABELS)
         }
     }
 }

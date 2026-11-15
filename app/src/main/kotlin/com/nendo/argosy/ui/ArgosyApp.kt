@@ -128,6 +128,7 @@ import com.nendo.argosy.ui.theme.gripReserveBottomInset
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
@@ -202,13 +203,17 @@ fun ArgosyApp(
     }
 
     val isOnWizard = currentRoute == Screen.FirstRun.route
+    val setupActive by rememberUpdatedState(uiState.setupIncomplete || isOnWizard)
     var wasOnWizard by remember { mutableStateOf(isOnWizard) }
-    LaunchedEffect(uiState.isFirstRun, isOnWizard) {
-        dsm?.recordWizardState(uiState.isFirstRun || isOnWizard)
-        if (wasOnWizard && !isOnWizard) {
+    LaunchedEffect(isOnWizard) {
+        if (wasOnWizard && !isOnWizard && !uiState.setupIncomplete) {
             viewModel.triggerPostWizardSync()
         }
         wasOnWizard = isOnWizard
+    }
+
+    LaunchedEffect(isOnWizard) {
+        activity?.holdStatusBarHidden(isOnWizard)
     }
 
     LaunchedEffect(isOnHomeScreen) {
@@ -233,6 +238,19 @@ fun ArgosyApp(
         navBackStackEntry?.let { dsm?.setPrimaryRoute(it.concreteRoute()) }
     }
 
+    val navigateFromDrawer: (String) -> Unit = remember {
+        { route ->
+            val current = navController.currentDestination?.route
+            if (route != current) {
+                navController.navigate(route) {
+                    popUpTo(Screen.Home.route) { saveState = true }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        }
+    }
+
     val handleDeepLink: suspend (android.net.Uri) -> Unit = { uri ->
         android.util.Log.d("ArgosyApp", "Handling deep link: $uri")
         val showDeepLinkNotice: (Int) -> Unit = { messageRes ->
@@ -250,7 +268,7 @@ fun ArgosyApp(
         }
         if (uri.scheme == "argosy") {
             when (uri.host) {
-                "game" -> {
+                com.nendo.argosy.ArgosyHomeIntent.GAME_DEEP_LINK_HOST -> {
                     val gameId = uri.lastPathSegment?.toLongOrNull()
                     if (gameId != null && awaitNavGraph()) {
                         navController.navigate(Screen.GameDetail.createRoute(gameId)) {
@@ -272,6 +290,11 @@ fun ArgosyApp(
                         navController.navigate(Screen.Apps.route) {
                             launchSingleTop = true
                         }
+                    }
+                }
+                com.nendo.argosy.ArgosyHomeIntent.RUNNING_DEEP_LINK_HOST -> {
+                    if (!setupActive && awaitNavGraph()) {
+                        navigateFromDrawer(Screen.Running.route)
                     }
                 }
                 "launch" -> {
@@ -306,6 +329,14 @@ fun ArgosyApp(
     }
     val currentHandleDeepLink by rememberUpdatedState(handleDeepLink)
     val inputLifecycle = androidx.lifecycle.compose.LocalLifecycleOwner.current.lifecycle
+    val runningGamesUi by viewModel.runningGamesUi.collectAsState()
+    val runningBreath = com.nendo.argosy.ui.common.rememberRunningBreath(active = runningGamesUi.isAnyRunning)
+    val openRunningGames: () -> Unit = remember(navigateFromDrawer) { { navigateFromDrawer(Screen.Running.route) } }
+    LaunchedEffect(inputLifecycle) {
+        inputLifecycle.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
+            viewModel.watchRunningGames()
+        }
+    }
     LaunchedEffect(dsm, inputLifecycle) {
         val manager = dsm ?: return@LaunchedEffect
         manager.pendingDeepLink.flowWithLifecycle(inputLifecycle).filterNotNull().collect { uri ->
@@ -331,9 +362,10 @@ fun ArgosyApp(
 
     var screenSetPromptVisible by remember { mutableStateOf(false) }
 
-    LaunchedEffect(unconfiguredScreenSet) {
-        if (unconfiguredScreenSet == null) {
+    LaunchedEffect(unconfiguredScreenSet, setupActive) {
+        if (unconfiguredScreenSet == null || setupActive) {
             screenSetPromptVisible = false
+            if (unconfiguredScreenSet != null) dsm?.clearUnconfiguredScreenSet()
             return@LaunchedEffect
         }
         screenSetPromptVisible = true
@@ -398,21 +430,8 @@ fun ArgosyApp(
 
     val startDestination = remember(uiState.isLoading) {
         when {
-            uiState.isFirstRun -> Screen.FirstRun.route
+            uiState.setupIncomplete -> Screen.FirstRun.route
             else -> Screen.Home.route
-        }
-    }
-
-    val navigateFromDrawer: (String) -> Unit = remember {
-        { route ->
-            val current = navController.currentDestination?.route
-            if (route != current) {
-                navController.navigate(route) {
-                    popUpTo(Screen.Home.route) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
         }
     }
 
@@ -433,7 +452,7 @@ fun ArgosyApp(
 
     val openDrawer = remember(drawerInputHandler) {
         wizardGuard@{
-            if (uiState.isFirstRun) return@wizardGuard
+            if (setupActive) return@wizardGuard
             viewModel.hideNavBar()
             inputDispatcher.subscribeDrawer(drawerInputHandler)
             viewModel.setDrawerOpen(true)
@@ -532,7 +551,7 @@ fun ArgosyApp(
 
     val openQuickSettings = remember(quickSettingsInputHandler) {
         wizardGuard@{
-            if (uiState.isFirstRun) return@wizardGuard
+            if (setupActive) return@wizardGuard
             viewModel.hideNavBar()
             inputDispatcher.subscribeDrawer(quickSettingsInputHandler)
             viewModel.quickSettings.setOpen(true)
@@ -580,7 +599,7 @@ fun ArgosyApp(
 
     val openQuickMenu = remember(quickMenuInputHandler) {
         wizardGuard@{
-            if (uiState.isFirstRun) return@wizardGuard
+            if (setupActive) return@wizardGuard
             if (isDrawerOpen) closeDrawer()
             if (isQuickSettingsOpen) closeQuickSettings()
             viewModel.hideNavBar()
@@ -811,8 +830,20 @@ fun ArgosyApp(
         viewModel.gamepadInputHandler.homeEventEnabled = !isHome
     }
 
-    LaunchedEffect(currentRoute, uiState.isFirstRun, navRingState.destinations.isEmpty()) {
-        if (!uiState.isFirstRun && viewModel.isNavRingRoute(currentRoute)) {
+    LaunchedEffect(uiState.isLoading, uiState.setupIncomplete, currentRoute) {
+        if (uiState.isLoading || !uiState.setupIncomplete) return@LaunchedEffect
+        if (currentRoute == null || currentRoute == Screen.FirstRun.route) return@LaunchedEffect
+        if (isDrawerOpen) closeDrawer()
+        if (isQuickSettingsOpen) closeQuickSettings()
+        if (quickMenuState.isVisible) closeQuickMenu()
+        navController.navigate(Screen.FirstRun.route) {
+            popUpTo(navController.graph.id) { inclusive = true }
+            launchSingleTop = true
+        }
+    }
+
+    LaunchedEffect(currentRoute, setupActive, navRingState.destinations.isEmpty()) {
+        if (!setupActive && viewModel.isNavRingRoute(currentRoute)) {
             viewModel.showNavBar()
         } else {
             viewModel.hideNavBar()
@@ -919,7 +950,7 @@ fun ArgosyApp(
                         val delta = if (event == GamepadEvent.PrevSection) -1 else 1
                         val target = if (
                             !input.isRepeat &&
-                            !uiState.isFirstRun &&
+                            !setupActive &&
                             !isDrawerOpen &&
                             !isQuickSettingsOpen &&
                             !quickMenuState.isVisible
@@ -982,11 +1013,19 @@ fun ArgosyApp(
                         if (isQuickSettingsOpen) closeQuickSettings()
                         if (quickMenuState.isVisible) closeQuickMenu()
                         val homeRoute = Screen.Home.route
-                        if (currentRoute != homeRoute) {
+                        if (!setupActive && currentRoute != homeRoute) {
                             navController.navigate(homeRoute) {
                                 popUpTo(homeRoute) { inclusive = true }
                                 launchSingleTop = true
                             }
+                        }
+                    }
+                    GamepadEvent.LongHome -> {
+                        if (!setupActive) {
+                            if (isDrawerOpen) closeDrawer()
+                            if (isQuickSettingsOpen) closeQuickSettings()
+                            if (quickMenuState.isVisible) closeQuickMenu()
+                            navigateFromDrawer(Screen.Running.route)
                         }
                     }
                     else -> {}
@@ -998,7 +1037,7 @@ fun ArgosyApp(
     val shortcutGate = remember(inputDispatcher, navController) {
         object : UiShortcutGate {
             override fun hotkeysAllowed(): Boolean =
-                !uiState.isFirstRun &&
+                !setupActive &&
                     !isEmulatorRunning &&
                     navController.currentDestination?.route != Screen.FirstRun.route &&
                     !inputDispatcher.hasCapturingOverlay()
@@ -1046,7 +1085,7 @@ fun ArgosyApp(
         viewModel.gamepadInputHandler.homeEventFlow().flowWithLifecycle(inputLifecycle).collect {
             if (isEmulatorRunning) {
             } else {
-                if (navController.currentDestination != null) {
+                if (navController.currentDestination != null && !setupActive) {
                     if (isDrawerOpen) closeDrawer()
                     if (isQuickSettingsOpen) closeQuickSettings()
                     if (quickMenuState.isVisible) closeQuickMenu()
@@ -1096,7 +1135,10 @@ fun ArgosyApp(
                 battery = uiState.showStatusBattery,
                 network = uiState.showStatusNetwork
             ),
-        com.nendo.argosy.ui.components.friends.LocalUserAvatarState provides localAvatarInfo
+        com.nendo.argosy.ui.components.friends.LocalUserAvatarState provides localAvatarInfo,
+        com.nendo.argosy.ui.common.LocalRunningGames provides runningGamesUi,
+        com.nendo.argosy.ui.common.LocalRunningBreath provides runningBreath,
+        com.nendo.argosy.ui.common.LocalOpenRunningGames provides openRunningGames
     ) {
         if (uiState.isLoading) {
             AppSplashScreen(statusRes = uiState.startupStatusRes)
@@ -1114,7 +1156,7 @@ fun ArgosyApp(
                 ?: remember { kotlinx.coroutines.flow.MutableStateFlow(null) }
             ).collectAsState()
         val dimmerEnabled = dsm != null && screenDimmerPrefs.enabled && !isEmulatorRunning &&
-            !uiState.isFirstRun && mediaPlayback == null
+            !setupActive && mediaPlayback == null
         val bottomReserved = gripReserveBottomInset()
 
         ScreenDimmerOverlay(
@@ -1141,7 +1183,7 @@ fun ArgosyApp(
             val navBarAllowed = onRingDestination &&
                 !hasCapturingOverlay &&
                 !homeAppBarOwnsBottom &&
-                !uiState.isFirstRun &&
+                !setupActive &&
                 !isDrawerOpen &&
                 !isQuickSettingsOpen &&
                 !quickMenuState.isVisible &&
@@ -1192,7 +1234,7 @@ fun ArgosyApp(
                  * connected. The window inset is not trusted for this: it reads zero here even
                  * with the keyboard on screen, which is what made every text field unusable.
                  */
-                LaunchedEffect(keySinkFocused, drawerState.isOpen, uiState.isFirstRun) {
+                LaunchedEffect(keySinkFocused, drawerState.isOpen, setupActive) {
                     if (!keySinkFocused && !drawerState.isOpen) {
                         delay(KEY_SINK_RECLAIM_GRACE_MS)
                         if (imeManager?.isAcceptingText == true) return@LaunchedEffect
@@ -1213,7 +1255,7 @@ fun ArgosyApp(
 
                 ModalNavigationDrawer(
                 drawerState = drawerState,
-                gesturesEnabled = !uiState.isFirstRun,
+                gesturesEnabled = !setupActive,
                 scrimColor = scrimColor,
                 drawerContent = {
                     MainDrawer(
@@ -1259,7 +1301,7 @@ fun ArgosyApp(
                     val density = LocalDensity.current
                     var navBarHeight by remember { mutableStateOf(0.dp) }
                     val navBarHoldsSpace = navRingState.isAlwaysVisible && onRingDestination &&
-                        !homeAppBarOwnsBottom && !uiState.isFirstRun && navBarHeight > 0.dp
+                        !homeAppBarOwnsBottom && !setupActive && navBarHeight > 0.dp
                     val navBarClearance = if (navBarHoldsSpace) navBarHeight + Dimens.spacingSm else 0.dp
                     val navBarLift by androidx.compose.animation.core.animateDpAsState(
                         targetValue = if (
@@ -1325,6 +1367,19 @@ fun ArgosyApp(
 
             com.nendo.argosy.ui.components.recap.MonthlyRecapOverlay()
 
+            val updatePromptKeyboard by com.nendo.argosy.ui.components.keyboard.ControllerKeyboard.active.collectAsState()
+            com.nendo.argosy.ui.components.update.UpdatePromptOverlay(
+                idle = !setupActive &&
+                    !isEmulatorRunning &&
+                    !hasCapturingOverlay &&
+                    !isDrawerOpen &&
+                    !isQuickSettingsOpen &&
+                    !quickMenuState.isVisible &&
+                    !appPromptShowing &&
+                    !com.nendo.argosy.ui.components.recap.monthlyRecapShowing() &&
+                    updatePromptKeyboard == null
+            )
+
             com.nendo.argosy.ui.components.LaunchOverlay(appPromptShowing = appPromptShowing)
 
             val mutedNotificationKeys = if (currentRoute == Screen.SyncMonitor.route) {
@@ -1335,11 +1390,17 @@ fun ArgosyApp(
             LaunchedEffect(mutedNotificationKeys) { dsm?.setMutedNotificationKeys(mutedNotificationKeys) }
             val notificationsOnPresentation by dsm?.companionHoldsPrimary?.collectAsState()
                 ?: remember { mutableStateOf(false) }
+            val keyboardHeightPx by com.nendo.argosy.ui.components.keyboard.ControllerKeyboard.dockedHeightPx
+                .collectAsState()
+            val keyboardHeight = with(LocalDensity.current) { keyboardHeightPx.toDp() }
             if (!notificationsOnPresentation) {
                 NotificationHost(
                     manager = viewModel.notificationManager,
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                    mutedKeys = mutedNotificationKeys
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = keyboardHeight),
+                    mutedKeys = mutedNotificationKeys,
+                    criticalOnly = isOnWizard
                 )
             }
 
@@ -1391,9 +1452,11 @@ fun ArgosyApp(
                 connectionsPage = {
                     QuickSettingsConnectionsPage(
                         state = quickConnectionsState,
+                        forgetHold = viewModel.quickConnections.forgetHold,
                         onRowClick = quickConnectionsInputHandler::tapRow,
                         onShowList = quickConnectionsInputHandler::tapList,
-                        onForget = quickConnectionsInputHandler::tapForget
+                        onFocusRow = quickConnectionsInputHandler::focusRow,
+                        onForget = quickConnectionsInputHandler::forget
                     )
                 },
                 musicPage = {
@@ -1489,6 +1552,8 @@ fun ArgosyApp(
                 onDismiss = { viewModel.privilegedAccess.answerPrompt(enable = false) }
             )
 
+            com.nendo.argosy.ui.components.permissions.PermissionSheetHost(controller = viewModel.permissionSheets)
+
             netplayInvitePrompt?.let { invite ->
                 NetplayInviteModal(
                     invite = invite,
@@ -1524,8 +1589,9 @@ fun ArgosyApp(
                     com.nendo.argosy.DualScreenManagerHolder.instance?.publishControlHints(relayed)
                 }
             } else {
+                val keyboardOpen by com.nendo.argosy.ui.components.keyboard.ControllerKeyboard.active.collectAsState()
                 AnimatedVisibility(
-                    visible = !navRingState.footerYieldsToBar,
+                    visible = !navRingState.footerYieldsToBar && keyboardOpen == null,
                     enter = slideInVertically(tween(Motion.durationSlide)) { it },
                     exit = slideOutVertically(tween(Motion.durationSlide)) { it },
                     modifier = Modifier.align(Alignment.BottomCenter)
@@ -1533,6 +1599,8 @@ fun ArgosyApp(
                     FooterHost(controller = footerHostController)
                 }
             }
+
+            com.nendo.argosy.ui.components.keyboard.ControllerKeyboardHost()
             }
         }
     }

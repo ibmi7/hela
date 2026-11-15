@@ -11,6 +11,7 @@ import androidx.annotation.StringRes
 import com.nendo.argosy.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import java.net.URLEncoder
 import com.nendo.argosy.data.download.DownloadManager
 import com.nendo.argosy.data.download.DownloadQueueState
 import com.nendo.argosy.data.emulator.LaunchOrigin
@@ -59,6 +60,8 @@ import com.nendo.argosy.core.notification.DownloadNotificationObserver
 import com.nendo.argosy.core.notification.NotificationManager
 import com.nendo.argosy.core.notification.SyncNotificationObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import com.nendo.argosy.ui.common.toRunningGamesUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -77,7 +80,7 @@ import javax.inject.Inject
 private const val RECONNECT_SETTLE_MS = 5_000L
 
 data class ArgosyUiState(
-    val isFirstRun: Boolean = true,
+    val setupIncomplete: Boolean = true,
     val isLoading: Boolean = true,
     @StringRes val startupStatusRes: Int? = null,
     val showStatusClock: Boolean = true,
@@ -107,10 +110,12 @@ data class DrawerState(
     val downloadCount: Int = 0,
     val saveSyncAttentionCount: Int = 0,
     val pendingUpdateCount: Int = 0,
+    val runningCount: Int = 0,
     val navFocusIndex: Int = 0
 ) {
     fun badgeCountFor(route: String): Int? = when (route) {
         Screen.Downloads.route -> downloadCount
+        Screen.Running.route -> runningCount
         Screen.SaveSync.route -> saveSyncAttentionCount
         Screen.Settings.route -> pendingUpdateCount
         else -> 0
@@ -199,8 +204,27 @@ class ArgosyViewModel @Inject constructor(
     private val gameStartRouter: com.nendo.argosy.ui.screens.common.GameStartRouter,
     private val connectedControllerTracker: com.nendo.argosy.core.input.ConnectedControllerTracker,
     val apkInstallManager: com.nendo.argosy.data.update.ApkInstallManager,
-    val privilegedAccess: com.nendo.argosy.data.access.PrivilegedAccess
+    val privilegedAccess: com.nendo.argosy.data.access.PrivilegedAccess,
+    private val runningGames: com.nendo.argosy.data.emulator.background.RunningGames,
+    private val setupStateRepository: com.nendo.argosy.data.setup.SetupStateRepository,
+    val permissionSheets: com.nendo.argosy.data.permissions.PermissionSheetController
 ) : ViewModel() {
+
+    val runningGamesUi: StateFlow<com.nendo.argosy.ui.common.RunningGamesUi> = runningGames.state
+        .map { it.toRunningGamesUi() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = com.nendo.argosy.ui.common.RunningGamesUi()
+        )
+
+    private val runningCount = runningGamesUi.map { it.appCount }
+
+    /**
+     * Keeps the running list polled while the calling coroutine runs; the app root holds it for
+     * as long as Argosy is started.
+     */
+    suspend fun watchRunningGames() = runningGames.watch()
 
     suspend fun resolveDeepLinkLaunch(
         request: com.nendo.argosy.domain.model.DeepLinkRequest
@@ -316,12 +340,12 @@ class ArgosyViewModel @Inject constructor(
         preferencesRepository.userPreferences,
         connectedControllerTracker.activeLayout,
         launcherStartup.complete,
-        launcherStartup.status
-    ) { prefs, detectedLayout, startupDone, status ->
+        launcherStartup.status,
+        setupStateRepository.needsSetup
+    ) { prefs, detectedLayout, startupDone, status, needsSetup ->
         val glyphSwaps = prefs.buttonGlyphSwaps(detectedLayout)
-        val hasExistingConfig = prefs.rommBaseUrl != null || prefs.romStoragePath != null
         ArgosyUiState(
-            isFirstRun = !prefs.firstRunComplete && !hasExistingConfig,
+            setupIncomplete = needsSetup,
             isLoading = !startupDone,
             startupStatusRes = status,
             showStatusClock = prefs.showStatusClock,
@@ -373,7 +397,8 @@ class ArgosyViewModel @Inject constructor(
             ownedConflictCount(),
             preferencesRepository.userPreferences,
             mediaDownloadManager.activeDownload,
-            mediaDownloadManager.downloadQueue
+            mediaDownloadManager.downloadQueue,
+            runningCount
         )
     ) { values ->
         val connection = values[0] as ConnectionState
@@ -399,6 +424,7 @@ class ArgosyViewModel @Inject constructor(
             downloadCount = downloadCount,
             saveSyncAttentionCount = saveSyncAttentionCount,
             pendingUpdateCount = pendingUpdateCount,
+            runningCount = values[9] as Int,
             navFocusIndex = navIndex
         )
     }.stateIn(
@@ -559,6 +585,7 @@ class ArgosyViewModel @Inject constructor(
             syncCoordinator.processQueue()
             downloadManager.recheckStorageAndResume()
         }
+        viewModelScope.launch(Dispatchers.IO) { runningGames.refresh() }
     }
 
     val screenDimmerPreferences: StateFlow<ScreenDimmerPreferences> = preferencesRepository.userPreferences
@@ -570,7 +597,7 @@ class ArgosyViewModel @Inject constructor(
         )
 
     val isEmulatorRunning: StateFlow<Boolean> = playSessionTracker.activeSession
-        .map { it != null }
+        .map { it?.isStream == false }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -835,9 +862,10 @@ class ArgosyViewModel @Inject constructor(
     }
 }
 
-private fun rommAvatarUrl(prefs: UserPreferences): String? {
+internal fun rommAvatarUrl(prefs: UserPreferences): String? {
     if (prefs.rommAvatarPath.isNullOrBlank()) return null
     val baseUrl = prefs.rommBaseUrl?.trim()?.trimEnd('/')?.takeIf { it.isNotEmpty() } ?: return null
     val userId = prefs.rommUserId ?: return null
-    return "$baseUrl/api/users/$userId/avatar"
+    val revision = prefs.rommProfileUpdatedAt?.let { "?ts=${URLEncoder.encode(it, Charsets.UTF_8.name())}" }.orEmpty()
+    return "$baseUrl/api/users/$userId/avatar$revision"
 }

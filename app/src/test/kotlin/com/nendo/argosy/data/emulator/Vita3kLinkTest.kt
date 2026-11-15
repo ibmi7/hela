@@ -61,7 +61,7 @@ class Vita3kLinkTest {
             verdict = SavePathVerdict.Ok
         )
         coEvery { folderResolver.downloadDirForPlatform(5L, "psvita") } returns library
-        coEvery { downloadQueueDao.getPendingDownloads() } returns emptyList()
+        coEvery { downloadQueueDao.getRecoverableDownloads() } returns emptyList()
         coEvery { syncPrefs.getRommUserId() } returns 1L
         coEvery { gameDao.getByPlatform(5L, 1L) } returns emptyList()
         coEvery { gameFileDao.getFilesForGame(226L) } returns listOf(mockk<GameFileEntity>(), mockk())
@@ -102,7 +102,7 @@ class Vita3kLinkTest {
     @Test
     fun `a queued game is not linked`() = runTest {
         persona()
-        coEvery { downloadQueueDao.getPendingDownloads() } returns listOf(mockk<DownloadQueueEntity> { every { gameId } returns 226L })
+        coEvery { downloadQueueDao.getRecoverableDownloads() } returns listOf(mockk<DownloadQueueEntity> { every { gameId } returns 226L })
 
         assertFalse(link.link(226L, "PCSB00245"))
         assertFalse(File(library, "Persona 4 Golden.vita3k").exists())

@@ -22,6 +22,8 @@
     <string name="settings_main_section_library">BIBLIOTECA</string>
     <!-- Group heading over the rows for the servers and accounts Argosy talks to. Noun, plural. -->
     <string name="settings_main_section_connections">CONEXÕES</string>
+    <string name="settings_main_network_title">Rede e Bluetooth</string>
+    <string name="settings_main_network_subtitle">Redes Wi-Fi e controles Bluetooth</string>
     <!-- Group heading over the rows about the device and the app itself. Noun. -->
     <string name="settings_main_section_system">SISTEMA</string>
 
@@ -358,6 +360,17 @@
     <string name="settings_interface_monthly_recap_title">Resumo Mensal</string>
     <!-- Second line of that row. -->
     <string name="settings_interface_monthly_recap_subtitle">No início de cada mês, mostrar um resumo do mês anterior na Tela Inicial</string>
+    <string name="settings_interface_section_notifications">Notificações</string>
+    <string name="settings_interface_notifications_title">Notificações</string>
+    <string name="settings_interface_notifications_subtitle">Mostrar avisos do Argosy no launcher e sobre os jogos. Avisos de bateria continuam aparecendo</string>
+    <string name="settings_interface_notify_downloads_finished_title">Downloads concluídos</string>
+    <string name="settings_interface_notify_downloads_finished_subtitle">Mostrar um aviso quando um download terminar</string>
+    <string name="settings_interface_notify_battery_title">Bateria</string>
+    <string name="settings_interface_notify_battery_subtitle" formatted="false">Avisa em 15% e 5%. Os jogos integrados salvam em 5% mesmo assim</string>
+    <string name="settings_interface_notify_charging_title">Carregamento</string>
+    <string name="settings_interface_notify_charging_subtitle">Mostrar um aviso ao conectar ou desconectar o carregador durante o jogo</string>
+    <string name="settings_interface_notify_controllers_title">Controles</string>
+    <string name="settings_interface_notify_controllers_subtitle">Mostrar um aviso quando um controle se conecta, se desconecta ou fica com pouca bateria</string>
     <!-- Row opening the settings for handhelds with a clip-on grip. Noun phrase. -->
     <string name="settings_interface_controller_grip_title">Empunhadura do controle</string>
     <!-- Second line of that row. -->
@@ -518,9 +531,11 @@
     <string name="settings_navigation_shortcut_capture_reserved">%1$s move pelos menus e não pode ser atribuído</string>
     <!-- Button hint that closes that dialog without assigning. Verb. -->
     <string name="settings_navigation_shortcut_capture_hint_cancel">Cancelar</string>
-    <string name="settings_navigation_section_system_buttons">Botões do sistema</string>
+    <string name="settings_navigation_section_system_buttons">Atalhos globais</string>
     <string name="settings_navigation_system_hotkeys_title">Combinações de Início e Voltar</string>
     <string name="settings_navigation_system_hotkeys_subtitle">Combinações do controle que funcionam como Início e Voltar enquanto outro app está aberto</string>
+    <string name="settings_navigation_home_button_in_games_title">Segurar Início para trocar de jogo</string>
+    <string name="settings_navigation_home_button_in_games_subtitle">Segure o botão Início do aparelho em um jogo aberto pelo Argosy para abrir o seletor de jogos. Desative para deixar o Início com o aparelho. Requer root</string>
     <string name="settings_navigation_system_hotkeys_access_title">Serviço de acessibilidade</string>
     <string name="settings_navigation_system_hotkeys_access_subtitle">As combinações chegam a outros apps pelo serviço de acessibilidade do Argosy</string>
     <string name="settings_navigation_system_hotkeys_access_on">Ativado</string>
@@ -528,7 +543,7 @@
     <string name="settings_navigation_system_home_title">Início</string>
     <string name="settings_navigation_system_home_subtitle">Segure juntos por 2 segundos. Tocar no botão guia também vai para o Início</string>
     <string name="settings_navigation_system_back_title">Voltar</string>
-    <string name="settings_navigation_system_back_subtitle">Segure os primeiros botões e depois aperte o último. Segurar o botão guia por 1 segundo também volta. Em um jogo, segurar a combinação por 3 segundos abre o painel rápido</string>
+    <string name="settings_navigation_system_back_subtitle">Segure os primeiros botões e depois aperte o último. Em um jogo, segurar a combinação por 3 segundos abre o painel rápido</string>
     <string name="settings_navigation_system_combo_capture_prompt">Segure 2 ou 3 botões em ordem...</string>
 
     <!-- ===== Displays section ===== -->
@@ -1276,41 +1291,6 @@
 
     <!-- ===== Permissions section ===== -->
 
-    <!-- Paragraph at the top of the permissions list. "Argosy" is this app's name. -->
-    <string name="settings_permissions_intro">O Argosy requer certas permissões para fornecer funcionalidade completa. Toque em cada permissão para conceder acesso.</string>
-    <!-- Card title. Noun phrase naming the permission to read and write files. -->
-    <string name="settings_permissions_storage_title">Acesso ao Armazenamento</string>
-    <!-- Body of that card. "ROM" is the usual term for a game file dumped from a cartridge or
-          disc; leave it untranslated. -->
-    <string name="settings_permissions_storage_description">Necessário para baixar jogos, sincronizar arquivos de save e acessar arquivos ROM no seu dispositivo.</string>
-    <!-- Card title. Noun phrase naming Android's permission to see which app is in front. -->
-    <string name="settings_permissions_usage_stats_title">Acesso às Estatísticas de Uso</string>
-    <!-- Body of that card. -->
-    <string name="settings_permissions_usage_stats_description">Permite rastreamento preciso do tempo de jogo e retomada perfeita da sessão ao alternar entre aplicativos.</string>
-    <!-- Card title. Noun, plural, naming the permission to post notifications. -->
-    <string name="settings_permissions_notifications_title">Notificações</string>
-    <!-- Body of that card. -->
-    <string name="settings_permissions_notifications_description">Mostra o progresso do download ao baixar jogos em segundo plano.</string>
-    <!-- Card title. Noun phrase naming the permission to change device settings. -->
-    <string name="settings_permissions_write_settings_title">Acesso às Configurações do Sistema</string>
-    <!-- Body of that card. "Quick Settings panel" is Argosy's own small settings overlay. -->
-    <string name="settings_permissions_write_settings_description">Permite controlar o modo de desempenho e configurações do ventilador a partir do painel de Configurações Rápidas.</string>
-    <!-- Card title. Noun phrase naming the permission to read what is on screen. -->
-    <string name="settings_permissions_screen_capture_title">Captura de Tela</string>
-    <!-- Body of that card. "LED" is the light strip on some handhelds. -->
-    <string name="settings_permissions_screen_capture_description">Ativa iluminação LED ambiente para amostrar cores da tela enquanto joga.</string>
-    <!-- Card title. Noun phrase naming Android's permission to draw on top of other apps. -->
-    <string name="settings_permissions_display_overlay_title">Sobreposição de Tela sobre Outros Aplicativos</string>
-    <!-- Body of that card. -->
-    <string name="settings_permissions_display_overlay_description">Mostra notificações de detecção de save enquanto joga em emuladores externos.</string>
-    <!-- Card title. Names Android's accessibility service setting for Argosy. -->
-    <string name="settings_permissions_accessibility_title">Serviço de Acessibilidade</string>
-    <!-- Body of that card. "Silent" means taken without a sound or visible capture prompt. -->
-    <string name="settings_permissions_accessibility_description">Permite abrir o painel rápido sobre outros emuladores e capturas de save silenciosas</string>
-    <!-- Card title. Noun phrase naming Argosy's animated wallpaper, which Android asks the user to apply once. -->
-    <string name="settings_permissions_live_wallpaper_title">Tela de Bloqueio Animada</string>
-    <!-- Body of that card. -->
-    <string name="settings_permissions_live_wallpaper_description">Permitir que o Argosy aplique uma tela de bloqueio animada.</string>
     <!-- %1$s is a root or system-access app name, such as Magisk or Shizuku -->
     <string name="settings_permissions_privileged_title">Acesso via %1$s</string>
     <string name="settings_permissions_privileged_description_off">Permitir que o Argosy acesse as pastas de save dos emuladores em Android/data.</string>
@@ -1323,8 +1303,6 @@
     <string name="settings_lock_screen_wallpaper_label">Biblioteca Argosy</string>
     <!-- Description of that wallpaper in Android's wallpaper picker, which Argosy opens on startup while Lock Screen Art is on. -->
     <string name="settings_lock_screen_wallpaper_description">Permitir que o Argosy aplique uma tela de bloqueio animada.</string>
-    <!-- Line under the list. %1$d is how many permissions were given, %2$d how many there are. -->
-    <string name="settings_permissions_status_footer">Status: %1$d/%2$d permissões concedidas</string>
 
     <!-- ===== About section ===== -->
 
@@ -1366,7 +1344,7 @@
     <!-- Second line of that row before any check has run. Verb phrase. -->
     <string name="settings_about_update_subtitle_idle">Verificar novas versões</string>
     <!-- Button that fetches the new version. Verb. -->
-    <string name="settings_about_update_action_download">Baixar</string>
+    <string name="settings_about_update_action_install">Instalar</string>
     <!-- Button that asks the update server. Verb. -->
     <string name="settings_about_update_action_check">Verificar</string>
     <!-- Button that opens the list of what changed. Noun. -->
@@ -2969,6 +2947,8 @@
     <string name="settings_builtin_controls_limit_hotkeys_title">Limitar atalhos ao Jogador 1</string>
     <!-- Second line of that row. -->
     <string name="settings_builtin_controls_limit_hotkeys_subtitle">Somente o controle do jogador 1 pode acionar os atalhos</string>
+    <string name="settings_builtin_controls_confirm_return_title">Confirmar volta ao Argosy</string>
+    <string name="settings_builtin_controls_confirm_return_subtitle">Perguntar antes de sair do jogo com Home</string>
     <!-- Row title. Noun phrase: the controller's Select button reaching the app as Back. "Select"
          and "Back" are button names. -->
     <string name="settings_builtin_controls_select_as_back_title">Select como Voltar</string>
@@ -3539,7 +3519,16 @@
     <string name="settings_platform_filters_empty">Nenhuma plataforma disponível</string>
     <string name="settings_platform_filters_no_games">Nenhum jogo</string>
     <string name="settings_romm_config_server_url_label">URL do servidor</string>
-    <string name="settings_romm_config_server_url_placeholder">https://romm.example.com</string>
+    <string name="settings_romm_config_url_keyboard_submit">Concluído</string>
+    <string name="settings_romm_config_pairing_code_keyboard_label">Código de pareamento</string>
+    <string name="settings_romm_config_pairing_code_keyboard_submit">Concluído</string>
+    <string name="settings_jellyfin_config_keyboard_submit">Salvar</string>
+    <string name="settings_jellyfin_signin_username_keyboard_submit">Concluído</string>
+    <string name="settings_jellyfin_signin_password_keyboard_submit">Entrar</string>
+    <string name="settings_ra_login_username_keyboard_submit">Concluído</string>
+    <string name="settings_ra_login_password_keyboard_submit">Concluído</string>
+    <string name="settings_ra_proxy_address_keyboard_submit">Concluído</string>
+    <string name="settings_steam_add_game_keyboard_submit">Adicionar</string>    <string name="settings_romm_config_server_url_placeholder">https://romm.example.com</string>
     <string name="settings_romm_config_auth_method_title">Método de autenticação</string>
     <string name="settings_romm_config_auth_method_device">Emparelhamento de dispositivos</string>
     <string name="settings_romm_config_auth_method_pairing_code">Código de emparelhamento</string>
@@ -3551,8 +3540,6 @@
     <string name="settings_romm_config_connect_title">Conectar</string>
     <string name="settings_romm_config_connect_device_subtitle">Gerar um código QR de emparelhamento</string>
     <string name="settings_romm_config_connect_subtitle">Conectar ao servidor RomM</string>
-    <string name="settings_romm_config_scan_title">Escanear código QR</string>
-    <string name="settings_romm_config_scan_subtitle">Escanear o código QR de emparelhamento na interface web do RomM</string>
     <string name="settings_romm_config_certificate_title">Adicionar certificado</string>
     <string name="settings_romm_config_certificate_subtitle">Confiar em um servidor com autoridade de certificação privada</string>
     <string name="settings_romm_config_certificate_import_failed">Esse arquivo não é um certificado legível.</string>
@@ -4172,5 +4159,27 @@
         <item quantity="other">%1$d jogos neste dispositivo que o RomM não possui</item>
         <item quantity="many">%1$d jogos neste dispositivo que o RomM não possui</item>
     </plurals>
-
+    <string name="settings_client_cert_row_title">Certificado de cliente</string>
+    <string name="settings_client_cert_row_subtitle_none">Entre em servidores que exigem um certificado de cliente (mTLS)</string>
+    <string name="settings_client_cert_row_subtitle_active">%1$s · válido até %2$s</string>
+    <string name="settings_client_cert_modal_header">Certificado de cliente</string>
+    <string name="settings_client_cert_modal_title_none">Nenhum certificado de cliente importado</string>
+    <string name="settings_client_cert_modal_title_active">%1$s · válido até %2$s</string>
+    <string name="settings_client_cert_use_romm_title">Usar no RomM</string>
+    <string name="settings_client_cert_use_romm_subtitle">Apresentar este certificado ao conectar ao seu servidor RomM</string>
+    <string name="settings_client_cert_use_jellyfin_title">Usar no Jellyfin</string>
+    <string name="settings_client_cert_use_jellyfin_subtitle">Apresentar este certificado ao conectar ao seu servidor Jellyfin</string>
+    <string name="settings_client_cert_import_subtitle">Escolha um arquivo .p12 ou .pfx que contenha o certificado e a chave privada</string>
+    <string name="settings_client_cert_replace_subtitle">Importar outro arquivo .p12 ou .pfx no lugar deste</string>
+    <string name="settings_client_cert_remove_subtitle">Apagar o certificado e a chave privada deste dispositivo</string>
+    <string name="settings_client_cert_import">Importar certificado…</string>
+    <string name="settings_client_cert_replace">Substituir certificado…</string>
+    <string name="settings_client_cert_remove">Remover certificado</string>
+    <string name="settings_client_cert_remove_title">Remover o certificado de cliente?</string>
+    <string name="settings_client_cert_remove_message">O certificado e a chave privada serão apagados deste dispositivo. Servidores que o exigem deixarão de aceitar conexões até você importar o arquivo novamente.</string>
+    <string name="settings_client_cert_remove_confirm">Remover</string>
+    <string name="settings_client_cert_filebrowser_title">Escolher certificado de cliente</string>
+    <string name="settings_romm_config_error_client_certificate_required">O servidor exige um certificado de cliente. Importe um em Certificado de cliente ou ative Usar no RomM lá.</string>
+    <string name="settings_accounts_pairing_error_client_certificate_required">O servidor exige um certificado de cliente. Importe um em Certificado de cliente ou ative Usar no RomM lá.</string>
+    <string name="settings_jellyfin_error_client_certificate_required">O servidor exige um certificado de cliente. Ative Usar no Jellyfin em Certificado de cliente.</string>
 </resources>

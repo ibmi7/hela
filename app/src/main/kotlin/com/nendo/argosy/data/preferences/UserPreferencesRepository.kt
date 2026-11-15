@@ -54,11 +54,11 @@ class UserPreferencesRepository @Inject constructor(
     ) { sources, builtinEnabled, jellyfin ->
         val (display, sync, controls, storage, app) = sources
         UserPreferences(
-            firstRunComplete = app.firstRunComplete,
             rommBaseUrl = sync.rommBaseUrl,
             rommUsername = sync.rommUsername,
             rommUserId = sync.rommUserId,
             rommAvatarPath = sync.rommAvatarPath,
+            rommProfileUpdatedAt = sync.rommProfileUpdatedAt,
             rommToken = sync.rommToken,
             rommDeviceId = sync.rommDeviceId,
             rommDeviceClientVersion = sync.rommDeviceClientVersion,
@@ -114,6 +114,7 @@ class UserPreferencesRepository @Inject constructor(
             navBarAutoHide = controls.navBarAutoHide,
             ignoreControllerTouchpad = controls.ignoreControllerTouchpad,
             systemHotkeysEnabled = controls.systemHotkeysEnabled,
+            homeButtonInGames = controls.homeButtonInGames,
             systemHomeCombo = controls.systemHomeCombo,
             systemBackCombo = controls.systemBackCombo,
             lastRommSync = sync.lastRommSync,
@@ -166,13 +167,20 @@ class UserPreferencesRepository @Inject constructor(
             libraryDefaultPlayers = display.libraryDefaultPlayers,
             soundConfigs = controls.soundConfigs,
             betaUpdatesEnabled = app.betaUpdatesEnabled,
+            debugUpdateChecksEnabled = app.debugUpdateChecksEnabled,
             closeEmulatorOnSessionEnd = app.closeEmulatorOnSessionEnd,
             appLanguage = app.appLanguage,
             preLaunchRecapsEnabled = app.preLaunchRecapsEnabled,
             monthlyRecapEnabled = app.monthlyRecapEnabled,
             lastMonthlyRecapShown = app.lastMonthlyRecapShown,
             preLaunchRecapBaseline = app.preLaunchRecapBaseline,
+            notificationsEnabled = app.notificationsEnabled,
+            notifyDownloadsFinished = app.notifyDownloadsFinished,
+            notifyBattery = app.notifyBattery,
+            notifyCharging = app.notifyCharging,
+            notifyControllers = app.notifyControllers,
             saveSyncEnabled = sync.saveSyncEnabled,
+            notOnDeviceAction = sync.notOnDeviceAction,
             secureSaves = sync.secureSaves,
             stateCacheEnabled = sync.stateCacheEnabled,
             saveCacheLimit = sync.saveCacheLimit,
@@ -434,6 +442,8 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun setRommConfig(url: String?, username: String?) = syncPrefs.setRommConfig(url, username)
 
     suspend fun privateIgdbIds(): List<Long> = syncPrefs.privateIgdbIds()
+
+    suspend fun claimRaSignInNotice(): Boolean = syncPrefs.claimRaSignInNotice()
     suspend fun setDownloadCategoryDefault(categoryKey: String, include: Boolean) =
         syncPrefs.setDownloadCategoryDefault(categoryKey, include)
     suspend fun setDownloadCategoryPlatformOverride(platformSlug: String, categoryKey: String, include: Boolean?) =
@@ -446,7 +456,8 @@ class UserPreferencesRepository @Inject constructor(
         syncPrefs.getEffectiveDownloadDefaults(platformSlug)
     suspend fun setRomMCredentials(baseUrl: String, token: String, username: String? = null, userId: Long? = null) =
         syncPrefs.setRomMCredentials(baseUrl, token, username, userId)
-    suspend fun setRomMAvatarPath(path: String?) = syncPrefs.setRomMAvatarPath(path)
+    suspend fun refreshRomMProfile(userId: Long, username: String, avatarPath: String?, updatedAt: String?) =
+        syncPrefs.refreshRomMProfile(userId, username, avatarPath, updatedAt)
     suspend fun clearRomMCredentials() = syncPrefs.clearRomMCredentials()
     suspend fun setRommDeviceId(deviceId: String, clientVersion: String) = syncPrefs.setRommDeviceId(deviceId, clientVersion)
     suspend fun clearRommDeviceId() = syncPrefs.clearRommDeviceId()
@@ -482,6 +493,7 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun setUploadScreenshotsEnabled(enabled: Boolean) = syncPrefs.setUploadScreenshotsEnabled(enabled)
     suspend fun setBoxArtCacheEnabled(enabled: Boolean) = syncPrefs.setBoxArtCacheEnabled(enabled)
     suspend fun setSaveSyncEnabled(enabled: Boolean) = syncPrefs.setSaveSyncEnabled(enabled)
+    suspend fun setNotOnDeviceAction(action: NotOnDeviceAction) = syncPrefs.setNotOnDeviceAction(action)
     suspend fun setSecureSaves(enabled: Boolean) = syncPrefs.setSecureSaves(enabled)
     suspend fun setStateCacheEnabled(enabled: Boolean) = syncPrefs.setStateCacheEnabled(enabled)
     suspend fun setSaveCacheLimit(limit: Int) = syncPrefs.setSaveCacheLimit(limit)
@@ -544,6 +556,7 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun setNavBarAutoHide(enabled: Boolean) = controlsPrefs.setNavBarAutoHide(enabled)
     suspend fun setIgnoreControllerTouchpad(enabled: Boolean) = controlsPrefs.setIgnoreControllerTouchpad(enabled)
     suspend fun setSystemHotkeysEnabled(enabled: Boolean) = controlsPrefs.setSystemHotkeysEnabled(enabled)
+    suspend fun setHomeButtonInGames(enabled: Boolean) = controlsPrefs.setHomeButtonInGames(enabled)
     suspend fun setSystemHomeCombo(keyCodes: List<Int>?) = controlsPrefs.setSystemHomeCombo(keyCodes)
     suspend fun setSystemBackCombo(keyCodes: List<Int>?) = controlsPrefs.setSystemBackCombo(keyCodes)
 
@@ -585,8 +598,8 @@ class UserPreferencesRepository @Inject constructor(
 
     // --- App delegates ---
 
-    suspend fun setFirstRunComplete() = appPrefs.setFirstRunComplete()
     suspend fun setBetaUpdatesEnabled(enabled: Boolean) = appPrefs.setBetaUpdatesEnabled(enabled)
+    suspend fun setDebugUpdateChecksEnabled(enabled: Boolean) = appPrefs.setDebugUpdateChecksEnabled(enabled)
     suspend fun setCloseEmulatorOnSessionEnd(enabled: Boolean) = appPrefs.setCloseEmulatorOnSessionEnd(enabled)
     suspend fun setHiddenApps(apps: Set<String>) = appPrefs.setHiddenApps(apps)
     suspend fun toggleDockPin(packageName: String) = appPrefs.toggleDockPin(packageName)
@@ -608,6 +621,11 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun setPreLaunchRecapsEnabled(enabled: Boolean) = appPrefs.setPreLaunchRecapsEnabled(enabled)
     suspend fun setMonthlyRecapEnabled(enabled: Boolean) = appPrefs.setMonthlyRecapEnabled(enabled)
     suspend fun setLastMonthlyRecapShown(month: java.time.YearMonth) = appPrefs.setLastMonthlyRecapShown(month)
+    suspend fun setNotificationsEnabled(enabled: Boolean) = appPrefs.setNotificationsEnabled(enabled)
+    suspend fun setNotifyDownloadsFinished(enabled: Boolean) = appPrefs.setNotifyDownloadsFinished(enabled)
+    suspend fun setNotifyBattery(enabled: Boolean) = appPrefs.setNotifyBattery(enabled)
+    suspend fun setNotifyCharging(enabled: Boolean) = appPrefs.setNotifyCharging(enabled)
+    suspend fun setNotifyControllers(enabled: Boolean) = appPrefs.setNotifyControllers(enabled)
 
     suspend fun setPreLaunchRecapBaseline(at: java.time.Instant) = appPrefs.setPreLaunchRecapBaseline(at)
 
@@ -687,6 +705,8 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun setPs2StandalonePinDone() = builtinPrefs.setPs2StandalonePinDone()
     fun isBuiltinPriorityPinDone(): Flow<Boolean> = builtinPrefs.isBuiltinPriorityPinDone()
     suspend fun setBuiltinPriorityPinDone() = builtinPrefs.setBuiltinPriorityPinDone()
+    fun isBuiltinMicPermissionAsked(): Flow<Boolean> = builtinPrefs.isBuiltinMicPermissionAsked()
+    suspend fun setBuiltinMicPermissionAsked() = builtinPrefs.setBuiltinMicPermissionAsked()
 
     // --- Session delegates ---
 
@@ -701,8 +721,11 @@ class UserPreferencesRepository @Inject constructor(
         channelName: String? = null,
         variantFileId: Long? = null,
         origin: LaunchOrigin = LaunchOrigin.INTERNAL,
-        isNetplayGuest: Boolean = false
-    ) = sessionPrefs.persistActiveSession(gameId, emulatorPackage, startTime, coreName, isHardcore, channelName, variantFileId, origin, isNetplayGuest)
+        isNetplayGuest: Boolean = false,
+        streamClaim: com.nendo.argosy.data.streaming.StreamClaim? = null
+    ) = sessionPrefs.persistActiveSession(
+        gameId, emulatorPackage, startTime, coreName, isHardcore, channelName, variantFileId, origin, isNetplayGuest, streamClaim
+    )
 
     suspend fun clearActiveSession(startedAt: Instant? = null) = sessionPrefs.clearActiveSession(startedAt)
 
@@ -753,6 +776,7 @@ data class BuiltinEmulatorSettings(
     val framesEnabled: Boolean = false,
     val frame: String? = null,
     val limitHotkeysToPlayer1: Boolean = true,
+    val confirmReturnHome: Boolean = true,
     val analogAsDpad: Boolean = false,
     val dpadAsAnalog: Boolean = false,
     val fastForwardEnabled: Boolean = true,
@@ -858,11 +882,11 @@ data class BuiltinEmulatorSettings(
 }
 
 data class UserPreferences(
-    val firstRunComplete: Boolean = false,
     val rommBaseUrl: String? = null,
     val rommUsername: String? = null,
     val rommUserId: Long? = null,
     val rommAvatarPath: String? = null,
+    val rommProfileUpdatedAt: String? = null,
     val rommToken: String? = null,
     val rommDeviceId: String? = null,
     val rommDeviceClientVersion: String? = null,
@@ -918,6 +942,7 @@ data class UserPreferences(
     val navBarAutoHide: Boolean = true,
     val ignoreControllerTouchpad: Boolean = true,
     val systemHotkeysEnabled: Boolean = true,
+    val homeButtonInGames: Boolean = true,
     val systemHomeCombo: List<Int>? = null,
     val systemBackCombo: List<Int>? = null,
     val lastRommSync: Instant? = null,
@@ -953,13 +978,20 @@ data class UserPreferences(
     val libraryDefaultPlayers: com.nendo.argosy.domain.model.PlayerCountBucket? = null,
     val soundConfigs: Map<SoundType, SoundConfig> = emptyMap(),
     val betaUpdatesEnabled: Boolean = false,
+    val debugUpdateChecksEnabled: Boolean = false,
     val closeEmulatorOnSessionEnd: Boolean = false,
     val appLanguage: AppLanguage = AppLanguage.SYSTEM,
     val preLaunchRecapsEnabled: Boolean = true,
     val monthlyRecapEnabled: Boolean = true,
     val lastMonthlyRecapShown: java.time.YearMonth? = null,
     val preLaunchRecapBaseline: java.time.Instant? = null,
+    val notificationsEnabled: Boolean = true,
+    val notifyDownloadsFinished: Boolean = true,
+    val notifyBattery: Boolean = true,
+    val notifyCharging: Boolean = true,
+    val notifyControllers: Boolean = true,
     val saveSyncEnabled: Boolean = false,
+    val notOnDeviceAction: NotOnDeviceAction = NotOnDeviceAction.DOWNLOAD,
     val secureSaves: Boolean = true,
     val stateCacheEnabled: Boolean = true,
     val saveCacheLimit: Int = 10,

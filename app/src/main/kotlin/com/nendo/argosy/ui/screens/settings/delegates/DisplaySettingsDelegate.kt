@@ -90,7 +90,7 @@ class DisplaySettingsDelegate @Inject constructor(
     private val _previewGame = MutableStateFlow<SettingsPreviewGame?>(null)
     val previewGame: StateFlow<SettingsPreviewGame?> = _previewGame.asStateFlow()
 
-    private val colorCount = 7
+    private val colorCount = AccentHue.SWATCHES.size
     private var _colorFocusIndex = 0
     val colorFocusIndex: Int get() = _colorFocusIndex
 
@@ -161,16 +161,7 @@ class DisplaySettingsDelegate @Inject constructor(
     }
 
     fun selectFocusedColor(scope: CoroutineScope) {
-        val colors = listOf<Int?>(
-            null,
-            0xFF9575CD.toInt(),
-            0xFF4DB6AC.toInt(),
-            0xFFFFB74D.toInt(),
-            0xFF81C784.toInt(),
-            0xFFF06292.toInt(),
-            0xFF64B5F6.toInt()
-        )
-        val color = colors.getOrNull(_colorFocusIndex)
+        val color = AccentHue.SWATCHES.getOrNull(_colorFocusIndex)
         setPrimaryColor(scope, color)
     }
 
@@ -640,6 +631,41 @@ class DisplaySettingsDelegate @Inject constructor(
         scope.launch {
             preferencesRepository.setMonthlyRecapEnabled(enabled)
             _state.update { it.copy(monthlyRecap = enabled) }
+        }
+    }
+
+    fun setNotificationsEnabled(scope: CoroutineScope, enabled: Boolean) {
+        scope.launch {
+            preferencesRepository.setNotificationsEnabled(enabled)
+            _state.update { it.copy(notificationsEnabled = enabled) }
+        }
+    }
+
+    fun setNotifyDownloadsFinished(scope: CoroutineScope, enabled: Boolean) {
+        scope.launch {
+            preferencesRepository.setNotifyDownloadsFinished(enabled)
+            _state.update { it.copy(notifyDownloadsFinished = enabled) }
+        }
+    }
+
+    fun setNotifyBattery(scope: CoroutineScope, enabled: Boolean) {
+        scope.launch {
+            preferencesRepository.setNotifyBattery(enabled)
+            _state.update { it.copy(notifyBattery = enabled) }
+        }
+    }
+
+    fun setNotifyCharging(scope: CoroutineScope, enabled: Boolean) {
+        scope.launch {
+            preferencesRepository.setNotifyCharging(enabled)
+            _state.update { it.copy(notifyCharging = enabled) }
+        }
+    }
+
+    fun setNotifyControllers(scope: CoroutineScope, enabled: Boolean) {
+        scope.launch {
+            preferencesRepository.setNotifyControllers(enabled)
+            _state.update { it.copy(notifyControllers = enabled) }
         }
     }
 

@@ -12,7 +12,7 @@ import org.junit.Test
 class SettingsBackupKeysTest {
 
     private val credentialsAndIdentity = setOf(
-        "romm_token", "romm_url", "romm_username", "romm_user_id", "romm_avatar_path",
+        "romm_token", "romm_url", "romm_username", "romm_user_id", "romm_avatar_path", "romm_profile_updated_at",
         "romm_device_id",
         "romm_device_client_version", "romm_snapshots_server", "romm_snapshots_supported", "ra_token", "ra_web_api_key", "ra_username", "ra_proxy_enabled",
         "ra_proxy_address", "social_session_token", "social_user_id", "social_username",
@@ -45,14 +45,16 @@ class SettingsBackupKeysTest {
         "last_integrity_check_time", "romm_play_session_backfill_done",
         "sibling_split_repair_finished", "sibling_pick_seeded_owners", "sibling_full_pass_done",
         "variant_file_cleanup_done", "sibling_config_carry_over_done", "save_migration_notices_shown",
-        "home_app_default_applied", "last_monthly_recap_shown", "pre_launch_recap_baseline"
+        "home_app_default_applied", "last_monthly_recap_shown", "pre_launch_recap_baseline",
+        "ra_sign_in_notice_shown"
     )
 
     private val liveSessionState = setOf(
         "active_session_channel_name", "active_session_core_name", "active_session_emulator",
         "active_session_game_id", "active_session_is_hardcore", "active_session_start_time",
         "active_session_variant_file_id", "active_session_launch_origin", "active_session_netplay_guest",
-        "active_session_recovery_attempts", "active_session_ra_launch_snapshot"
+        "active_session_recovery_attempts", "active_session_ra_launch_snapshot",
+        "active_session_stream_platform", "active_session_stream_container", "active_session_stream_claimed_at"
     )
 
     private val saveAndStateSafetyGates = setOf(
@@ -78,7 +80,8 @@ class SettingsBackupKeysTest {
         "builtin_architecture_override", "builtin_gpu_driver", "grip_auto_controllers",
         "screen_layouts", "screen_layouts_unreadable", "lock_screen_art_applied", "live_wallpaper_offered", "home_app_available",
         "games_display_target", "apps_display_target", "performance_saved_mode",
-        "performance_root_granted", "shizuku_access_enabled", "privileged_access_prompt_answered"
+        "performance_root_granted", "shizuku_access_enabled", "privileged_access_prompt_answered",
+        "builtin_mic_permission_asked"
     )
 
     private val perDeviceScreenChoices = setOf(
@@ -96,7 +99,8 @@ class SettingsBackupKeysTest {
     )
 
     private val diagnostics = setOf(
-        "file_logging_enabled", "file_log_level", "save_debug_logging_enabled"
+        "file_logging_enabled", "file_log_level", "save_debug_logging_enabled",
+        "debug_update_checks_enabled"
     )
 
     private val installPermissions = setOf("allow_remote_installs")
@@ -107,11 +111,24 @@ class SettingsBackupKeysTest {
         "hela_home_enabled", "hela_vita_auto_release_zip"
     )
 
+    private val setupConfirmations = setOf(
+        "romm_library_confirmed", "rom_storage_path_confirmed", "save_sync_answered",
+        "default_home_declined", "legacy_setup_migrated", "setup_flow_finished",
+        "setup_pages_seen"
+    )
+
+    private val recordedPermissionState = setOf(
+        "permissions_acknowledged", "permissions_revocations_noticed"
+    )
+
+    private val serverFeatureChoices = setOf("romm_not_on_device_action")
+
     private val excluded: Set<String> =
         credentialsAndIdentity + presenceSharingAndServiceAccounts + syncWatermarksAndResume +
             oneShotAndVersionMarkers + liveSessionState + saveAndStateSafetyGates +
             filesystemLocations + hardwareAndUnit + perDeviceScreenChoices + localRowIdsAndSets +
-            derivedAndGenerated + diagnostics + installPermissions + helaLocalPacksAndLayout
+            derivedAndGenerated + diagnostics + installPermissions + setupConfirmations +
+            recordedPermissionState + serverFeatureChoices + helaLocalPacksAndLayout
 
     private val credentialShapes = listOf(
         "token", "credential", "password", "api_key", "username", "user_name", "user_id", "device_id",

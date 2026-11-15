@@ -1,6 +1,7 @@
 package com.nendo.argosy.hardware
 
 import android.view.KeyEvent
+import com.nendo.argosy.core.input.HomeKeys
 
 enum class SystemHotkeyAction { HOME, BACK }
 
@@ -61,18 +62,14 @@ object SystemHotkeyCombos {
     fun isValid(combo: List<Int>): Boolean =
         combo.size in MIN_KEYS..MAX_KEYS && combo.distinct().size == combo.size && combo.all(::isRecordable)
 
-    private val RESERVED = setOf(
-        KeyEvent.KEYCODE_UNKNOWN,
-        KeyEvent.KEYCODE_HOME,
-        KeyEvent.KEYCODE_BACK,
-        KeyEvent.KEYCODE_BUTTON_MODE
-    )
+    private val RESERVED = HomeKeys.RESERVED + setOf(KeyEvent.KEYCODE_UNKNOWN, KeyEvent.KEYCODE_BACK)
 }
 
 /**
  * Global Home, Back and quick panel from controller combos while another app is in front; true
  * marks a consumed event. While [quickPanelAvailable], the Back combo fires Back on release and
- * opens the quick panel once held for [BACK_COMBO_HOLD_MS].
+ * opens the quick panel once held for [BACK_COMBO_HOLD_MS]. A guide tap goes Home and a guide
+ * held for [GUIDE_HOLD_MS] calls [openRunning].
  */
 class SystemHotkeyDetector(
     private val config: () -> SystemHotkeyConfig,
@@ -81,7 +78,8 @@ class SystemHotkeyDetector(
     private val cancelHold: (Runnable) -> Unit,
     private val perform: (SystemHotkeyAction) -> Unit,
     private val quickPanelAvailable: () -> Boolean = { false },
-    private val openQuickPanel: () -> Unit = {}
+    private val openQuickPanel: () -> Unit = {},
+    private val openRunning: () -> Unit = {}
 ) {
     private val held = mutableSetOf<Int>()
     private val consumedUps = mutableSetOf<Int>()
@@ -106,7 +104,7 @@ class SystemHotkeyDetector(
 
     private val guideHold = Runnable {
         guideHoldFired = true
-        perform(SystemHotkeyAction.BACK)
+        openRunning()
     }
 
     fun onKeyDown(keyCode: Int, isRepeat: Boolean): Boolean {

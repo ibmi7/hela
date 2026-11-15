@@ -56,6 +56,9 @@ import com.nendo.argosy.data.preferences.ThemeMode
 import com.nendo.argosy.data.preferences.AmbientLedColorMode
 import com.nendo.argosy.data.preferences.DisplayRoleOverride
 import com.nendo.argosy.domain.model.ScreenRole
+import com.nendo.argosy.domain.model.ArgosyPermission
+import com.nendo.argosy.domain.model.PermissionAvailability
+import com.nendo.argosy.domain.model.PermissionSnapshot
 import com.nendo.argosy.data.preferences.EmulatorDisplayTarget
 import com.nendo.argosy.core.input.SoundConfig
 import com.nendo.argosy.ui.input.SoundPreset
@@ -66,6 +69,7 @@ import com.nendo.argosy.util.LogLevel
 import com.nendo.argosy.util.PlatformFilterLogic
 import com.nendo.argosy.BuildConfig
 import com.nendo.argosy.data.social.discord.DiscordPresenceState
+import com.nendo.argosy.ui.screens.common.ClientCertState
 
 enum class BuiltinPathType { SAVE, STATE }
 
@@ -96,6 +100,7 @@ enum class SettingsSection {
     SYNC_SETTINGS,
     STEAM_SETTINGS,
     JELLYFIN,
+    NETWORK_BLUETOOTH,
     RETRO_ACHIEVEMENTS,
     STORAGE,
     STORAGE_GAMES,
@@ -291,6 +296,11 @@ data class DisplayState(
     val isDefaultHome: Boolean = false,
     val preLaunchRecaps: Boolean = true,
     val monthlyRecap: Boolean = true,
+    val notificationsEnabled: Boolean = true,
+    val notifyDownloadsFinished: Boolean = true,
+    val notifyBattery: Boolean = true,
+    val notifyCharging: Boolean = true,
+    val notifyControllers: Boolean = true,
     val iconPack: String? = null,
     val iconPacks: List<com.nendo.argosy.data.model.IconPack> = emptyList(),
     val boxArtShape: BoxArtShape = BoxArtShape.STANDARD,
@@ -439,12 +449,14 @@ data class ControlsState(
     val navBarAutoHide: Boolean = true,
     val ignoreControllerTouchpad: Boolean = true,
     val systemHotkeysEnabled: Boolean = true,
+    val homeButtonInGames: Boolean = true,
     val systemHomeCombo: List<Int>? = null,
     val systemBackCombo: List<Int>? = null,
     val systemComboCaptureTarget: com.nendo.argosy.hardware.SystemHotkeyAction? = null,
     val showNavRingModal: Boolean = false,
     val navRingFocusIndex: Int = 0,
-    val navRingReorder: com.nendo.argosy.ui.components.ListReorder<String>? = null
+    val navRingReorder: com.nendo.argosy.ui.components.ListReorder<String>? = null,
+    val showButtonCheck: Boolean = false
 ) {
     val navRingHeld: String?
         get() = navRingReorder?.let { navRingRoutes.getOrNull(it.heldIndex) }
@@ -833,6 +845,7 @@ data class BuiltinControlsState(
     val gyroAimInvertY: Boolean = false,
     val gyroAimSensitivity: Int = com.nendo.argosy.data.preferences.GyroAimSensitivity.DEFAULT,
     val limitHotkeysToPlayer1: Boolean = true,
+    val confirmReturnHome: Boolean = true,
     val speedrunStartOnReset: Boolean = true,
     val speedrunPanelSide: String = "Right",
     val speedrunPanelWidthPercent: Int = 30,
@@ -1182,11 +1195,13 @@ enum class PlayTimeListKind { PLATFORMS, DEVICES, GAMES }
 
 /**
  * One row of a Play Time list. [name] is blank when a pulled session's rom could not be
- * named, and the row shows its placeholder label instead.
+ * named, and the row shows its placeholder label instead. A device row that names no real
+ * device carries [nameRes], which the row shows in place of [name].
  */
 data class PlayTimeEntryUi(
     val key: String,
     val name: String,
+    @StringRes val nameRes: Int? = null,
     val platformName: String = "",
     val platformSlug: String = "",
     val coverPath: String? = null,
@@ -1218,6 +1233,7 @@ data class PlayTimeSummaryUi(
     val weekday: java.time.DayOfWeek,
     val hour: Int,
     val deviceName: String,
+    @StringRes val deviceNameRes: Int? = null,
     val isThisDevice: Boolean
 )
 
@@ -1370,8 +1386,6 @@ data class ServerState(
     val rommAddressVerifyPrompt: RomMAddressVerifyPrompt? = null,
     val rommAddressVerifyFocusIndex: Int = 0,
     val rommConfigPairingCode: String = "",
-    val rommShowScanner: Boolean = false,
-    val rommHasCamera: Boolean = false,
     val rommConnecting: Boolean = false,
     val rommConfigError: String? = null,
     val rommFocusField: Int? = null,
@@ -1391,7 +1405,10 @@ data class ServerState(
     val boxArtCacheEnabled: Boolean = true,
     val screenshotUploadSupported: Boolean = false,
     val musicApiSupported: Boolean = false,
-    val deviceInstallSupported: Boolean = false
+    val deviceInstallSupported: Boolean = false,
+    val streamingAvailable: Boolean = false,
+    val notOnDeviceAction: com.nendo.argosy.data.preferences.NotOnDeviceAction =
+        com.nendo.argosy.data.preferences.NotOnDeviceAction.DOWNLOAD
 )
 
 /**
@@ -1508,7 +1525,6 @@ data class SyncSettingsState(
     val saveCacheLimit: Int = 10,
     val pendingUploadsCount: Int = 0,
     val hasStoragePermission: Boolean = false,
-    val hasNotificationPermission: Boolean = false,
     val isSyncing: Boolean = false,
     val imageCachePath: String? = null,
     val defaultImageCachePath: String? = null,
@@ -1645,16 +1661,17 @@ data class JellyfinState(
 data class UpdateCheckState(
     val isChecking: Boolean = false,
     val hasChecked: Boolean = false,
-    val updateAvailable: Boolean = false,
-    val latestVersion: String? = null,
-    val latestName: String? = null,
-    val latestBody: String? = null,
-    val downloadUrl: String? = null,
+    val latest: com.nendo.argosy.data.model.AppUpdateRelease? = null,
+    val isSkipped: Boolean = false,
+    val isStored: Boolean = false,
     val error: String? = null,
     val isDownloading: Boolean = false,
-    val downloadProgress: Int = 0,
-    val readyToInstall: Boolean = false
-)
+    val downloadProgress: Int = 0
+) {
+    val updateAvailable: Boolean get() = latest != null
+}
+
+enum class AboutUpdateAction { PRIMARY, REDOWNLOAD, CHANGELOG }
 
 data class ChangelogRelease(
     val tag: String,
@@ -1673,33 +1690,18 @@ data class ChangelogState(
 )
 
 data class PermissionsState(
-    val hasStorageAccess: Boolean = false,
-    val hasUsageStats: Boolean = false,
-    val hasNotificationPermission: Boolean = false,
-    val hasWriteSettings: Boolean = false,
-    val isWriteSettingsRelevant: Boolean = false,
-    val hasScreenCapture: Boolean = false,
-    val isScreenCaptureRelevant: Boolean = false,
-    val hasDisplayOverlay: Boolean = false,
-    val hasAccessibilityService: Boolean = false,
-    val hasLiveWallpaper: Boolean = false,
-    val isLiveWallpaperRelevant: Boolean = false,
+    val snapshot: PermissionSnapshot = PermissionSnapshot(),
     val privilegedRoute: PrivilegedRoute? = null,
-    val privilegedReach: PrivilegedReach = PrivilegedReach.NONE
+    val privilegedReach: PrivilegedReach = PrivilegedReach.NONE,
+    val saveSyncWarning: ArgosyPermission? = null
 ) {
-    private val relevantGrants: List<Boolean>
-        get() = listOfNotNull(
-            hasStorageAccess,
-            hasUsageStats,
-            hasNotificationPermission,
-            hasWriteSettings.takeIf { isWriteSettingsRelevant },
-            hasScreenCapture.takeIf { isScreenCaptureRelevant },
-            hasDisplayOverlay,
-            hasLiveWallpaper.takeIf { isLiveWallpaperRelevant }
-        )
-    val allGranted: Boolean get() = relevantGrants.all { it }
-    val grantedCount: Int get() = relevantGrants.count { it }
-    val totalCount: Int get() = relevantGrants.size
+    private val counted: List<ArgosyPermission>
+        get() = ArgosyPermission.entries.filter {
+            it in snapshot.relevant && snapshot.of(it) != PermissionAvailability.UNAVAILABLE
+        }
+    val grantedCount: Int get() = counted.count { snapshot.isGranted(it) }
+    val totalCount: Int get() = counted.size
+    val allGranted: Boolean get() = grantedCount == totalCount
 }
 
 const val RA_PROXY_TOGGLE_INDEX = 1
@@ -1729,7 +1731,8 @@ data class RAWebApiKeyEditor(
     val actions: List<RAWebApiKeyAction>,
     val row: TextEntryRow = TextEntryRow.FIELD,
     val buttonIndex: Int = actions.indexOf(RAWebApiKeyAction.SAVE).coerceAtLeast(0),
-    val status: RAWebApiKeyStatus = RAWebApiKeyStatus.IDLE
+    val status: RAWebApiKeyStatus = RAWebApiKeyStatus.IDLE,
+    val keyboardRequest: Int = 0
 ) {
     val focusedAction: RAWebApiKeyAction?
         get() = if (row == TextEntryRow.BUTTONS) actions.getOrNull(buttonIndex) else null
@@ -2013,6 +2016,7 @@ data class SettingsUiState(
     val steam: SteamSettingsState = SteamSettingsState(),
     val jellyfin: JellyfinState = JellyfinState(),
     val retroAchievements: RASettingsState = RASettingsState(),
+    val clientCert: ClientCertState = ClientCertState(),
     val accounts: AccountsState = AccountsState(),
     val bios: BiosState = BiosState(),
     val drivers: DriversState = DriversState(),
@@ -2030,6 +2034,7 @@ data class SettingsUiState(
     val changelog: ChangelogState = ChangelogState(),
     val aboutUpdateActionIndex: Int = 0,
     val betaUpdatesEnabled: Boolean = false,
+    val debugUpdateChecksEnabled: Boolean = false,
     val appLanguage: AppLanguage = AppLanguage.SYSTEM,
     val fileLoggingEnabled: Boolean = false,
     val fileLoggingPath: String? = null,

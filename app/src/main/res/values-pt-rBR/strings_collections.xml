@@ -26,6 +26,8 @@
     <string name="collections_options_rename">Renomear coleção</string>
     <string name="collections_options_delete">Excluir coleção</string>
     <string name="collections_options_remove_game">Remover \"%1$s\"</string>
+    <string name="collections_options_move_to_display">Mover para a tela %1$d</string>
+    <string name="collections_options_close_game">Fechar jogo</string>
     <string name="collections_options_remove_game_fallback">Jogo</string>
 
     <string name="collections_delete_dialog_title">Excluir coleção</string>
@@ -62,6 +64,7 @@
     <string name="collections_detail_loading">Carregando&#8230;</string>
     <string name="collections_detail_hint_search_open">Abrir</string>
     <string name="collections_detail_hint_search_close">Fechar busca</string>
+    <string name="collections_detail_keyboard_submit">Buscar</string>
     <string name="collections_detail_hint_navigate">Navegar</string>
     <string name="collections_detail_hint_open">Abrir</string>
     <string name="collections_detail_hint_back">Voltar</string>
@@ -91,6 +94,7 @@
     <string name="collections_browser_loading">Carregando&#8230;</string>
     <string name="collections_browser_hint_search_select">Selecionar</string>
     <string name="collections_browser_hint_search_close">Fechar busca</string>
+    <string name="collections_browser_keyboard_submit">Buscar</string>
     <string name="collections_browser_hint_navigate">Navegar</string>
     <string name="collections_browser_hint_select">Selecionar</string>
     <string name="collections_browser_hint_back">Voltar</string>
@@ -121,6 +125,7 @@
     <string name="collections_category_loading">Carregando&#8230;</string>
     <string name="collections_category_hint_search_open">Abrir</string>
     <string name="collections_category_hint_search_close">Fechar busca</string>
+    <string name="collections_category_keyboard_submit">Buscar</string>
     <string name="collections_category_hint_navigate">Navegar</string>
     <string name="collections_category_hint_open">Abrir</string>
     <string name="collections_category_hint_back">Voltar</string>
@@ -131,9 +136,9 @@
     <string name="collections_category_hint_refreshing">Atualizando&#8230;</string>
     <string name="collections_category_hint_refresh">Atualizar</string>
     <string name="collections_category_hint_swap_screens">Trocar telas</string>
-    <string name="collections_category_hint_open_hold_download_all">Abrir, segure para baixar todos (%1$d)</string>
-    <string name="collections_category_hint_download_all">Download todos (%1$d)</string>
-    <string name="collections_category_hint_download_all_hold_swap_screens">Download todos (%1$d), segure para trocar telas</string>
+    <string name="collections_category_hint_open_hold_options">Abrir, segure para opções</string>
+    <string name="collections_category_hint_options">Opções</string>
+    <string name="collections_category_hint_options_hold_swap_screens">Opções, segure para trocar telas</string>
     <string name="collections_category_hint_hold_swap_screens">Segure para trocar telas</string>
     <string name="collections_category_downloadall_confirm_title">Baixar todos os jogos?</string>
     <plurals name="collections_category_downloadall_confirm_message">
@@ -220,4 +225,8 @@
 
     <string name="collections_cell_installed">%1$d instalados</string>
     <string name="collections_cell_achievements">%1$d/%2$d</string>
+    <string name="downloads_file_state_retrying">Tentando novamente&#8230;</string>
+    <string name="downloads_file_state_waiting_for_network">Aguardando rede&#8230;</string>
+    <string name="downloads_item_status_retrying">Tentando novamente&#8230;</string>
+    <string name="downloads_item_status_waiting_for_network">Aguardando rede&#8230;</string>
 </resources>

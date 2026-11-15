@@ -73,10 +73,6 @@ internal class InterfaceSectionInput(
                 return toggleLeftRight(direction, state.display.hideSystemStatusBar) {
                     viewModel.setHideSystemStatusBar(it)
                 }
-            InterfaceItem.QuickPanelInEmulators ->
-                return toggleLeftRight(direction, state.display.quickPanelInEmulators) {
-                    viewModel.setQuickPanelInEmulators(it)
-                }
             InterfaceItem.LockScreenArt -> return toggleLeftRight(direction, state.display.lockScreenArt) {
                 viewModel.setLockScreenArt(it)
             }
@@ -97,6 +93,22 @@ internal class InterfaceSectionInput(
             }
             InterfaceItem.MonthlyRecap -> return toggleLeftRight(direction, state.display.monthlyRecap) {
                 viewModel.setMonthlyRecap(it)
+            }
+            InterfaceItem.Notifications -> return toggleLeftRight(direction, state.display.notificationsEnabled) {
+                viewModel.setNotificationsEnabled(it)
+            }
+            InterfaceItem.NotifyDownloadsFinished ->
+                return toggleLeftRight(direction, state.display.notifyDownloadsFinished) {
+                    viewModel.setNotifyDownloadsFinished(it)
+                }
+            InterfaceItem.NotifyBattery -> return toggleLeftRight(direction, state.display.notifyBattery) {
+                viewModel.setNotifyBattery(it)
+            }
+            InterfaceItem.NotifyCharging -> return toggleLeftRight(direction, state.display.notifyCharging) {
+                viewModel.setNotifyCharging(it)
+            }
+            InterfaceItem.NotifyControllers -> return toggleLeftRight(direction, state.display.notifyControllers) {
+                viewModel.setNotifyControllers(it)
             }
             else -> {}
         }

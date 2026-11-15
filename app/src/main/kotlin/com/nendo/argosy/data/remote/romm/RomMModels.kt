@@ -363,7 +363,8 @@ data class RomMSsMetadata(
     @Json(name = "box2d_side_path") val box2dSidePath: String? = null,
     @Json(name = "logo_path") val logoPath: String? = null,
     @Json(name = "fanart_path") val fanartPath: String? = null,
-    @Json(name = "fanart_url") val fanartUrl: String? = null
+    @Json(name = "fanart_url") val fanartUrl: String? = null,
+    @Json(name = "video_normalized_path") val videoNormalizedPath: String? = null
 )
 
 @JsonClass(generateAdapter = true)
@@ -380,6 +381,7 @@ data class RomMUser(
     @Json(name = "enabled") val enabled: Boolean,
     @Json(name = "role") val role: String,
     @Json(name = "avatar_path") val avatarPath: String? = null,
+    @Json(name = "updated_at") val updatedAt: String? = null,
     @Json(name = "ra_username") val raUsername: String? = null,
     @Json(name = "ra_progression") val raProgression: RomMRAProgression? = null
 )
@@ -598,7 +600,8 @@ data class RomMPairingExchangeResponse(
  * underlying exception text names neither the cause nor the fix.
  */
 enum class RomMErrorKind {
-    UNTRUSTED_CERTIFICATE
+    UNTRUSTED_CERTIFICATE,
+    CLIENT_CERTIFICATE_REQUIRED
 }
 
 sealed class RomMResult<out T> {

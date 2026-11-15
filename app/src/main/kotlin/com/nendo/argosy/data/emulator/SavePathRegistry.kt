@@ -18,6 +18,7 @@ data class SavePathConfig(
     val usesInternalStorage: Boolean = false,
     val usesGciFormat: Boolean = false,
     val savesBesideRom: Boolean = false,
+    val retroArchCoreSubpath: String? = null,
     private val supported: Boolean = true,
     val requiresRoot: Boolean = false
 ) {
@@ -135,6 +136,30 @@ object SavePathRegistry {
             ),
             saveExtensions = listOf("gci"),
             usesGciFormat = true,
+        ),
+        "retroarch_wii" to SavePathConfig(
+            emulatorId = "retroarch_wii",
+            defaultPaths = listOf(
+                "{extStorage}/RetroArch/saves/dolphin-emu/User/Wii/title/00010000",
+                "{extStorage}/Android/data/com.retroarch/files/saves/dolphin-emu/User/Wii/title/00010000",
+                "{extStorage}/RetroArch/saves/User/Wii/title/00010000",
+                "{extStorage}/Android/data/com.retroarch/files/saves/User/Wii/title/00010000"
+            ),
+            saveExtensions = listOf("*"),
+            usesFolderBasedSaves = true,
+            retroArchCoreSubpath = "User/Wii/title/00010000"
+        ),
+        "retroarch_64_wii" to SavePathConfig(
+            emulatorId = "retroarch_64_wii",
+            defaultPaths = listOf(
+                "{extStorage}/RetroArch/saves/dolphin-emu/User/Wii/title/00010000",
+                "{extStorage}/Android/data/com.retroarch.aarch64/files/saves/dolphin-emu/User/Wii/title/00010000",
+                "{extStorage}/RetroArch/saves/User/Wii/title/00010000",
+                "{extStorage}/Android/data/com.retroarch.aarch64/files/saves/User/Wii/title/00010000"
+            ),
+            saveExtensions = listOf("*"),
+            usesFolderBasedSaves = true,
+            retroArchCoreSubpath = "User/Wii/title/00010000"
         ),
         "retroarch_32_ngc" to SavePathConfig(
             emulatorId = "retroarch_32_ngc",
@@ -318,6 +343,16 @@ object SavePathRegistry {
             saveExtensions = listOf("*"),
             usesFolderBasedSaves = true,
             usesPackageTemplate = true
+        ),
+        "eden_nx2" to SavePathConfig(
+            emulatorId = "eden_nx2",
+            defaultPaths = listOf(
+                "{extStorage}/Android/data/{package}/files/nand/user/save"
+            ),
+            saveExtensions = listOf("*"),
+            usesFolderBasedSaves = true,
+            usesPackageTemplate = true,
+            supported = false
         ),
         "eden_duo" to SavePathConfig(
             emulatorId = "eden_duo",
@@ -918,7 +953,8 @@ object SavePathRegistry {
         "io.wip.pico8" to "pico8_android",
         "com.sa_moo_rai.picpic" to "picpic",
         "com.pixelrespawn.linkboy" to "linkboy",
-        "com.phobos.emulator" to "phobos"
+        "com.phobos.emulator" to "phobos",
+        "dev.eden.nx2" to "eden_nx2"
     )
 
     private val packagePrefixToConfigId = mapOf(

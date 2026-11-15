@@ -17,6 +17,8 @@
     <string name="settings_main_section_gameplay">JUGABILIDAD</string>
     <string name="settings_main_section_library">BIBLIOTECA</string>
     <string name="settings_main_section_connections">CONEXIONES</string>
+    <string name="settings_main_network_title">Red y Bluetooth</string>
+    <string name="settings_main_network_subtitle">Redes Wi-Fi y mandos Bluetooth</string>
     <string name="settings_main_section_system">SISTEMA</string>
 
     <string name="settings_main_theme_title">Tema</string>
@@ -249,9 +251,11 @@
     <string name="settings_navigation_shortcut_capture_subtitle">El botón deja de hacer cualquier otra cosa en los menús de Argosy</string>
     <string name="settings_navigation_shortcut_capture_reserved">%1$s sirve para moverse por los menús y no se puede asignar</string>
     <string name="settings_navigation_shortcut_capture_hint_cancel">Cancelar</string>
-    <string name="settings_navigation_section_system_buttons">Botones del sistema</string>
+    <string name="settings_navigation_section_system_buttons">Atajos globales</string>
     <string name="settings_navigation_system_hotkeys_title">Combinaciones de Inicio y Atrás</string>
     <string name="settings_navigation_system_hotkeys_subtitle">Combinaciones del mando que funcionan como Inicio y Atrás mientras otra app está abierta</string>
+    <string name="settings_navigation_home_button_in_games_title">Mantener Inicio para cambiar de juego</string>
+    <string name="settings_navigation_home_button_in_games_subtitle">Mantén el botón Inicio del dispositivo en un juego que Argosy abrió para mostrar el selector de juegos. Desactívalo para dejar Inicio al dispositivo. Requiere root</string>
     <string name="settings_navigation_system_hotkeys_access_title">Servicio de accesibilidad</string>
     <string name="settings_navigation_system_hotkeys_access_subtitle">Las combinaciones llegan a otras apps a través del servicio de accesibilidad de Argosy</string>
     <string name="settings_navigation_system_hotkeys_access_on">Activado</string>
@@ -259,7 +263,7 @@
     <string name="settings_navigation_system_home_title">Inicio</string>
     <string name="settings_navigation_system_home_subtitle">Mantenlos juntos 2 segundos. Pulsar el botón guía también va a Inicio</string>
     <string name="settings_navigation_system_back_title">Atrás</string>
-    <string name="settings_navigation_system_back_subtitle">Mantén los primeros botones y pulsa el último. Mantener el botón guía 1 segundo también va Atrás. En un juego, mantener la combinación 3 segundos abre el panel rápido</string>
+    <string name="settings_navigation_system_back_subtitle">Mantén los primeros botones y pulsa el último. En un juego, mantener la combinación 3 segundos abre el panel rápido</string>
     <string name="settings_navigation_system_combo_capture_prompt">Mantén 2 o 3 botones en orden...</string>
 
     <!-- ===== Displays section ===== -->
@@ -413,6 +417,17 @@
     <string name="settings_interface_pre_launch_recaps_subtitle">Antes de un juego de RetroAchievements que no has jugado en una semana, muestra dónde lo dejaste</string>
     <string name="settings_interface_monthly_recap_title">Resumen mensual</string>
     <string name="settings_interface_monthly_recap_subtitle">Al empezar cada mes, muestra en Inicio un resumen del mes anterior</string>
+    <string name="settings_interface_section_notifications">Notificaciones</string>
+    <string name="settings_interface_notifications_title">Notificaciones</string>
+    <string name="settings_interface_notifications_subtitle">Muestra avisos de Argosy en el launcher y sobre los juegos. Los avisos de batería se siguen mostrando</string>
+    <string name="settings_interface_notify_downloads_finished_title">Descargas completadas</string>
+    <string name="settings_interface_notify_downloads_finished_subtitle">Muestra un aviso al terminar una descarga</string>
+    <string name="settings_interface_notify_battery_title">Batería</string>
+    <string name="settings_interface_notify_battery_subtitle" formatted="false">Avisa al 15 % y al 5 %. Los juegos integrados guardan igualmente al 5 %</string>
+    <string name="settings_interface_notify_charging_title">Carga</string>
+    <string name="settings_interface_notify_charging_subtitle">Muestra un aviso al conectar o desconectar el cargador durante el juego</string>
+    <string name="settings_interface_notify_controllers_title">Mandos</string>
+    <string name="settings_interface_notify_controllers_subtitle">Muestra un aviso cuando un mando se conecta, se desconecta o tiene poca batería</string>
 
     <string name="settings_home_screen_background_title">Fondo</string>
     <string name="settings_home_screen_background_subtitle">Carátula del juego o patrón de fondo</string>
@@ -682,23 +697,6 @@
 
     <!-- ===== Permissions section ===== -->
 
-    <string name="settings_permissions_intro">Argosy necesita ciertos permisos para funcionar por completo. Toca cada permiso para concederlo.</string>
-    <string name="settings_permissions_storage_title">Acceso al almacenamiento</string>
-    <string name="settings_permissions_storage_description">Necesario para descargar juegos, sincronizar archivos de guardado y acceder a los archivos ROM de tu dispositivo.</string>
-    <string name="settings_permissions_usage_stats_title">Acceso a estadísticas de uso</string>
-    <string name="settings_permissions_usage_stats_description">Permite un seguimiento preciso del tiempo de juego y reanudar la sesión sin interrupciones al cambiar entre aplicaciones.</string>
-    <string name="settings_permissions_notifications_title">Notificaciones</string>
-    <string name="settings_permissions_notifications_description">Muestra el progreso de la descarga al descargar juegos en segundo plano.</string>
-    <string name="settings_permissions_write_settings_title">Acceso a los ajustes del sistema</string>
-    <string name="settings_permissions_write_settings_description">Permite controlar el modo de rendimiento del dispositivo y los ajustes del ventilador desde el panel de Ajustes rápidos.</string>
-    <string name="settings_permissions_screen_capture_title">Captura de pantalla</string>
-    <string name="settings_permissions_screen_capture_description">Permite la iluminación LED ambiental para tomar muestras de los colores de la pantalla mientras juegas.</string>
-    <string name="settings_permissions_display_overlay_title">Mostrar sobre otras aplicaciones</string>
-    <string name="settings_permissions_display_overlay_description">Muestra notificaciones de detección de guardado al jugar con emuladores externos.</string>
-    <string name="settings_permissions_accessibility_title">Servicio de accesibilidad</string>
-    <string name="settings_permissions_accessibility_description">Permite abrir el panel rápido sobre otros emuladores y tomar capturas de guardado en silencio</string>
-    <string name="settings_permissions_live_wallpaper_title">Pantalla de bloqueo animada</string>
-    <string name="settings_permissions_live_wallpaper_description">Permite que Argosy aplique una pantalla de bloqueo animada.</string>
     <!-- %1$s is a root or system-access app name, such as Magisk or Shizuku -->
     <string name="settings_permissions_privileged_title">Acceso de %1$s</string>
     <string name="settings_permissions_privileged_description_off">Permite que Argosy acceda a las carpetas de guardado de los emuladores en Android/data.</string>
@@ -709,7 +707,6 @@
     <string name="settings_permissions_privileged_description_refused">No se concedió el acceso. Selecciona para volver a pedirlo.</string>
     <string name="settings_lock_screen_wallpaper_label">Biblioteca de Argosy</string>
     <string name="settings_lock_screen_wallpaper_description">Permite que Argosy aplique una pantalla de bloqueo animada.</string>
-    <string name="settings_permissions_status_footer">Estado: %1$d/%2$d permisos concedidos</string>
 
     <!-- ===== About section ===== -->
 
@@ -730,7 +727,7 @@
     <string name="settings_about_update_subtitle_current">Actualizado</string>
     <string name="settings_about_update_subtitle_on_prerelease">Ejecutando una versión preliminar</string>
     <string name="settings_about_update_subtitle_idle">Buscar nuevas versiones</string>
-    <string name="settings_about_update_action_download">Descargar</string>
+    <string name="settings_about_update_action_install">Instalar</string>
     <string name="settings_about_update_action_check">Comprobar</string>
     <string name="settings_about_update_action_changelog">Registro de cambios</string>
     <string name="settings_about_changelog_preview_title">Novedades - %1$s</string>
@@ -1633,6 +1630,8 @@
     <string name="settings_builtin_controls_hotkeys_subtitle">Configura los atajos para el menú, avance rápido y rebobinado</string>
     <string name="settings_builtin_controls_limit_hotkeys_title">Limitar atajos al jugador 1</string>
     <string name="settings_builtin_controls_limit_hotkeys_subtitle">Solo el mando del jugador 1 puede activar los atajos</string>
+    <string name="settings_builtin_controls_confirm_return_title">Confirmar volver a Argosy</string>
+    <string name="settings_builtin_controls_confirm_return_subtitle">Preguntar antes de salir del juego con Home</string>
     <string name="settings_builtin_controls_select_as_back_title">Select como Atrás</string>
     <string name="settings_builtin_controls_select_as_back_subtitle">Para mandos cuyo Select envía Atrás. Automático usa Atrás como Select en mandos sin botón Select.</string>
     <string name="settings_builtin_controls_select_as_back_auto">Automático</string>
@@ -2169,7 +2168,16 @@
     <!-- ===== RomM config form (Settings > components > RomMConfigForm) ===== -->
 
     <string name="settings_romm_config_server_url_label">URL del servidor</string>
-    <string name="settings_romm_config_server_url_placeholder">https://romm.example.com</string>
+    <string name="settings_romm_config_url_keyboard_submit">Listo</string>
+    <string name="settings_romm_config_pairing_code_keyboard_label">Código de vinculación</string>
+    <string name="settings_romm_config_pairing_code_keyboard_submit">Listo</string>
+    <string name="settings_jellyfin_config_keyboard_submit">Guardar</string>
+    <string name="settings_jellyfin_signin_username_keyboard_submit">Listo</string>
+    <string name="settings_jellyfin_signin_password_keyboard_submit">Iniciar sesión</string>
+    <string name="settings_ra_login_username_keyboard_submit">Listo</string>
+    <string name="settings_ra_login_password_keyboard_submit">Listo</string>
+    <string name="settings_ra_proxy_address_keyboard_submit">Listo</string>
+    <string name="settings_steam_add_game_keyboard_submit">Añadir</string>    <string name="settings_romm_config_server_url_placeholder">https://romm.example.com</string>
     <string name="settings_romm_config_auth_method_title">Método de autenticación</string>
     <string name="settings_romm_config_auth_method_device">Vinculación de dispositivo</string>
     <string name="settings_romm_config_auth_method_pairing_code">Código de vinculación</string>
@@ -2181,8 +2189,6 @@
     <string name="settings_romm_config_connect_title">Conectar</string>
     <string name="settings_romm_config_connect_device_subtitle">Generar un código QR de vinculación</string>
     <string name="settings_romm_config_connect_subtitle">Conectar al servidor RomM</string>
-    <string name="settings_romm_config_scan_title">Escanear código QR</string>
-    <string name="settings_romm_config_scan_subtitle">Escanea el QR de vinculación desde la interfaz web de RomM</string>
     <string name="settings_romm_config_certificate_title">Añadir certificado</string>
     <string name="settings_romm_config_certificate_subtitle">Confiar en un servidor con una autoridad certificadora privada</string>
     <plurals name="settings_romm_config_certificate_subtitle_count">
@@ -2863,4 +2869,27 @@
     <string name="settings_builtin_gpu_driver_reason_core_system_only">%1$s usa el controlador del sistema</string>
     <string name="settings_builtin_gpu_driver_reason_backend">Se aplica cuando el motor de renderizado es Vulkan</string>
     <string name="settings_builtin_gpu_driver_reason_device">Los controladores personalizados requieren una GPU Adreno</string>
+    <string name="settings_client_cert_row_title">Certificado de cliente</string>
+    <string name="settings_client_cert_row_subtitle_none">Para servidores que exigen un certificado de cliente (mTLS)</string>
+    <string name="settings_client_cert_row_subtitle_active">%1$s · válido hasta %2$s</string>
+    <string name="settings_client_cert_modal_header">Certificado de cliente</string>
+    <string name="settings_client_cert_modal_title_none">No se ha importado ningún certificado de cliente</string>
+    <string name="settings_client_cert_modal_title_active">%1$s · válido hasta %2$s</string>
+    <string name="settings_client_cert_use_romm_title">Usar para RomM</string>
+    <string name="settings_client_cert_use_romm_subtitle">Presentar este certificado al conectar con tu servidor RomM</string>
+    <string name="settings_client_cert_use_jellyfin_title">Usar para Jellyfin</string>
+    <string name="settings_client_cert_use_jellyfin_subtitle">Presentar este certificado al conectar con tu servidor Jellyfin</string>
+    <string name="settings_client_cert_import_subtitle">Elige un archivo .p12 o .pfx con el certificado y su clave privada</string>
+    <string name="settings_client_cert_replace_subtitle">Importar otro archivo .p12 o .pfx en lugar de este</string>
+    <string name="settings_client_cert_remove_subtitle">Borrar el certificado y su clave privada de este dispositivo</string>
+    <string name="settings_client_cert_import">Importar certificado…</string>
+    <string name="settings_client_cert_replace">Reemplazar certificado…</string>
+    <string name="settings_client_cert_remove">Eliminar certificado</string>
+    <string name="settings_client_cert_remove_title">¿Eliminar el certificado de cliente?</string>
+    <string name="settings_client_cert_remove_message">El certificado y su clave privada se borran de este dispositivo. Los servidores que lo exigen rechazarán las conexiones hasta que vuelvas a importar el archivo.</string>
+    <string name="settings_client_cert_remove_confirm">Eliminar</string>
+    <string name="settings_client_cert_filebrowser_title">Elegir certificado de cliente</string>
+    <string name="settings_romm_config_error_client_certificate_required">El servidor exige un certificado de cliente. Importa uno en Certificado de cliente o activa allí Usar para RomM.</string>
+    <string name="settings_accounts_pairing_error_client_certificate_required">El servidor exige un certificado de cliente. Importa uno en Certificado de cliente o activa allí Usar para RomM.</string>
+    <string name="settings_jellyfin_error_client_certificate_required">El servidor exige un certificado de cliente. Activa Usar para Jellyfin en Certificado de cliente.</string>
 </resources>

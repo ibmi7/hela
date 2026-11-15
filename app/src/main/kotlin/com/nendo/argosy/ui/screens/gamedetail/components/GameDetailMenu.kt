@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.EmojiEvents
@@ -38,6 +39,7 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
@@ -64,8 +66,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.nendo.argosy.R
+import com.nendo.argosy.ui.screens.gamedetail.DownloadWaitStatus
 import com.nendo.argosy.data.repository.SaveSyncApiClient
 import com.nendo.argosy.ui.screens.gamedetail.GameDownloadStatus
 import com.nendo.argosy.ui.screens.settings.menu.SettingsLayout
@@ -80,7 +84,10 @@ data class MenuLayoutState(
     val hasSaveSync: Boolean = false,
     val hasRelated: Boolean = false,
     val hasPerGameSettings: Boolean = false,
-    val hasDocuments: Boolean = false
+    val hasDocuments: Boolean = false,
+    val isRunning: Boolean = false,
+    val moveTargetCount: Int = 0,
+    val stream: com.nendo.argosy.ui.screens.stream.StreamOffer? = null
 )
 
 sealed class MenuItem(
@@ -88,6 +95,16 @@ sealed class MenuItem(
     val visibleWhen: (MenuLayoutState) -> Boolean = { true }
 ) {
     data object Play : MenuItem("play")
+    data object Stream : MenuItem("stream", visibleWhen = { it.stream != null && !it.stream.leads })
+
+    /**
+     * The Move to Display row for the [slot]th move target of the running game.
+     */
+    data class MoveToDisplay(val slot: Int) : MenuItem(
+        "move_to_display_$slot",
+        visibleWhen = { it.isRunning && slot < it.moveTargetCount }
+    )
+
     data object Saves : MenuItem("saves", visibleWhen = { it.hasSaveSync })
     data object Favorite : MenuItem("favorite")
     data object Privacy : MenuItem("privacy", visibleWhen = { it.hasSocialAccount })
@@ -100,12 +117,15 @@ sealed class MenuItem(
     data object Reviews : MenuItem("reviews", visibleWhen = { it.hasSocialAccount })
     data object Achievements : MenuItem("achievements", visibleWhen = { it.hasAchievements })
     data object RelatedGames : MenuItem("related", visibleWhen = { it.hasRelated })
+    data object CloseGame : MenuItem("close_game", visibleWhen = { it.isRunning })
 
     companion object {
+        private const val MOVE_TARGET_SLOTS = 3
+
         val ALL: List<MenuItem>
-            get() = listOf(
-                Play, Saves, Favorite, Privacy, PerGameSettings, Options, Details,
-                Description, Screenshots, Documents, Reviews, Achievements, RelatedGames
+            get() = listOf<MenuItem>(Play, Stream) + List(MOVE_TARGET_SLOTS) { MoveToDisplay(it) } + listOf(
+                Saves, Favorite, Privacy, PerGameSettings, Options, Details,
+                Description, Screenshots, Documents, Reviews, Achievements, RelatedGames, CloseGame
             )
     }
 }
@@ -120,12 +140,14 @@ val menuLayout = SettingsLayout<MenuItem, MenuLayoutState>(
 data class GameDetailMenuState(
     val focusedIndex: Int = 0,
     val downloadStatus: GameDownloadStatus = GameDownloadStatus.NOT_DOWNLOADED,
-    val isAwaitingServer: Boolean = false,
+    val downloadWaitStatus: DownloadWaitStatus? = null,
     val isFavorite: Boolean = false,
     val saveStatus: SaveStatusInfo? = null,
     val isSyncingSaves: Boolean = false,
     val downloadSizeBytes: Long? = null,
-    val isPrivate: Boolean = false
+    val isPrivate: Boolean = false,
+    val running: com.nendo.argosy.ui.common.RunningGameUi? = null,
+    val moveTargets: List<com.nendo.argosy.ui.screens.running.RunningMoveTarget> = emptyList()
 )
 
 @Composable
@@ -175,12 +197,57 @@ fun GameDetailMenu(
 
             when (item) {
                 MenuItem.Play -> {
-                    PlayMenuItem(
-                        downloadStatus = displayState.downloadStatus,
-                        downloadProgress = downloadProgress,
-                        isAwaitingServer = displayState.isAwaitingServer,
+                    val leadingStream = layoutState.stream?.takeIf { it.leads }
+                    if (leadingStream != null) {
+                        PlayButtonBody(
+                            label = if (leadingStream.isLive) {
+                                stringResource(R.string.stream_entry_gamedetail_primary_resume)
+                            } else {
+                                stringResource(R.string.stream_entry_gamedetail_primary, leadingStream.containerLabel)
+                            },
+                            downloadStatus = displayState.downloadStatus,
+                            downloadProgress = downloadProgress,
+                            isFocused = isFocused,
+                            downloadSizeBytes = null,
+                            isCompact = isCompact,
+                            iconOverride = ImageVector.vectorResource(R.drawable.ic_stream_play_network),
+                            onClick = { onFocusChange(focusIndex); onItemClick(item) }
+                        )
+                    } else {
+                        PlayMenuItem(
+                            downloadStatus = displayState.downloadStatus,
+                            downloadProgress = downloadProgress,
+                            downloadWaitStatus = displayState.downloadWaitStatus,
+                            isFocused = isFocused,
+                            downloadSizeBytes = displayState.downloadSizeBytes,
+                            isCompact = isCompact,
+                            running = displayState.running,
+                            onClick = { onFocusChange(focusIndex); onItemClick(item) }
+                        )
+                    }
+                }
+
+                MenuItem.Stream -> {
+                    val offer = layoutState.stream
+                    IconTextMenuItem(
+                        label = if (offer?.isLive == true) {
+                            stringResource(R.string.stream_entry_gamedetail_menu_resume)
+                        } else {
+                            stringResource(R.string.stream_entry_gamedetail_menu, offer?.containerLabel.orEmpty())
+                        },
+                        icon = ImageVector.vectorResource(R.drawable.ic_stream_play_network),
                         isFocused = isFocused,
-                        downloadSizeBytes = displayState.downloadSizeBytes,
+                        isCompact = isCompact,
+                        onClick = { onFocusChange(focusIndex); onItemClick(item) }
+                    )
+                }
+
+                is MenuItem.MoveToDisplay -> {
+                    val screenNumber = displayState.moveTargets.getOrNull(item.slot)?.screenNumber ?: 0
+                    IconTextMenuItem(
+                        label = stringResource(R.string.gamedetail_menu_move_to_display, screenNumber),
+                        icon = Icons.Default.Tv,
+                        isFocused = isFocused,
                         isCompact = isCompact,
                         onClick = { onFocusChange(focusIndex); onItemClick(item) }
                     )
@@ -307,6 +374,16 @@ fun GameDetailMenu(
                         onClick = { onFocusChange(focusIndex); onItemClick(item) }
                     )
                 }
+
+                MenuItem.CloseGame -> {
+                    IconTextMenuItem(
+                        label = stringResource(R.string.gamedetail_menu_close_game),
+                        icon = Icons.Default.Close,
+                        isFocused = isFocused,
+                        isCompact = isCompact,
+                        onClick = { onFocusChange(focusIndex); onItemClick(item) }
+                    )
+                }
             }
         }
     }
@@ -316,19 +393,60 @@ fun GameDetailMenu(
 private fun PlayMenuItem(
     downloadStatus: GameDownloadStatus,
     downloadProgress: State<Float>,
-    isAwaitingServer: Boolean,
+    downloadWaitStatus: DownloadWaitStatus?,
     isFocused: Boolean,
     downloadSizeBytes: Long?,
     isCompact: Boolean,
+    running: com.nendo.argosy.ui.common.RunningGameUi?,
     onClick: () -> Unit
 ) {
-    val label = when (downloadStatus) {
+    val runningGame = running?.takeIf { downloadStatus == GameDownloadStatus.DOWNLOADED }
+    val label = when {
+        runningGame?.isClosing == true -> stringResource(R.string.gamedetail_menu_play_button_saving)
+        runningGame != null -> stringResource(R.string.gamedetail_menu_play_button_resume_game)
+        else -> playButtonLabel(downloadStatus, downloadProgress, downloadWaitStatus)
+    }
+    val isClosingGame = runningGame?.isClosing == true
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        PlayButtonBody(
+            label = label,
+            downloadStatus = downloadStatus,
+            downloadProgress = downloadProgress,
+            isFocused = isFocused && !isClosingGame,
+            downloadSizeBytes = downloadSizeBytes,
+            isCompact = isCompact,
+            onClick = if (isClosingGame) ({}) else onClick
+        )
+        if (runningGame != null && !isCompact) {
+            com.nendo.argosy.ui.components.RunningSubLine(
+                running = runningGame,
+                labels = PLAY_BUTTON_RUNNING_LABELS,
+                modifier = Modifier.padding(top = Dimens.spacingXs)
+            )
+        }
+    }
+}
+
+private val PLAY_BUTTON_RUNNING_LABELS = com.nendo.argosy.ui.components.RunningLineLabels(
+    running = R.string.gamedetail_menu_play_sub_running,
+    runningIn = R.string.gamedetail_menu_play_sub_running_in,
+    saving = R.string.gamedetail_menu_play_sub_closing,
+    runningWithTime = R.string.gamedetail_menu_play_sub_running_with_time
+)
+
+@Composable
+private fun playButtonLabel(
+    downloadStatus: GameDownloadStatus,
+    downloadProgress: State<Float>,
+    downloadWaitStatus: DownloadWaitStatus?
+): String {
+    return when (downloadStatus) {
         GameDownloadStatus.NO_FILE ->
             stringResource(R.string.gamedetail_menu_play_button_no_file)
         GameDownloadStatus.EXTRACTING ->
             stringResource(R.string.gamedetail_menu_play_button_extracting)
-        GameDownloadStatus.DOWNLOADING -> if (isAwaitingServer) {
-            stringResource(R.string.gamedetail_menu_play_button_waiting_for_server)
+        GameDownloadStatus.DOWNLOADING -> if (downloadWaitStatus != null) {
+            stringResource(downloadWaitStatus.menuLabelRes)
         } else {
             stringResource(
                 R.string.gamedetail_menu_play_button_progress_percent,
@@ -350,7 +468,19 @@ private fun PlayMenuItem(
         GameDownloadStatus.NOT_DOWNLOADED ->
             stringResource(R.string.gamedetail_menu_play_button_download)
     }
+}
 
+@Composable
+private fun PlayButtonBody(
+    label: String,
+    downloadStatus: GameDownloadStatus,
+    downloadProgress: State<Float>,
+    isFocused: Boolean,
+    downloadSizeBytes: Long?,
+    isCompact: Boolean,
+    iconOverride: ImageVector? = null,
+    onClick: () -> Unit
+) {
     val isFailed = downloadStatus == GameDownloadStatus.FAILED
     val baseContainerColor = if (isFailed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
     val baseContentColor = if (isFailed) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onPrimary
@@ -367,7 +497,7 @@ private fun PlayMenuItem(
         baseContentColor.copy(alpha = 0.7f)
     }
 
-    val icon = when (downloadStatus) {
+    val icon = iconOverride ?: when (downloadStatus) {
         GameDownloadStatus.DOWNLOADED -> Icons.Default.PlayArrow
         GameDownloadStatus.NEEDS_INSTALL -> Icons.Default.InstallMobile
         GameDownloadStatus.QUEUED -> Icons.Default.Schedule
@@ -920,4 +1050,3 @@ private fun buildEndWeightedLines(words: List<String>): List<String> {
 
     return listOf(firstPart, lastPart)
 }
-

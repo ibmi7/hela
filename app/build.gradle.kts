@@ -34,8 +34,8 @@ android {
         applicationId = "com.nendo.argosy"
         minSdk = 26
         targetSdk = 35
-        versionCode = 375
-        versionName = "2.31.0"
+        versionCode = 380
+        versionName = "3.0.0-beta.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -287,9 +287,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.svg)
 
-    // QR code generation + scanning
+    // QR code generation
     implementation("com.google.zxing:core:3.5.4")
-    implementation(libs.bundles.camerax)
 
     // Discord Social SDK (optional AAR -- place in app/libs/)
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
@@ -326,6 +325,7 @@ dependencies {
 
     // Testing
     testImplementation(libs.junit)
+    testImplementation(libs.okhttp.mockwebserver)
     // The zstd aar ships Android natives only; unit tests need the JVM jar.
     testImplementation(libs.zstd.jni)
     testImplementation(libs.mockk)

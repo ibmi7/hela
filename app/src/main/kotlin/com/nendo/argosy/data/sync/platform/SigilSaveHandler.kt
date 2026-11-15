@@ -169,7 +169,7 @@ class SigilSaveHandler @Inject constructor(
             "lime3ds" to listOf("sdmc")
         )
 
-        private val GB_CORES = setOf("gambatte", "mgba", "vbam", "sameboy", "tgbdual")
+        private val GB_CORES = setOf("gambatte", "mgba", "vbam", "sameboy", "tgbdual", "armgba")
 
         private val LIBRETRO_LAYOUTS: Map<String, Set<String>> = mapOf(
             "saturn" to setOf("mednafen_saturn", "kronos", "yabause", "yabasanshiro"),
@@ -354,6 +354,16 @@ class SigilSaveHandler @Inject constructor(
 
         fun rootFor(basePath: String, layout: String): String? =
             ROOT_ANCHORS[layout]?.let { rootFor(basePath, it) }
+
+        /**
+         * The save root for a path set above the layout's folders: [path] itself, when one of the
+         * layout's anchor folders exists directly inside it.
+         */
+        fun rootAbove(path: String, layout: String, isDirectory: (String) -> Boolean): String? {
+            val root = path.trimEnd('/')
+            val anchors = ROOT_ANCHORS[layout] ?: return null
+            return root.takeIf { anchors.any { anchor -> isDirectory("$root/${anchor.substringBefore('/')}") } }
+        }
 
         /**
          * The save root a layout expects, found in [basePath] by the first folder of one of the
@@ -564,7 +574,11 @@ class SigilSaveHandler @Inject constructor(
             ?: emulatorSaveConfigRepository.resolveEvaluatedSavePath(config.emulatorId)
         val candidates = listOfNotNull(chosen) + registered
         val roots = candidates.mapNotNull {
-            if (layout == FLYCAST_STANDALONE_LAYOUT) it.trimEnd('/') else rootFor(it, layout)
+            if (layout == FLYCAST_STANDALONE_LAYOUT) {
+                it.trimEnd('/')
+            } else {
+                rootFor(it, layout) ?: rootAbove(it, layout, fal::isDirectory)
+            }
         }.distinct()
         if (roots.isEmpty()) {
             Logger.warn(TAG, "[SaveSync] SIGIL | no root for layout=$layout in ${candidates.firstOrNull()}")

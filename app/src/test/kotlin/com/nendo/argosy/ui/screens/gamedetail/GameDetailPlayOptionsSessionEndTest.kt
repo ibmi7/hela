@@ -226,6 +226,11 @@ class GameDetailPlayOptionsSessionEndTest {
         gameThemeAudio = mockk(relaxed = true),
         siblingChoice = siblingChoice,
         steamInstallReports = mockk(relaxed = true),
-        appsRepository = appsRepository
+        appsRepository = appsRepository,
+        runningGames = mockk {
+            every { state } returns MutableStateFlow(com.nendo.argosy.data.emulator.background.RunningGamesSnapshot())
+        },
+        runningGameMenu = mockk(relaxed = true),
+        streamLaunch = com.nendo.argosy.ui.screens.stream.noStreamLaunch()
     )
 }

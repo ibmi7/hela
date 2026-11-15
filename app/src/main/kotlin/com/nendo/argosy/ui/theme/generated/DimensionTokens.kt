@@ -86,6 +86,11 @@ object DimensionTokens {
         const val inGameMenuMaxHeightPct = 90
         const val inGameMenuBroadWidthPct = 85
         const val inGameMenuBroadWidthPctWide = 65
+        const val noticeWidthLandscapeMinPct = 20
+        const val noticeWidthLandscapeMaxPct = 30
+        const val noticeWidthPortraitMax = 336
+        const val noticeOverAppEndInset = 16
+        const val noticeOverAppBottomInset = 36
         const val inGameMenuRailWidth = 72
         const val inGameQuickHistoryThumbWidth = 96
         const val inGameQuickHistoryThumbHeight = 72
@@ -142,7 +147,15 @@ object DimensionTokens {
         const val saveTimelineFloaterWidth = 360
         const val saveTimelineFloaterThumb = 152
         const val saveTimelineHeaderCover = 56
-        const val saveTimelineBackdropBlur = 48
+        const val gameArtBackdropBlur = 48
+        const val runningCardCaptionHeight = 44
+        const val runningRaBarWidth = 56
+        const val runningFriendAvatar = 30
+        const val runningCartridgeWidth = 30
+        const val runningCartridgeHeight = 34
+        const val setupLeadColumnWidth = 280
+        const val setupContentMaxWidth = 560
+        const val setupPreviewMaxHeight = 340
     }
 
     object Elevation {

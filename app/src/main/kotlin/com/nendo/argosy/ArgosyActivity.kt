@@ -30,6 +30,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.nendo.argosy.core.input.ControllerPointerGuard
+import com.nendo.argosy.core.input.HomeKeys
 import com.nendo.argosy.core.input.controllerTouchpadGuarding
 import com.nendo.argosy.data.cache.ImageCacheManager
 import com.nendo.argosy.data.local.dao.DownloadQueueDao
@@ -120,6 +121,7 @@ class ArgosyActivity : ComponentActivity() {
     @Inject lateinit var downloadQueueRepository: com.nendo.argosy.data.repository.DownloadQueueRepository
     @Inject lateinit var gamepadInputHandler: GamepadInputHandler
     @Inject lateinit var connectedControllerTracker: com.nendo.argosy.core.input.ConnectedControllerTracker
+    @Inject lateinit var savedPadSeatsPublisher: com.nendo.argosy.hardware.pad.SavedPadSeatsPublisher
     @Inject lateinit var triggerAxisKeyEmitter: com.nendo.argosy.ui.input.TriggerAxisKeyEmitter
     @Inject lateinit var imageCacheManager: ImageCacheManager
     @Inject lateinit var resolveGameEmulatorContext:
@@ -192,6 +194,8 @@ class ArgosyActivity : ComponentActivity() {
         com.nendo.argosy.ui.screens.media.delegates.MediaSeriesDelegate
     @Inject lateinit var mediaSiblingsDelegate:
         com.nendo.argosy.ui.screens.media.delegates.MediaSiblingsDelegate
+    @Inject lateinit var runningGames: com.nendo.argosy.data.emulator.background.RunningGames
+    @Inject lateinit var setupStateRepository: com.nendo.argosy.data.setup.SetupStateRepository
 
     private val sessionStateStore by lazy {
         com.nendo.argosy.data.preferences.SessionStateStore(this)
@@ -206,6 +210,8 @@ class ArgosyActivity : ComponentActivity() {
         private set
 
     var isOnHomeScreen = false
+
+    fun holdStatusBarHidden(hold: Boolean) = systemBars.holdStatusBarHidden(hold)
 
     var isOverlayFocused: Boolean
         get() = dualScreenManager.isOverlayFocused
@@ -338,6 +344,8 @@ class ArgosyActivity : ComponentActivity() {
                 mediaDownloadDelegate = mediaDownloadDelegate,
                 mediaSeriesDelegate = mediaSeriesDelegate,
                 mediaSiblingsDelegate = mediaSiblingsDelegate,
+                runningGames = runningGames,
+                setupStateRepository = setupStateRepository,
                 imageCacheManager = imageCacheManager,
                 romMRepository = romMRepository,
                 gameDocumentLoader = gameDocumentLoader,
@@ -452,6 +460,7 @@ class ArgosyActivity : ComponentActivity() {
     @SuppressLint("NewApi")
     override fun onResume() {
         super.onResume()
+        savedPadSeatsPublisher.onLauncherResumed()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) pointerGuard.onInFrontChanged(true)
         systemBars.apply()
         if (::dualScreenManager.isInitialized) {
@@ -524,6 +533,7 @@ class ArgosyActivity : ComponentActivity() {
     @SuppressLint("RestrictedApi")
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         if (!dualScreenManager.claimInput(event)) return true
+        if (gamepadInputHandler.releaseIfRemoved(event.deviceId)) return true
         if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
             Logger.verbose(TAG) { "dispatchKeyEvent: key=${event.keyCode} isHome=$isOnHomeScreen swapped=${dualScreenManager.isRolesSwapped.value} gameOnSecondary=${dualScreenManager.swappedIsGameActive.value} companion=${dualScreenManager.isCompanionActive.value} overlay=$isOverlayFocused" }
         }
@@ -577,7 +587,7 @@ class ArgosyActivity : ComponentActivity() {
         if (gamepadInputHandler.handleKeyEvent(event)) {
             return true
         }
-        if (event.keyCode == KeyEvent.KEYCODE_HOME || event.keyCode == KeyEvent.KEYCODE_BUTTON_MODE) {
+        if (HomeKeys.isHome(event)) {
             if (event.action == KeyEvent.ACTION_DOWN) gamepadInputHandler.emitHomeEvent()
             return true
         }
@@ -715,7 +725,7 @@ class ArgosyActivity : ComponentActivity() {
     }
 
     private fun forwardDeepLinkToDefaultDisplay() {
-        if (intent?.data?.scheme != "argosy") return
+        if (deepLinkOf(intent) == null) return
         val forwarded = Intent(intent).setClass(this, ArgosyActivity::class.java)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         val options = android.app.ActivityOptions.makeBasic()
@@ -878,14 +888,17 @@ class ArgosyActivity : ComponentActivity() {
 
 
     private fun handleDeepLink(intent: Intent): Boolean {
-        val uri = intent.data ?: return false
-        if (uri.scheme == "argosy") {
-            val resolved = mergeLaunchExtras(uri, intent)
-            Log.d(TAG, "Received deep link: $resolved")
-            dualScreenManager.publishDeepLink(resolved)
-            return true
-        }
-        return false
+        val resolved = deepLinkOf(intent) ?: return false
+        Log.d(TAG, "Received deep link: $resolved")
+        dualScreenManager.publishDeepLink(resolved)
+        return true
+    }
+
+    private fun deepLinkOf(intent: Intent?): android.net.Uri? {
+        if (intent == null) return null
+        ArgosyHomeIntent.runningDeepLinkOf(intent)?.let { return it }
+        val uri = intent.data?.takeIf { it.scheme == "argosy" } ?: return null
+        return mergeLaunchExtras(uri, intent)
     }
 
     private fun mergeLaunchExtras(uri: android.net.Uri, intent: Intent): android.net.Uri {

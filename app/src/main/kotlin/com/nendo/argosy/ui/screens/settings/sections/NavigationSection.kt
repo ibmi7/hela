@@ -7,12 +7,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.nendo.argosy.R
+import com.nendo.argosy.domain.model.ArgosyPermission
 import com.nendo.argosy.data.preferences.ControlsPreferences
 import com.nendo.argosy.data.preferences.MenuWrapMode
 import com.nendo.argosy.data.preferences.SelectSwapMode
@@ -20,6 +25,9 @@ import com.nendo.argosy.hardware.SystemHotkeyAction
 import com.nendo.argosy.libretro.HotkeyManager
 import com.nendo.argosy.ui.common.labelRes
 import com.nendo.argosy.ui.components.ActionPreference
+import com.nendo.argosy.ui.components.Modal
+import com.nendo.argosy.ui.components.NavigationPreference
+import com.nendo.argosy.ui.screens.setup.components.ButtonCheckPanel
 import com.nendo.argosy.ui.components.SegmentedPreference
 import com.nendo.argosy.ui.components.SliderPreference
 import com.nendo.argosy.ui.components.SwitchPreference
@@ -36,6 +44,7 @@ import com.nendo.argosy.ui.screens.settings.components.SystemComboCaptureModal
 import com.nendo.argosy.ui.screens.settings.delegates.ControlsSettingsDelegate
 import com.nendo.argosy.ui.screens.settings.menu.SettingsLayout
 import com.nendo.argosy.ui.theme.Dimens
+import com.nendo.argosy.ui.theme.LocalLauncherTheme
 import kotlin.math.roundToInt
 
 internal sealed class NavigationItem(
@@ -62,6 +71,7 @@ internal sealed class NavigationItem(
     data object SwapAB : NavigationItem("swapAB", "controller")
     data object SwapXY : NavigationItem("swapXY", "controller")
     data object SwapStartSelect : NavigationItem("swapStartSelect", "controller")
+    data object CheckButtons : NavigationItem("checkButtons", "controller")
     data object IgnoreControllerTouchpad : NavigationItem("ignoreControllerTouchpad", "controller")
 
     data object HapticFeedback : NavigationItem("haptic", "feedback")
@@ -95,12 +105,10 @@ internal sealed class NavigationItem(
     data object OpenNavigationShortcut : NavigationItem("openNavigationKey", "shortcuts")
     data object OpenQuickPanelShortcut : NavigationItem("openQuickPanelKey", "shortcuts")
 
+    data object SystemHotkeysAccess : NavigationItem("systemHotkeysAccess", "system")
+    data object HomeButtonInGames : NavigationItem("homeButtonInGames", "system")
+    data object QuickPanelInEmulators : NavigationItem("quickPanelInEmulators", "system")
     data object SystemHotkeys : NavigationItem("systemHotkeys", "system")
-    data object SystemHotkeysAccess : NavigationItem(
-        key = "systemHotkeysAccess",
-        section = "system",
-        visibleWhen = { it.systemHotkeysEnabled }
-    )
     data object SystemHomeCombo : NavigationItem(
         key = "systemHomeCombo",
         section = "system",
@@ -144,7 +152,7 @@ internal sealed class NavigationItem(
         val ALL: List<NavigationItem>
             get() = listOf(
                 ControllerHeader,
-                ControllerLayout, SwapAB, SwapXY, SwapStartSelect, IgnoreControllerTouchpad,
+                ControllerLayout, SwapAB, SwapXY, SwapStartSelect, CheckButtons, IgnoreControllerTouchpad,
                 FeedbackSpacer, FeedbackHeader,
                 HapticFeedback, VibrationStrength,
                 MenusSpacer, MenusHeader,
@@ -154,7 +162,8 @@ internal sealed class NavigationItem(
                 ShortcutsSpacer, ShortcutsHeader,
                 OpenNavigationShortcut, OpenQuickPanelShortcut,
                 SystemSpacer, SystemHeader,
-                SystemHotkeys, SystemHotkeysAccess, SystemHomeCombo, SystemBackCombo
+                SystemHotkeysAccess, HomeButtonInGames, QuickPanelInEmulators,
+                SystemHotkeys, SystemHomeCombo, SystemBackCombo
             )
     }
 }
@@ -270,6 +279,14 @@ fun NavigationSection(uiState: SettingsUiState, viewModel: SettingsViewModel) {
                 isEnabled = controls.swapStartSelect,
                 isFocused = isFocused(item),
                 onToggle = { viewModel.setSwapStartSelect(it) }
+            )
+
+            NavigationItem.CheckButtons -> NavigationPreference(
+                icon = Icons.Default.SportsEsports,
+                title = stringResource(R.string.settings_navigation_check_buttons_title),
+                subtitle = stringResource(R.string.settings_navigation_check_buttons_subtitle),
+                isFocused = isFocused(item),
+                onClick = { viewModel.openButtonCheck() }
             )
 
             NavigationItem.IgnoreControllerTouchpad -> SwitchPreference(
@@ -392,11 +409,36 @@ fun NavigationSection(uiState: SettingsUiState, viewModel: SettingsViewModel) {
                 onToggle = { viewModel.setSystemHotkeysEnabled(it) }
             )
 
+            NavigationItem.HomeButtonInGames -> SwitchPreference(
+                title = stringResource(R.string.settings_navigation_home_button_in_games_title),
+                subtitle = stringResource(R.string.settings_navigation_home_button_in_games_subtitle),
+                isEnabled = controls.homeButtonInGames,
+                isFocused = isFocused(item),
+                onToggle = { viewModel.setHomeButtonInGames(it) }
+            )
+
+            NavigationItem.QuickPanelInEmulators -> {
+                val serviceOff = uiState.display.quickPanelInEmulators &&
+                    !uiState.permissions.snapshot.isGranted(ArgosyPermission.ACCESSIBILITY)
+                SwitchPreference(
+                    title = stringResource(R.string.settings_interface_quick_panel_in_emulators_title),
+                    subtitle = if (serviceOff) {
+                        stringResource(R.string.settings_interface_quick_panel_in_emulators_service_off)
+                    } else {
+                        stringResource(R.string.settings_interface_quick_panel_in_emulators_subtitle)
+                    },
+                    subtitleColor = if (serviceOff) LocalLauncherTheme.current.semanticColors.warning else null,
+                    isEnabled = uiState.display.quickPanelInEmulators,
+                    isFocused = isFocused(item),
+                    onToggle = { viewModel.setQuickPanelInEmulators(it) }
+                )
+            }
+
             NavigationItem.SystemHotkeysAccess -> ActionPreference(
                 title = stringResource(R.string.settings_navigation_system_hotkeys_access_title),
                 subtitle = stringResource(R.string.settings_navigation_system_hotkeys_access_subtitle),
                 isFocused = isFocused(item),
-                trailingText = if (uiState.permissions.hasAccessibilityService) {
+                trailingText = if (uiState.permissions.snapshot.isGranted(ArgosyPermission.ACCESSIBILITY)) {
                     stringResource(R.string.settings_navigation_system_hotkeys_access_on)
                 } else {
                     stringResource(R.string.settings_navigation_system_hotkeys_access_needed)
@@ -445,6 +487,24 @@ fun NavigationSection(uiState: SettingsUiState, viewModel: SettingsViewModel) {
             onAssign = { keyCode -> viewModel.assignShortcutKey(target, keyCode) },
             onDismiss = { viewModel.cancelShortcutCapture() }
         )
+    }
+
+    if (controls.showButtonCheck) {
+        val check by viewModel.buttonCheck.state.collectAsState()
+        Modal(
+            title = stringResource(R.string.settings_navigation_check_buttons_title),
+            subtitle = stringResource(R.string.setup_check_purpose),
+            baseWidth = Dimens.modalWidthXl,
+            onDismiss = { viewModel.closeButtonCheck() }
+        ) {
+            ButtonCheckPanel(
+                state = check,
+                controller = viewModel.buttonCheck,
+                continueLabel = R.string.settings_navigation_check_buttons_done,
+                backLabel = null,
+                onExit = { viewModel.closeButtonCheck() }
+            )
+        }
     }
 
     controls.systemComboCaptureTarget?.let { action ->

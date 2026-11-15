@@ -64,6 +64,7 @@ import com.nendo.argosy.ui.screens.settings.sections.themeSoundsItemAtFocusIndex
 import com.nendo.argosy.ui.screens.settings.sections.themeSoundsMaxFocusIndex
 import com.nendo.argosy.ui.screens.settings.sections.aboutHasChangelog
 import com.nendo.argosy.ui.screens.settings.sections.aboutItemAtFocusIndex
+import com.nendo.argosy.ui.screens.settings.sections.aboutUpdateActions
 import com.nendo.argosy.ui.screens.settings.sections.boxArtItemAtFocusIndex
 import com.nendo.argosy.ui.screens.settings.sections.audioItemAtFocusIndex
 import com.nendo.argosy.ui.screens.settings.sections.audioMaxFocusIndex
@@ -152,6 +153,7 @@ import com.nendo.argosy.ui.screens.settings.sections.libraryMaxFocusIndex
 import com.nendo.argosy.ui.screens.settings.sections.libraryItemAtFocusIndex
 import com.nendo.argosy.ui.screens.settings.sections.LibraryItem
 import com.nendo.argosy.ui.screens.settings.sections.LibraryLayoutState
+import com.nendo.argosy.data.remote.ssl.ClientCertTarget
 
 private fun nextRommAuthMethod(current: RomMAuthMethod): RomMAuthMethod = when (current) {
     RomMAuthMethod.DEVICE -> RomMAuthMethod.PAIRING_CODE
@@ -187,6 +189,7 @@ internal fun routeConfirm(vm: SettingsViewModel): InputResult {
                 MainSettingsItem.Social -> vm.navigateToSection(SettingsSection.SOCIAL)
                 MainSettingsItem.Steam -> vm.navigateToSection(SettingsSection.STEAM_SETTINGS)
                 MainSettingsItem.Jellyfin -> vm.navigateToSection(SettingsSection.JELLYFIN)
+                MainSettingsItem.NetworkBluetooth -> vm.navigateToSection(SettingsSection.NETWORK_BLUETOOTH)
                 null -> {}
             }
             InputResult.HANDLED
@@ -196,6 +199,7 @@ internal fun routeConfirm(vm: SettingsViewModel): InputResult {
         SettingsSection.SAVES -> routeSavesConfirm(vm, state)
         SettingsSection.STEAM_SETTINGS -> routeSteamConfirm(vm, state)
         SettingsSection.JELLYFIN -> routeJellyfinConfirm(vm, state)
+        SettingsSection.NETWORK_BLUETOOTH -> InputResult.HANDLED
         SettingsSection.RETRO_ACHIEVEMENTS -> {
             val ra = state.retroAchievements
             if (ra.showLoginForm) {
@@ -408,8 +412,11 @@ private fun routeRomMConfirm(vm: SettingsViewModel, state: SettingsUiState): Inp
                 return InputResult.handled(SoundType.OPEN_MODAL)
             }
             indices.connectIndex -> vm.connectToRomm()
-            indices.scanIndex -> vm.showRommScanner()
             indices.certificateIndex -> vm.requestCertificatePicker()
+            indices.clientCertificateIndex -> {
+                vm.openClientCertManager(ClientCertTarget.ROMM)
+                return InputResult.handled(SoundType.OPEN_MODAL)
+            }
             indices.cancelIndex -> vm.cancelRommConfig()
             else -> vm._uiState.update { it.copy(server = it.server.copy(rommFocusField = state.focusedIndex)) }
         }
@@ -423,6 +430,7 @@ private fun routeRomMConfirm(vm: SettingsViewModel, state: SettingsUiState): Inp
         RomMItem.Accounts -> vm.navigateToSection(SettingsSection.ACCOUNTS)
         RomMItem.SyncSettings -> vm.navigateToSection(SettingsSection.SYNC_SETTINGS)
         RomMItem.SyncLibrary -> if (isOnline) vm.syncRomm()
+        RomMItem.NotOnDevice -> return InputResult.handled(SoundType.SILENT)
         else -> {}
     }
     return InputResult.HANDLED
@@ -460,6 +468,10 @@ private fun routeJellyfinConfirm(vm: SettingsViewModel, state: SettingsUiState):
             else -> vm.requestJellyfinSignIn()
         }
         JellyfinItem.PasswordSignIn -> vm.showJellyfinLoginForm()
+        JellyfinItem.ClientCertificate -> {
+            vm.openClientCertManager(ClientCertTarget.JELLYFIN)
+            return InputResult.handled(SoundType.OPEN_MODAL)
+        }
         JellyfinItem.SyncLibrary -> if (state.jellyfin.isSignedIn) vm.syncJellyfinLibrary()
         JellyfinItem.StreamingQuality -> return InputResult.handled(SoundType.SILENT)
         JellyfinItem.AudioLanguage, JellyfinItem.Subtitles,
@@ -737,7 +749,6 @@ private fun routeInterfaceConfirm(vm: SettingsViewModel, state: SettingsUiState)
         InterfaceItem.HideSystemNavigationBar ->
             vm.setHideSystemNavigationBar(!state.display.hideSystemNavigationBar)
         InterfaceItem.HideSystemStatusBar -> vm.setHideSystemStatusBar(!state.display.hideSystemStatusBar)
-        InterfaceItem.QuickPanelInEmulators -> vm.setQuickPanelInEmulators(!state.display.quickPanelInEmulators)
         InterfaceItem.LockScreenArt -> vm.setLockScreenArt(!state.display.lockScreenArt)
         InterfaceItem.HomeApp -> vm.setHomeAppAvailable(!state.display.homeAppAvailable)
         InterfaceItem.StatusClock -> vm.setShowStatusClock(!state.display.showStatusClock)
@@ -745,6 +756,12 @@ private fun routeInterfaceConfirm(vm: SettingsViewModel, state: SettingsUiState)
         InterfaceItem.StatusNetwork -> vm.setShowStatusNetwork(!state.display.showStatusNetwork)
         InterfaceItem.PreLaunchRecaps -> vm.setPreLaunchRecaps(!state.display.preLaunchRecaps)
         InterfaceItem.MonthlyRecap -> vm.setMonthlyRecap(!state.display.monthlyRecap)
+        InterfaceItem.Notifications -> vm.setNotificationsEnabled(!state.display.notificationsEnabled)
+        InterfaceItem.NotifyDownloadsFinished ->
+            vm.setNotifyDownloadsFinished(!state.display.notifyDownloadsFinished)
+        InterfaceItem.NotifyBattery -> vm.setNotifyBattery(!state.display.notifyBattery)
+        InterfaceItem.NotifyCharging -> vm.setNotifyCharging(!state.display.notifyCharging)
+        InterfaceItem.NotifyControllers -> vm.setNotifyControllers(!state.display.notifyControllers)
         InterfaceItem.ControllerGrip -> vm.navigateToControllerGrip()
         InterfaceItem.HomeScreen -> vm.navigateToHomeScreen()
         InterfaceItem.LibraryView -> vm.navigateToLibraryView()
@@ -1056,6 +1073,10 @@ private fun routeNavigationConfirm(vm: SettingsViewModel, state: SettingsUiState
             vm.setSwapStartSelect(swapped)
             return InputResult.toggled(swapped)
         }
+        NavigationItem.CheckButtons -> {
+            vm.openButtonCheck()
+            return InputResult.handled(SoundType.OPEN_MODAL)
+        }
         NavigationItem.IgnoreControllerTouchpad -> {
             val enabled = !state.controls.ignoreControllerTouchpad
             vm.setIgnoreControllerTouchpad(enabled)
@@ -1089,6 +1110,16 @@ private fun routeNavigationConfirm(vm: SettingsViewModel, state: SettingsUiState
             return InputResult.toggled(enabled)
         }
         NavigationItem.SystemHotkeysAccess -> vm.openAccessibilitySettings()
+        NavigationItem.HomeButtonInGames -> {
+            val enabled = !state.controls.homeButtonInGames
+            vm.setHomeButtonInGames(enabled)
+            return InputResult.toggled(enabled)
+        }
+        NavigationItem.QuickPanelInEmulators -> {
+            val enabled = !state.display.quickPanelInEmulators
+            vm.setQuickPanelInEmulators(enabled)
+            return InputResult.toggled(enabled)
+        }
         NavigationItem.SystemHomeCombo -> {
             vm.startSystemComboCapture(SystemHotkeyAction.HOME)
             return InputResult.handled(SoundType.OPEN_MODAL)
@@ -1186,17 +1217,32 @@ private fun routeAboutConfirm(vm: SettingsViewModel, state: SettingsUiState): In
     val hasChangelog = aboutHasChangelog(state.updateCheck)
     when (aboutItemAtFocusIndex(state.focusedIndex, hasLogPath, hasChangelog)) {
         AboutItem.CheckUpdates -> {
-            if (state.aboutUpdateActionIndex == 1) {
-                vm.openChangelog()
-            } else if (state.updateCheck.updateAvailable) {
-                vm.viewModelScope.launch { vm._downloadUpdateEvent.emit(Unit) }
-            } else {
-                vm.checkForUpdates()
-            }
+            val actions = aboutUpdateActions(state.updateCheck)
+            actions.getOrNull(state.aboutUpdateActionIndex.coerceIn(0, actions.lastIndex))
+                ?.let { vm.runUpdateAction(it) }
         }
         AboutItem.ChangelogPreview -> vm.openChangelog()
         AboutItem.BetaUpdates -> {
             vm.setBetaUpdatesEnabled(!state.betaUpdatesEnabled)
+            return InputResult.handled(SoundType.TOGGLE)
+        }
+        AboutItem.ControllerTest -> {
+            vm.aboutTools.openControllerTest()
+            return InputResult.handled(SoundType.OPEN_MODAL)
+        }
+        AboutItem.DisplayInfo -> {
+            vm.aboutTools.openDisplayInfo()
+            return InputResult.handled(SoundType.OPEN_MODAL)
+        }
+        AboutItem.ExportDiagnostics -> vm.aboutTools.exportDiagnostics()
+        AboutItem.RunSetupAgain -> vm.runSetupAgain()
+        AboutItem.ShowUpdatePrompt -> vm.aboutTools.showUpdatePromptNow()
+        AboutItem.ResetNotices -> {
+            vm.aboutTools.requestResetNotices()
+            return InputResult.handled(SoundType.OPEN_MODAL)
+        }
+        AboutItem.DebugUpdateChecks -> {
+            vm.setDebugUpdateChecksEnabled(!state.debugUpdateChecksEnabled)
             return InputResult.handled(SoundType.TOGGLE)
         }
         AboutItem.FileLogging -> {
@@ -1291,6 +1337,8 @@ private fun routeDismissTopOverlay(vm: SettingsViewModel): Boolean {
         vm.shaderChainManager.shaderStack.isReordering -> { vm.cancelShaderLift(); true }
         state.accounts.pairing.active -> { vm.cancelAddAccount(); true }
         state.accounts.switchInProgress -> true
+        state.clientCert.passwordEntry != null -> { vm.closeClientCertPassword(); true }
+        state.clientCert.managerOpenFor != null -> { vm.closeClientCertManager(); true }
         state.server.rommAddressVerifyPrompt != null -> { vm.cancelUnverifiedRommAddress(); true }
         state.server.rommAddressEditor != null -> { vm.closeRommAddressEditor(); true }
         state.server.rommAddressMenu != null -> { vm.closeRommAddressMenu(); true }
@@ -1400,6 +1448,7 @@ private fun computeMaxFocusIndex(
         state.jellyfin.showLoginForm -> JELLYFIN_LOGIN_CANCEL_INDEX
         else -> jellyfinMaxFocusIndex(JellyfinLayoutState.from(state))
     }
+    SettingsSection.NETWORK_BLUETOOTH -> 0
     SettingsSection.RETRO_ACHIEVEMENTS -> when {
         state.retroAchievements.showLoginForm -> 3
         state.retroAchievements.isLoggedIn -> raLoggedInMaxFocusIndex(

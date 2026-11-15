@@ -178,6 +178,11 @@
     <!-- Second line of that row, listing what the hub shows. -->
     <string name="settings_main_play_time_subtitle">Patterns, top games, devices</string>
 
+    <!-- Row opening the Wi-Fi and Bluetooth settings. Wi-Fi and Bluetooth are radio names,
+         usually kept as is. -->
+    <string name="settings_main_network_title">Network and Bluetooth</string>
+    <!-- Second line of that row. Lists what the screen holds. -->
+    <string name="settings_main_network_subtitle">Wi-Fi networks and Bluetooth controllers</string>
     <!-- Row opening the RomM game server settings. Proper name of the server software Argosy
          talks to, never translated. -->
     <string name="settings_main_romm_title" translatable="false">RomM</string>
@@ -367,6 +372,32 @@
     <string name="settings_interface_monthly_recap_title">Monthly Recap</string>
     <!-- Second line of that row. -->
     <string name="settings_interface_monthly_recap_subtitle">At the start of each month, show a summary of last month on Home</string>
+    <!-- Group header above the notification toggles in the Interface settings section. -->
+    <string name="settings_interface_section_notifications">Notifications</string>
+    <!-- Master toggle for every notice card Argosy shows, in the launcher and over games. -->
+    <string name="settings_interface_notifications_title">Notifications</string>
+    <!-- Second line of the master toggle. Battery warnings are the one kind of notice that keeps
+         showing with this toggle off; they have their own toggle below. -->
+    <string name="settings_interface_notifications_subtitle">Show Argosy notices in the launcher and over games. Battery notices still show</string>
+    <!-- Toggle for the notice shown when a game download completes. -->
+    <string name="settings_interface_notify_downloads_finished_title">Downloads finished</string>
+    <string name="settings_interface_notify_downloads_finished_subtitle">Show a notice when a download completes</string>
+    <!-- Toggle for the low battery (15%) and critical battery (5%) notices. "Battery" is the
+         device's battery, a noun. -->
+    <string name="settings_interface_notify_battery_title">Battery</string>
+    <!-- Second line of that row. Built-in games are the emulators inside Argosy; they write their
+         save to storage at 5% battery whether or not this notice is on. "Save" is a verb here. -->
+    <string name="settings_interface_notify_battery_subtitle" formatted="false">Warn at 15% and 5%. Built-in games still save at 5%</string>
+    <!-- Toggle for the notices shown when the charger is plugged in or pulled out while a game
+         runs. "Charging" is the state of the battery taking power. -->
+    <string name="settings_interface_notify_charging_title">Charging</string>
+    <!-- Second line of that row. -->
+    <string name="settings_interface_notify_charging_subtitle">Show a notice when the charger is plugged in or out during play</string>
+    <!-- Toggle for the notices shown when a game controller connects, disconnects, joins a game
+         or runs low on battery. "Controllers" is a noun, the gamepads. -->
+    <string name="settings_interface_notify_controllers_title">Controllers</string>
+    <!-- Second line of that row. -->
+    <string name="settings_interface_notify_controllers_subtitle">Show a notice when a controller connects, disconnects or runs low</string>
     <!-- Row opening the settings for handhelds with a clip-on grip. Noun phrase. -->
     <string name="settings_interface_controller_grip_title">Controller Grip</string>
     <!-- Second line of that row. -->
@@ -530,11 +561,13 @@
     <!-- Button hint that closes that dialog without assigning. Verb. -->
     <string name="settings_navigation_shortcut_capture_hint_cancel">Cancel</string>
     <!-- Section header for controller combos that act as the Android Home and Back buttons. Noun phrase. -->
-    <string name="settings_navigation_section_system_buttons">System Buttons</string>
+    <string name="settings_navigation_section_system_buttons">Global Hotkeys</string>
     <!-- Switch title. On, held button combos act as the Android Home and Back buttons while another app is open. -->
     <string name="settings_navigation_system_hotkeys_title">Home and Back Combos</string>
     <!-- Second line of that switch. -->
     <string name="settings_navigation_system_hotkeys_subtitle">Controller combos that work as Home and Back while another app is open</string>
+    <string name="settings_navigation_home_button_in_games_title">Hold Home for game switcher</string>
+    <string name="settings_navigation_home_button_in_games_subtitle">Hold the device\'s Home button in a game Argosy launched to open the game switcher. Turn off to leave Home to the device. Needs root</string>
     <!-- Row title. Noun phrase: the Android accessibility service Argosy uses to read buttons in other apps. -->
     <string name="settings_navigation_system_hotkeys_access_title">Accessibility Service</string>
     <!-- Second line of that row. Selecting the row opens the system accessibility settings. -->
@@ -550,7 +583,7 @@
     <!-- Row title: the combo that acts as the Android Back button. Noun. -->
     <string name="settings_navigation_system_back_title">Back</string>
     <!-- Second line of that row. The guide button is the logo button in the middle of the controller. -->
-    <string name="settings_navigation_system_back_subtitle">Hold the first buttons, then press the last. Holding the guide button for 1 second also goes Back. In a game, holding the combo for 3 seconds opens the quick panel instead</string>
+    <string name="settings_navigation_system_back_subtitle">Hold the first buttons, then press the last. In a game, holding the combo for 3 seconds opens the quick panel instead</string>
     <!-- Main line of the dialog that records a new combo, before any button is held. Imperative. -->
     <string name="settings_navigation_system_combo_capture_prompt">Hold 2 or 3 buttons in order...</string>
 
@@ -1302,41 +1335,6 @@
 
     <!-- ===== Permissions section ===== -->
 
-    <!-- Paragraph at the top of the permissions list. "Argosy" is this app's name. -->
-    <string name="settings_permissions_intro">Argosy requires certain permissions to provide full functionality. Tap each permission to grant access.</string>
-    <!-- Card title. Noun phrase naming the permission to read and write files. -->
-    <string name="settings_permissions_storage_title">Storage Access</string>
-    <!-- Body of that card. "ROM" is the usual term for a game file dumped from a cartridge or
-         disc; leave it untranslated. -->
-    <string name="settings_permissions_storage_description">Required for downloading games, syncing save files, and accessing ROM files on your device.</string>
-    <!-- Card title. Noun phrase naming Android's permission to see which app is in front. -->
-    <string name="settings_permissions_usage_stats_title">Usage Stats Access</string>
-    <!-- Body of that card. -->
-    <string name="settings_permissions_usage_stats_description">Enables accurate play time tracking and seamless game session resume when switching between apps.</string>
-    <!-- Card title. Noun, plural, naming the permission to post notifications. -->
-    <string name="settings_permissions_notifications_title">Notifications</string>
-    <!-- Body of that card. -->
-    <string name="settings_permissions_notifications_description">Shows download progress when downloading games in the background.</string>
-    <!-- Card title. Noun phrase naming the permission to change device settings. -->
-    <string name="settings_permissions_write_settings_title">System Settings Access</string>
-    <!-- Body of that card. "Quick Settings panel" is Argosy's own small settings overlay. -->
-    <string name="settings_permissions_write_settings_description">Allows control of device performance mode and fan settings from the Quick Settings panel.</string>
-    <!-- Card title. Noun phrase naming the permission to read what is on screen. -->
-    <string name="settings_permissions_screen_capture_title">Screen Capture</string>
-    <!-- Body of that card. "LED" is the light strip on some handhelds. -->
-    <string name="settings_permissions_screen_capture_description">Enables ambient LED lighting to sample screen colors while playing games.</string>
-    <!-- Card title. Noun phrase naming Android's permission to draw on top of other apps. -->
-    <string name="settings_permissions_display_overlay_title">Display Over Other Apps</string>
-    <!-- Body of that card. -->
-    <string name="settings_permissions_display_overlay_description">Shows save detection notifications while playing games in external emulators.</string>
-    <!-- Card title. Names Android's accessibility service setting for Argosy. -->
-    <string name="settings_permissions_accessibility_title">Accessibility Service</string>
-    <!-- Body of that card. "Silent" means taken without a sound or visible capture prompt. -->
-    <string name="settings_permissions_accessibility_description">Lets the quick panel open over other emulators, and silent save screenshots</string>
-    <!-- Card title. Noun phrase naming Argosy's animated wallpaper, which Android asks the user to apply once. -->
-    <string name="settings_permissions_live_wallpaper_title">Animated Lock Screen</string>
-    <!-- Body of that card. -->
-    <string name="settings_permissions_live_wallpaper_description">Allow Argosy to apply an animated lock screen.</string>
     <!-- %1$s is a root or system-access app name, such as Magisk or Shizuku -->
     <string name="settings_permissions_privileged_title">%1$s access</string>
     <string name="settings_permissions_privileged_description_off">Let Argosy reach emulator save folders in Android/data.</string>
@@ -1349,8 +1347,6 @@
     <string name="settings_lock_screen_wallpaper_label">Argosy Library</string>
     <!-- Description of that wallpaper in Android's wallpaper picker, which Argosy opens on startup while Lock Screen Art is on. -->
     <string name="settings_lock_screen_wallpaper_description">Allow Argosy to apply an animated lock screen.</string>
-    <!-- Line under the list. %1$d is how many permissions were given, %2$d how many there are. -->
-    <string name="settings_permissions_status_footer">Status: %1$d/%2$d permissions granted</string>
 
     <!-- ===== About section ===== -->
 
@@ -1391,8 +1387,8 @@
     <string name="settings_about_update_subtitle_on_prerelease">Running pre-release build</string>
     <!-- Second line of that row before any check has run. Verb phrase. -->
     <string name="settings_about_update_subtitle_idle">Check for new versions</string>
-    <!-- Button that fetches the new version. Verb. -->
-    <string name="settings_about_update_action_download">Download</string>
+    <!-- Button that installs the new version, fetching it first when it is not stored yet. Verb. -->
+    <string name="settings_about_update_action_install">Install</string>
     <!-- Button that asks the update server. Verb. -->
     <string name="settings_about_update_action_check">Check</string>
     <!-- Button that opens the list of what changed. Noun. -->
@@ -3013,6 +3009,10 @@
     <string name="settings_builtin_controls_limit_hotkeys_title">Limit Hotkeys to Player 1</string>
     <!-- Second line of that row. -->
     <string name="settings_builtin_controls_limit_hotkeys_subtitle">Only player 1 controller can trigger hotkeys</string>
+    <!-- Row title. When on, pressing Home in a game asks before leaving it. -->
+    <string name="settings_builtin_controls_confirm_return_title">Confirm Return to Argosy</string>
+    <!-- Second line of that row. -->
+    <string name="settings_builtin_controls_confirm_return_subtitle">Ask before Home leaves the game</string>
     <!-- Row title. Noun phrase: the controller's Select button reaching the app as Back. "Select"
          and "Back" are button names. -->
     <string name="settings_builtin_controls_select_as_back_title">Select as Back</string>
@@ -4050,7 +4050,26 @@
     <string name="settings_romm_config_server_url_label">Server URL</string>
     <!-- Placeholder text illustrating the expected URL format. Not a real address. -->
     <string name="settings_romm_config_server_url_placeholder">https://romm.example.com</string>
-    <!-- Row title choosing how this device authenticates with the server. Noun phrase. -->
+    <!-- Enter key of the on-screen controller keyboard while typing the server URL. Finishes typing. -->
+    <string name="settings_romm_config_url_keyboard_submit">Done</string>
+    <!-- Label shown on the on-screen controller keyboard while typing the 8-character pairing code. Noun phrase. -->
+    <string name="settings_romm_config_pairing_code_keyboard_label">Pairing code</string>
+    <!-- Enter key of the on-screen controller keyboard while typing the pairing code. Finishes typing. -->
+    <string name="settings_romm_config_pairing_code_keyboard_submit">Done</string>
+    <!-- Enter key of the on-screen controller keyboard on the Jellyfin server address field. Verb: save the address. -->
+    <string name="settings_jellyfin_config_keyboard_submit">Save</string>
+    <!-- Enter key of the on-screen controller keyboard on the Jellyfin username field. Finishes typing. -->
+    <string name="settings_jellyfin_signin_username_keyboard_submit">Done</string>
+    <!-- Enter key of the on-screen controller keyboard on the Jellyfin password field. Verb phrase: sign in now. -->
+    <string name="settings_jellyfin_signin_password_keyboard_submit">Sign in</string>
+    <!-- Enter key of the on-screen controller keyboard on the RetroAchievements username field. Finishes typing. -->
+    <string name="settings_ra_login_username_keyboard_submit">Done</string>
+    <!-- Enter key of the on-screen controller keyboard on the RetroAchievements password field. Finishes typing. -->
+    <string name="settings_ra_login_password_keyboard_submit">Done</string>
+    <!-- Enter key of the on-screen controller keyboard on the offline proxy address field. Finishes typing. -->
+    <string name="settings_ra_proxy_address_keyboard_submit">Done</string>
+    <!-- Enter key of the on-screen controller keyboard on the Steam app ID field. Verb: add the game. -->
+    <string name="settings_steam_add_game_keyboard_submit">Add</string>    <!-- Row title choosing how this device authenticates with the server. Noun phrase. -->
     <string name="settings_romm_config_auth_method_title">Auth Method</string>
     <!-- Auth method value: pairs by scanning a QR code with another device. -->
     <string name="settings_romm_config_auth_method_device">Device Pairing</string>
@@ -4072,10 +4091,6 @@
     <string name="settings_romm_config_connect_device_subtitle">Generate a pairing QR code</string>
     <!-- Second line of the connect button while Pairing Code is selected. -->
     <string name="settings_romm_config_connect_subtitle">Connect to RomM server</string>
-    <!-- Button title. Verb phrase: open the camera to scan a pairing QR code. -->
-    <string name="settings_romm_config_scan_title">Scan QR Code</string>
-    <!-- Second line of that button. -->
-    <string name="settings_romm_config_scan_subtitle">Scan pairing QR from the RomM web UI</string>
     <!-- Button title. Verb: pick a certificate file for a server whose issuer this device does
          not recognise. -->
     <string name="settings_romm_config_certificate_title">Add Certificate</string>
@@ -5348,4 +5363,50 @@
     <string name="settings_builtin_gpu_driver_reason_backend">Applies when Backend is Vulkan</string>
     <!-- Second line of a read-only GPU Driver row on a device that cannot load custom drivers. -->
     <string name="settings_builtin_gpu_driver_reason_device">Custom drivers need an Adreno GPU</string>
+    <!-- Row title. Noun: a TLS client certificate (mTLS) the app presents to a server. -->
+    <string name="settings_client_cert_row_title">Client Certificate</string>
+    <!-- Second line of that row when no client certificate is imported. -->
+    <string name="settings_client_cert_row_subtitle_none">Sign in to servers that require a client certificate (mTLS)</string>
+    <!-- Second line once a certificate is imported. %1$s is the certificate's name, %2$s the date it expires. -->
+    <string name="settings_client_cert_row_subtitle_active">%1$s · valid until %2$s</string>
+    <!-- Header of the client certificate menu. Noun. -->
+    <string name="settings_client_cert_modal_header">Client Certificate</string>
+    <!-- Line under that header when no certificate is imported. -->
+    <string name="settings_client_cert_modal_title_none">No client certificate imported</string>
+    <!-- Line under that header once imported. %1$s is the certificate's name, %2$s the date it expires. -->
+    <string name="settings_client_cert_modal_title_active">%1$s · valid until %2$s</string>
+    <!-- Switch label in the client certificate dialog. -->
+    <string name="settings_client_cert_use_romm_title">Use for RomM</string>
+    <!-- Switch description: the certificate is sent to the RomM server during the TLS handshake. -->
+    <string name="settings_client_cert_use_romm_subtitle">Present this certificate when connecting to your RomM server</string>
+    <!-- Switch label in the client certificate dialog. -->
+    <string name="settings_client_cert_use_jellyfin_title">Use for Jellyfin</string>
+    <!-- Switch description: the certificate is sent to the Jellyfin server during the TLS handshake. -->
+    <string name="settings_client_cert_use_jellyfin_subtitle">Present this certificate when connecting to your Jellyfin server</string>
+    <!-- Action description under Import Certificate. -->
+    <string name="settings_client_cert_import_subtitle">Choose a .p12 or .pfx file that holds the certificate and its private key</string>
+    <!-- Action description under Replace Certificate. -->
+    <string name="settings_client_cert_replace_subtitle">Import a different .p12 or .pfx file in place of this one</string>
+    <!-- Action description under Remove Certificate. -->
+    <string name="settings_client_cert_remove_subtitle">Delete the certificate and its private key from this device</string>
+    <!-- Menu entry. Verb: pick a .p12/.pfx file to import. -->
+    <string name="settings_client_cert_import">Import Certificate…</string>
+    <!-- Menu entry. Verb: import a different file in place of the current certificate. -->
+    <string name="settings_client_cert_replace">Replace Certificate…</string>
+    <!-- Menu entry. Verb: delete the imported certificate and its key from this device. -->
+    <string name="settings_client_cert_remove">Remove Certificate</string>
+    <!-- Confirmation dialog title before deleting the imported client certificate. -->
+    <string name="settings_client_cert_remove_title">Remove client certificate?</string>
+    <!-- Confirmation dialog body before deleting the imported client certificate. -->
+    <string name="settings_client_cert_remove_message">The certificate and its private key are deleted from this device. Servers that require it stop accepting connections until you import the file again.</string>
+    <!-- Confirmation dialog button. Verb: delete the certificate. -->
+    <string name="settings_client_cert_remove_confirm">Remove</string>
+    <!-- File browser title. Verb: choose the .p12/.pfx file. -->
+    <string name="settings_client_cert_filebrowser_title">Choose Client Certificate</string>
+    <!-- Error shown when the server demanded a client certificate the app did not present. Names the remedy, the Client Certificate row. -->
+    <string name="settings_romm_config_error_client_certificate_required">The server requires a client certificate. Import one under Client Certificate, or turn on Use for RomM there.</string>
+    <!-- Error when adding another RomM account: the server rejected the connection for lack of a client certificate. -->
+    <string name="settings_accounts_pairing_error_client_certificate_required">The server requires a client certificate. Import one under Client Certificate, or turn on Use for RomM there.</string>
+    <!-- Sign-in error when the Jellyfin server demanded a client certificate this app did not present. Names the remedy in the Client Certificate menu. -->
+    <string name="settings_jellyfin_error_client_certificate_required">The server requires a client certificate. Turn on Use for Jellyfin under Client Certificate.</string>
 </resources>

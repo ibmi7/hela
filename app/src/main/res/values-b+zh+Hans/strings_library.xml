@@ -44,6 +44,7 @@
     <string name="library_filter_title">筛选游戏</string>
     <string name="library_filter_active_summary">已启用：%1$s</string>
     <string name="library_filter_search_placeholder">输入以搜索...</string>
+    <string name="library_filter_keyboard_submit">搜索</string>
     <string name="library_filter_recent_searches">最近搜索</string>
 
     <string name="library_filter_category_sort">排序</string>
@@ -60,7 +61,6 @@
     <string name="library_filter_category_series">系列</string>
 
     <string name="library_filter_hint_clear">清除</string>
-    <string name="library_filter_hint_type">输入</string>
     <string name="library_filter_hint_close_search">关闭</string>
     <string name="library_filter_hint_reset">重置</string>
     <string name="library_filter_hint_toggle">切换</string>
@@ -148,6 +148,7 @@
 
     <string name="library_search_placeholder_games_and_media">搜索游戏和媒体内容...</string>
     <string name="library_search_placeholder_games">搜索游戏...</string>
+    <string name="library_search_keyboard_submit">搜索</string>
     <plurals name="library_search_min_query_hint">
         <item quantity="other">请至少输入%d个字符以搜索</item>
     </plurals>
@@ -176,4 +177,10 @@
     <string name="library_showcase_play_time_hours">%1$d小时</string>
     <string name="library_showcase_play_time_minutes">%1$d分钟</string>
     <string name="library_apps_launch_failed">无法打开应用</string>
+    <string name="library_quickmenu_resume_game">继续游戏</string>
+    <string name="library_quickmenu_close_game">关闭游戏</string>
+    <string name="library_quickmenu_move_to_display">移到显示器 %1$d</string>
+    <string name="library_search_result_running">运行中</string>
+    <string name="library_search_result_running_in">正在 %1$s 中运行</string>
+    <string name="library_search_result_saving">正在保存</string>
 </resources>

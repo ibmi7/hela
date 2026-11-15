@@ -21,6 +21,8 @@
     <string name="completion_status_retired">Encostado</string>
     <string name="completion_status_never_playing">Não vou jogar</string>
 
+    <string name="play_session_device_romm_streaming">Streaming do RomM</string>
+
     <string name="ui_save_channel_title">Gestão de saves</string>
     <string name="ui_save_channel_slots_heading">Slots de save</string>
     <string name="ui_save_channel_history_heading_named">Histórico (%1$s)</string>
@@ -72,8 +74,6 @@
     <string name="ui_save_channel_rename_prompt_save_as">Digite um nome para este slot de save</string>
     <string name="ui_save_channel_rename_prompt_new_slot">Digite um nome para este slot de save</string>
     <string name="ui_save_channel_rename_prompt_rename">Digite um novo nome</string>
-    <string name="ui_save_channel_rename_footer_confirm">Confirmar</string>
-    <string name="ui_save_channel_rename_footer_cancel">Cancelar</string>
     <string name="ui_save_channel_rename_placeholder">Nome do slot</string>
     <string name="ui_save_channel_rename_cancel_button">Cancelar</string>
     <string name="ui_save_channel_migrate_title">MIGRAR SAVE</string>
@@ -134,6 +134,7 @@
     <string name="ui_save_channel_notice_restored_state">%1$s restaurado</string>
     <string name="ui_save_channel_notice_state_not_cached">State não encontrado no cache</string>
     <string name="ui_save_channel_notice_state_no_config">Nenhuma configuração de state para este emulador</string>
+    <string name="ui_save_channel_notice_state_other_core">Este state foi salvo por outro core e não pode ser carregado aqui</string>
     <string name="ui_save_channel_notice_delete_target_auto">state automático</string>
     <string name="ui_save_channel_notice_delete_target_slot">slot de state %1$d</string>
     <string name="ui_save_channel_notice_deleted_state">%1$s excluído</string>
@@ -186,6 +187,22 @@
     <string name="ui_pushed_apk_not_now">Agora não</string>
 
     <string name="ui_modal_search_placeholder">Buscar...</string>
+    <string name="ui_modal_search_keyboard_submit">Buscar</string>
+
+    <string name="ui_keyboard_key_shift">Shift</string>
+    <string name="ui_keyboard_key_caps_lock">Caps Lock</string>
+    <string name="ui_keyboard_key_backspace">Apagar</string>
+    <string name="ui_keyboard_key_space">Espaço</string>
+    <string name="ui_keyboard_key_symbols">Símbolos</string>
+    <string name="ui_keyboard_key_letters">Letras</string>
+    <string name="ui_keyboard_key_layout">Trocar layout</string>
+    <string name="ui_keyboard_paste">Colar</string>
+    <string name="ui_keyboard_key_enter_default">Concluir</string>
+    <plurals name="ui_keyboard_password_announce">
+        <item quantity="one">%d caractere</item>
+        <item quantity="many">%d caracteres</item>
+        <item quantity="other">%d caracteres</item>
+    </plurals>
 
     <string name="ui_disc_picker_title">SELECIONAR DISCO</string>
     <string name="ui_disc_picker_subtitle">Escolha qual disco iniciar</string>
@@ -287,7 +304,6 @@
     <string name="ui_expandable_preference_collapse">Recolher</string>
     <string name="ui_expandable_preference_expand">Expandir</string>
 
-    <string name="ui_permission_card_granted">Concedido</string>
 
     <string name="ui_game_card_favorite">Favorito</string>
     <string name="ui_game_card_downloaded">Baixado</string>
@@ -299,7 +315,6 @@
     <string name="ui_section_breadcrumb_next">Próxima seção</string>
 
     <string name="ui_qr_code_description">Código QR para %1$s</string>
-    <string name="ui_qr_scanner_hint">Aponte para o código QR de pareamento do RomM</string>
 
     <string name="ui_custom_tile_menu_header">FICHA</string>
 
@@ -352,7 +367,6 @@
 
     <string name="ui_tile_picker_title">ADICIONAR À GRADE</string>
     <string name="ui_tile_picker_title_track_game">RASTREAR UM JOGO</string>
-    <string name="ui_tile_picker_subtitle_matching">Correspondendo a \"%1$s\"</string>
     <string name="ui_tile_picker_empty_games">Nenhum jogo instalado para adicionar</string>
     <string name="ui_tile_picker_empty_collections">Nenhuma coleção ainda</string>
     <string name="ui_tile_picker_empty_apps">Nenhum app encontrado</string>
@@ -471,6 +485,7 @@
     <string name="ui_platform_filter_sort_most_games">Mais jogos</string>
     <string name="ui_platform_filter_sort_least_games">Menos jogos</string>
     <string name="ui_platform_filter_search_placeholder">Buscar plataformas...</string>
+    <string name="ui_platform_filter_keyboard_submit">Concluído</string>
     <string name="ui_platform_filter_search_clear">Limpar</string>
     <plurals name="ui_platform_filter_count">
         <item quantity="one">%d plataforma</item>
@@ -588,7 +603,6 @@
     <string name="ui_quick_settings_wifi">Wi-Fi</string>
     <string name="ui_quick_settings_bluetooth">Bluetooth</string>
     <string name="ui_quick_settings_radio_on">Ligado</string>
-    <string name="ui_quick_settings_radio_off">Desligado</string>
     <string name="ui_quick_settings_wifi_connected">Conectado</string>
     <string name="ui_quick_settings_wifi_not_connected">Não conectado</string>
     <string name="ui_quick_settings_quaypass">QuayPass</string>
@@ -601,7 +615,6 @@
     <string name="ui_quick_settings_page_performance">Desempenho</string>
     <string name="ui_quick_settings_page_friends">Amigos</string>
     <string name="ui_quick_settings_page_connections">Conexões</string>
-    <string name="ui_quick_connections_unsupported">Este dispositivo não permite controle direto de Wi-Fi e Bluetooth</string>
     <string name="ui_quick_connections_tab_wifi">Wi-Fi</string>
     <string name="ui_quick_connections_tab_bluetooth">Bluetooth</string>
     <string name="ui_quick_connections_wifi_off">Wi-Fi está desligado</string>
@@ -609,13 +622,20 @@
     <string name="ui_quick_connections_nearby">Redes próximas</string>
     <string name="ui_quick_connections_saved">Redes salvas</string>
     <string name="ui_quick_connections_paired">Dispositivos pareados</string>
-    <string name="ui_quick_connections_scanning">Procurando redes</string>
     <string name="ui_quick_connections_no_networks">Nenhuma rede encontrada</string>
     <string name="ui_quick_connections_no_paired">Nenhum dispositivo pareado</string>
     <string name="ui_quick_connections_row_joining">Conectando</string>
     <string name="ui_quick_connections_row_failed">Não foi possível conectar</string>
     <string name="ui_quick_connections_secured">Protegida</string>
     <string name="ui_quick_connections_forget">Esquecer</string>
+    <string name="ui_quick_connections_forget_device">Esquecer</string>
+    <string name="ui_quick_connections_pair_controller">Parear um controle</string>
+    <string name="ui_quick_connections_pair_stop">Parar</string>
+    <string name="ui_quick_connections_nearby_controllers">Encontrados por perto</string>
+    <string name="ui_quick_connections_controllers_searching">Segure o botão de pareamento do controle</string>
+    <string name="ui_quick_connections_no_controllers">Nenhum controle encontrado</string>
+    <string name="ui_quick_connections_row_pairing">Pareando</string>
+    <string name="ui_quick_connections_row_pair_failed">Falha ao parear</string>
     <string name="ui_quick_connections_bluetooth_permission">O Argosy precisa de permissão para mostrar dispositivos pareados.</string>
     <string name="ui_quick_connections_bluetooth_permission_allow">Permitir</string>
     <string name="ui_quick_connections_device_connected">Conectado</string>
@@ -630,6 +650,35 @@
     <string name="ui_quick_connections_join_busy">Conectando</string>
     <string name="ui_quick_connections_join_cancel">Cancelar</string>
     <string name="ui_quick_connections_join_failed">O dispositivo não pôde se conectar a esta rede.</string>
+    <string name="ui_quick_connections_bluetooth_status_one">%1$s conectado</string>
+    <plurals name="ui_quick_connections_bluetooth_status_many">
+        <item quantity="one">%1$d dispositivo conectado</item>
+        <item quantity="many">%1$d dispositivos conectados</item>
+        <item quantity="other">%1$d dispositivos conectados</item>
+    </plurals>
+    <string name="ui_quick_connections_bluetooth_status_none">Nenhum dispositivo conectado</string>
+    <string name="ui_quick_connections_wifi_status_network">%1$s · %2$s</string>
+    <string name="ui_quick_connections_searching_controllers">Procurando</string>
+    <string name="ui_quick_connections_found_pair">Parear</string>
+    <string name="ui_quick_connections_retry_pair">Tentar de novo</string>
+    <string name="ui_quick_connections_retry_join">Tentar de novo</string>
+    <string name="ui_quick_connections_scan_running">Procurando redes</string>
+    <string name="ui_quick_connections_scan_again">Procurar de novo</string>
+    <string name="ui_quick_connections_saved_out_of_range">Fora de alcance</string>
+    <string name="ui_quick_connections_saved_connected">Conectada</string>
+    <string name="ui_quick_connections_nearby_join">Conectar</string>
+    <string name="ui_quick_connections_nearby_join_outside">Conectar nas configurações de Wi-Fi</string>
+    <string name="ui_quick_connections_bluetooth_off_hint">Ative para parear controles</string>
+    <string name="ui_quick_connections_wifi_off_hint">Ative para ver as redes por perto</string>
+    <string name="ui_quick_connections_bluetooth_toggle_standard">Desative nas configurações de Bluetooth</string>
+    <string name="ui_quick_connections_forget_device_hint">Esqueça dispositivos nas configurações de Bluetooth do Android</string>
+    <string name="ui_quick_connections_wifi_toggle_standard">Ative ou desative o Wi-Fi no painel de Wi-Fi</string>
+    <string name="ui_quick_connections_wifi_permission">Permita o acesso à localização para ver os nomes das redes e as redes por perto</string>
+    <string name="ui_quick_connections_wifi_permission_allow">Permitir</string>
+    <string name="ui_quick_connections_wifi_permission_denied">O acesso à localização está desativado para o Argosy</string>
+    <string name="ui_quick_connections_wifi_permission_settings">Abrir permissões do app</string>
+    <string name="ui_quick_connections_bluetooth_permission_denied">A permissão de dispositivos por perto está desativada para o Argosy</string>
+    <string name="ui_quick_connections_bluetooth_permission_settings">Abrir permissões do app</string>
     <string name="ui_quick_settings_page_music">Música</string>
     <string name="ui_quick_settings_group_display">Tela</string>
     <string name="ui_quick_settings_group_audio">Som</string>
@@ -837,6 +886,7 @@
     <string name="ui_quick_menu_empty_favorites">Nenhum favorito ainda</string>
     <string name="ui_quick_menu_empty_random">Nenhum jogo disponível</string>
     <string name="ui_quick_menu_search_placeholder">Buscar jogos...</string>
+    <string name="ui_quick_menu_search_keyboard_submit">Buscar</string>
     <string name="ui_quick_menu_search_prompt">Digite pelo menos 2 caracteres para buscar</string>
     <string name="ui_quick_menu_search_no_results">Nenhum jogo encontrado para \"%1$s\"</string>
     <string name="ui_quick_menu_recent_searches_heading">Buscas recentes</string>
@@ -871,6 +921,7 @@
     <string name="ui_file_browser_new_folder_field_label">Nome da pasta</string>
     <string name="ui_file_browser_new_folder_cancel">Cancelar</string>
     <string name="ui_file_browser_new_folder_confirm">Criar</string>
+    <string name="ui_file_browser_new_folder_keyboard_submit">Criar</string>
     <string name="ui_file_browser_new_folder_error_empty">O nome da pasta não pode ser vazio</string>
     <string name="ui_file_browser_new_folder_error_invalid">Nome de pasta inválido</string>
     <string name="ui_file_browser_new_folder_error_exists">A pasta já existe</string>
@@ -1030,6 +1081,8 @@
     <string name="gamedetail_action_buttons_no_space">SEM ESPAÇO</string>
     <string name="gamedetail_action_buttons_downloading_percent">%1$d%%</string>
     <string name="gamedetail_action_buttons_waiting_for_server">Aguardando o servidor&#8230;</string>
+    <string name="gamedetail_action_buttons_retrying">Tentando novamente&#8230;</string>
+    <string name="gamedetail_action_buttons_waiting_for_network">Aguardando rede&#8230;</string>
     <string name="gamedetail_action_buttons_extracting">EXTRAINDO...</string>
     <string name="gamedetail_action_buttons_resume_percent">RETOMAR %1$d%%</string>
     <string name="gamedetail_action_buttons_retry">TENTAR NOVAMENTE</string>
@@ -1078,12 +1131,41 @@
     <string name="common_game_confirm_hide_confirm">Ocultar</string>
     <string name="ui_quick_settings_stats_fan">Ventilador</string>
     <string name="ui_quick_settings_stats_battery">Bateria</string>
-    <string name="ui_launch_overlay_running_open_title">%1$s Ainda Está Aberto</string>
-    <string name="ui_launch_overlay_running_open_message">Iniciar outro jogo irá fechá-lo.</string>
+    <string name="ui_launch_overlay_makeroom_title">Abra espaço para %1$s</string>
+    <string name="ui_launch_overlay_makeroom_subtitle">Escolha um jogo para fechar. Ele salva antes.</string>
+    <string name="ui_launch_overlay_makeroom_saved">Salvo %1$s</string>
+    <string name="ui_launch_overlay_makeroom_close">Fechar</string>
+    <string name="ui_launch_overlay_makeroom_saving">Salvando</string>
+    <string name="ui_launch_overlay_makeroom_closed">Fechado</string>
     <string name="ui_quick_settings_orientation">Orientação</string>
     <string name="ui_quick_settings_orientation_auto">Auto</string>
     <string name="ui_quick_settings_orientation_landscape">Paisagem</string>
     <string name="ui_quick_settings_orientation_portrait">Retrato</string>
     <string name="ui_volume_meter_unknown_location">%1$s dos jogos estão em um local desconhecido</string>
+    <string name="ui_game_card_running">Em execução</string>
+    <string name="ui_game_card_saving">Salvando</string>
+    <string name="ui_running_duration_hours_minutes">%1$dh %2$dm</string>
+    <string name="ui_running_duration_minutes">%1$dm</string>
+    <string name="ui_status_bar_running_desc">Jogos em execução</string>
+    <string name="ui_quick_menu_row_running">Em execução</string>
+    <string name="ui_quick_menu_row_running_in">Em execução no %1$s</string>
+    <string name="ui_quick_menu_row_saving">Salvando</string>
+    <string name="ui_quick_menu_random_action_resume_game">Retomar</string>
+    <string name="gamelist_row_running">Em execução</string>
+    <string name="gamelist_row_running_in">Em execução no %1$s</string>
+    <string name="gamelist_row_saving">Salvando</string>
 
+    <string name="ui_client_cert_password_title">Senha do certificado</string>
+    <string name="ui_client_cert_password_label">Senha</string>
+    <string name="ui_client_cert_password_message">Digite a senha de %1$s. Deixe em branco se o arquivo não tiver senha.</string>
+    <string name="ui_client_cert_password_import">Importar</string>
+    <string name="ui_client_cert_password_import_busy">Importando…</string>
+    <string name="ui_client_cert_password_cancel">Cancelar</string>
+    <string name="ui_client_cert_password_status_importing">Importando o certificado…</string>
+    <string name="ui_client_cert_password_error_not_a_file">Não foi possível abrir esse arquivo.</string>
+    <string name="ui_client_cert_password_error_wrong_password">Senha incorreta para este arquivo de certificado.</string>
+    <string name="ui_client_cert_password_error_no_private_key">Este arquivo não contém uma chave privada. Exporte o certificado junto com a chave.</string>
+    <string name="ui_client_cert_password_error_unreadable">Esse arquivo não é um certificado .p12 ou .pfx legível.</string>
+    <string name="ui_client_cert_password_error_expired">Este certificado expirou.</string>
+    <string name="ui_client_cert_password_error_unsupported_key">Este dispositivo não consegue armazenar este tipo de chave. Use uma chave RSA ou EC.</string>
 </resources>

@@ -33,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.compose.foundation.layout.offset
@@ -51,6 +52,7 @@ import coil.compose.AsyncImage
 import com.nendo.argosy.ui.ScreenDimmerPreferences
 import com.nendo.argosy.ui.toScreenDimmerPreferences
 import com.nendo.argosy.ui.common.rememberFileImageModel
+import com.nendo.argosy.ui.common.toRunningGamesUi
 import com.nendo.argosy.ui.components.FooterBarWithState
 import com.nendo.argosy.ui.components.FooterHintItem
 import com.nendo.argosy.ui.components.LocalFrostedBackdrop
@@ -124,10 +126,19 @@ private fun PresentationSlotBody(
         com.nendo.argosy.ui.components.launchRecapBackdropBlur(),
         com.nendo.argosy.ui.components.recap.monthlyRecapBackdropBlur()
     ).takeIf { slot !is PresentationSlot.InGame } ?: 0.dp
+    var videoPlaying by remember { mutableStateOf(false) }
+    val chromeAlpha by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = if (videoPlaying) 0f else 1f,
+        animationSpec = androidx.compose.animation.core.tween(
+            com.nendo.argosy.ui.theme.generated.ComponentDefaults.GameShowcase.backdropCrossfadeMs
+        ),
+        label = "presentationChrome"
+    )
     Box(modifier = Modifier.fillMaxSize()) {
         PresentationSlotScene(
             slot = slot,
             hintsHeight = hintsHeight,
+            onVideoPlayingChange = { videoPlaying = it },
             modifier = Modifier
                 .fillMaxSize()
                 .then(if (recapBlur > 0.dp) Modifier.blur(recapBlur) else Modifier)
@@ -137,11 +148,13 @@ private fun PresentationSlotBody(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(Dimens.spacingLg)
+                    .graphicsLayer { alpha = chromeAlpha }
             )
             if (showControlHints && hints.isNotEmpty()) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
+                        .graphicsLayer { alpha = chromeAlpha }
                         .onSizeChanged { measuredHintsHeight = with(density) { it.height.toDp() } }
                 ) {
                     PresentationControlHints(hints)
@@ -161,7 +174,7 @@ private fun PresentationSlotBody(
             com.nendo.argosy.core.notification.NotificationHost(
                 manager = manager.notificationManager,
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
+                    .align(Alignment.BottomEnd)
                     .padding(bottom = hintsHeight),
                 mutedKeys = mutedKeys
             )
@@ -173,6 +186,7 @@ private fun PresentationSlotBody(
 private fun PresentationSlotScene(
     slot: PresentationSlot,
     hintsHeight: Dp,
+    onVideoPlayingChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val frostedBackdrop = LocalFrostedBackdrop.current
@@ -201,6 +215,8 @@ private fun PresentationSlotScene(
             ) {
                 HomeLayoutPreview(settings = slot.settings, modifier = Modifier.fillMaxWidth())
             }
+            is PresentationSlot.Setup ->
+                com.nendo.argosy.ui.screens.setup.components.SetupCompanion(state = slot.state)
             is PresentationSlot.PlayTime -> PlayTimeSlot(slot)
             is PresentationSlot.PlayTimeline -> PlayTimelineSlot(slot)
             is PresentationSlot.PlayShare -> PlayShareSlot(slot)
@@ -211,22 +227,32 @@ private fun PresentationSlotScene(
                     ?: com.nendo.argosy.domain.model.PresentationStyle()
                 val backgroundBlur = com.nendo.argosy.DualScreenManagerHolder.instance
                     ?.presentationBackgroundBlur?.collectAsState()?.value ?: 0
+                val runningSnapshot = com.nendo.argosy.DualScreenManagerHolder.instance
+                    ?.runningGames?.state?.collectAsState()?.value
+                val running = remember(runningSnapshot) {
+                    runningSnapshot?.toRunningGamesUi() ?: com.nendo.argosy.ui.common.RunningGamesUi()
+                }
                 val helaHome = com.nendo.argosy.ui.hela.home.rememberHelaHomeEnabled() == true
                 val helaDetail = slot.detail.isGameTitle ||
                     slot.detail.platformSlug == com.nendo.argosy.ui.hela.home.HELA_FOLDER_SLUG
-                if (helaHome && helaDetail) {
-                    com.nendo.argosy.ui.hela.home.HelaGameDetail(
+                androidx.compose.runtime.CompositionLocalProvider(
+                    com.nendo.argosy.ui.common.LocalRunningGames provides running
+                ) {
+                    if (helaHome && helaDetail) {
+                        com.nendo.argosy.ui.hela.home.HelaGameDetail(
+                            detail = slot.detail,
+                            bottomInset = hintsHeight,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else CompanionDetailScreen(
                         detail = slot.detail,
+                        style = style,
+                        backgroundBlur = backgroundBlur,
                         bottomInset = hintsHeight,
+                        onVideoPlayingChange = onVideoPlayingChange,
                         modifier = Modifier.fillMaxSize()
                     )
-                } else CompanionDetailScreen(
-                    detail = slot.detail,
-                    style = style,
-                    backgroundBlur = backgroundBlur,
-                    bottomInset = hintsHeight,
-                    modifier = Modifier.fillMaxSize()
-                )
+                }
             }
             is PresentationSlot.PlatformShowcase -> PlatformShowcaseContent(slot)
             is PresentationSlot.SaveGame -> SaveGameSlot(slot, bottomInset = hintsHeight)
@@ -266,7 +292,8 @@ private fun dashboardActions(manager: com.nendo.argosy.DualScreenManager) =
         onOpenCheats = { manager.sessionQuickActions?.openCheats() },
         onOpenSettings = { manager.sessionQuickActions?.openGameSettings() },
         onQuit = { manager.quitSession() },
-        onOpenDocument = { manager.openDashboardDocument(it) }
+        onOpenDocument = { manager.openDashboardDocument(it) },
+        onNextDisc = { manager.streamDashboardActions?.nextDisc() }
     )
 
 private data class InGameAppBarState(

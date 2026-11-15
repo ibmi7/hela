@@ -21,6 +21,8 @@
     <string name="completion_status_retired">已擱置</string>
     <string name="completion_status_never_playing">不會玩</string>
 
+    <string name="play_session_device_romm_streaming">RomM 串流</string>
+
     <!-- Save manager (ui/common/savechannel) -->
 
     <string name="ui_save_channel_title">存檔管理</string>
@@ -75,8 +77,6 @@
     <string name="ui_save_channel_rename_prompt_save_as">請輸入此存檔槽的名稱</string>
     <string name="ui_save_channel_rename_prompt_new_slot">請輸入此存檔槽的名稱</string>
     <string name="ui_save_channel_rename_prompt_rename">請輸入新名稱</string>
-    <string name="ui_save_channel_rename_footer_confirm">確認</string>
-    <string name="ui_save_channel_rename_footer_cancel">取消</string>
     <string name="ui_save_channel_rename_placeholder">存檔槽名稱</string>
     <string name="ui_save_channel_rename_cancel_button">取消</string>
 
@@ -145,6 +145,7 @@
     <string name="ui_save_channel_notice_restored_state">已還原%1$s</string>
     <string name="ui_save_channel_notice_state_not_cached">快取中找不到該即時存檔</string>
     <string name="ui_save_channel_notice_state_no_config">此模擬器沒有即時存檔設定</string>
+    <string name="ui_save_channel_notice_state_other_core">此即時存檔由其他核心儲存，無法在此讀取</string>
     <string name="ui_save_channel_notice_delete_target_auto">自動即時存檔</string>
     <string name="ui_save_channel_notice_delete_target_slot">第%1$d格的即時存檔</string>
     <string name="ui_save_channel_notice_deleted_state">已刪除%1$s</string>
@@ -195,6 +196,20 @@
     <string name="ui_pushed_apk_not_now">暫不</string>
 
     <string name="ui_modal_search_placeholder">搜尋...</string>
+    <string name="ui_modal_search_keyboard_submit">搜尋</string>
+
+    <string name="ui_keyboard_key_shift">Shift 鍵</string>
+    <string name="ui_keyboard_key_caps_lock">大寫鎖定</string>
+    <string name="ui_keyboard_key_backspace">退格</string>
+    <string name="ui_keyboard_key_space">空白</string>
+    <string name="ui_keyboard_key_symbols">符號</string>
+    <string name="ui_keyboard_key_letters">字母</string>
+    <string name="ui_keyboard_key_layout">切換配置</string>
+    <string name="ui_keyboard_paste">貼上</string>
+    <string name="ui_keyboard_key_enter_default">完成</string>
+    <plurals name="ui_keyboard_password_announce">
+        <item quantity="other">%d 個字元</item>
+    </plurals>
 
     <string name="ui_disc_picker_title">選擇光碟</string>
     <string name="ui_disc_picker_subtitle">選擇要啟動的光碟</string>
@@ -278,7 +293,6 @@
     <string name="ui_expandable_preference_collapse">收合</string>
     <string name="ui_expandable_preference_expand">展開</string>
 
-    <string name="ui_permission_card_granted">已授權</string>
 
     <string name="ui_game_card_favorite">最愛</string>
     <string name="ui_game_card_downloaded">已下載</string>
@@ -290,7 +304,6 @@
     <string name="ui_section_breadcrumb_next">下一個區段</string>
 
     <string name="ui_qr_code_description">%1$s的QR Code</string>
-    <string name="ui_qr_scanner_hint">將鏡頭對準RomM的配對QR Code</string>
 
     <string name="ui_custom_tile_menu_header">圖塊</string>
 
@@ -341,7 +354,6 @@
 
     <string name="ui_tile_picker_title">加入網格</string>
     <string name="ui_tile_picker_title_track_game">追蹤一款遊戲</string>
-    <string name="ui_tile_picker_subtitle_matching">符合「%1$s」</string>
     <string name="ui_tile_picker_empty_games">沒有已安裝的遊戲可以加入</string>
     <string name="ui_tile_picker_empty_collections">尚無合輯</string>
     <string name="ui_tile_picker_empty_apps">找不到應用程式</string>
@@ -460,6 +472,7 @@
     <string name="ui_platform_filter_sort_most_games">遊戲數最多</string>
     <string name="ui_platform_filter_sort_least_games">遊戲數最少</string>
     <string name="ui_platform_filter_search_placeholder">搜尋平台...</string>
+    <string name="ui_platform_filter_keyboard_submit">完成</string>
     <string name="ui_platform_filter_search_clear">清除</string>
     <plurals name="ui_platform_filter_count">
         <item quantity="other">%d個平台</item>
@@ -786,6 +799,7 @@
     <string name="ui_quick_menu_empty_favorites">尚無最愛</string>
     <string name="ui_quick_menu_empty_random">沒有可用的遊戲</string>
     <string name="ui_quick_menu_search_placeholder">搜尋遊戲...</string>
+    <string name="ui_quick_menu_search_keyboard_submit">搜尋</string>
     <string name="ui_quick_menu_search_prompt">請輸入至少2個字元進行搜尋</string>
     <string name="ui_quick_menu_search_no_results">找不到符合「%1$s」的遊戲</string>
     <string name="ui_quick_menu_recent_searches_heading">最近搜尋</string>
@@ -822,6 +836,7 @@
     <string name="ui_file_browser_new_folder_field_label">資料夾名稱</string>
     <string name="ui_file_browser_new_folder_cancel">取消</string>
     <string name="ui_file_browser_new_folder_confirm">建立</string>
+    <string name="ui_file_browser_new_folder_keyboard_submit">建立</string>
     <string name="ui_file_browser_new_folder_error_empty">資料夾名稱不可為空</string>
     <string name="ui_file_browser_new_folder_error_invalid">資料夾名稱無效</string>
     <string name="ui_file_browser_new_folder_error_exists">資料夾已存在</string>
@@ -961,6 +976,8 @@
     <string name="gamedetail_action_buttons_no_space">空間不足</string>
     <string name="gamedetail_action_buttons_downloading_percent">%1$d%%</string>
     <string name="gamedetail_action_buttons_waiting_for_server">等待伺服器&#8230;</string>
+    <string name="gamedetail_action_buttons_retrying">正在重試&#8230;</string>
+    <string name="gamedetail_action_buttons_waiting_for_network">正在等待網路&#8230;</string>
     <string name="gamedetail_action_buttons_extracting">解壓縮中...</string>
     <string name="gamedetail_action_buttons_resume_percent">繼續%1$d%%</string>
     <string name="gamedetail_action_buttons_retry">重試</string>
@@ -972,7 +989,6 @@
     <string name="home_grid_local_video_row_subtitle">直接從您的儲存空間播放</string>
     <string name="ui_quick_settings_swap_displays">交換顯示器</string>
     <string name="ui_quick_settings_page_connections">連線</string>
-    <string name="ui_quick_connections_unsupported">此裝置不允許直接控制 Wi-Fi 和藍牙</string>
     <string name="ui_quick_connections_tab_wifi">Wi-Fi</string>
     <string name="ui_quick_connections_tab_bluetooth">藍牙</string>
     <string name="ui_quick_connections_wifi_off">Wi-Fi 已關閉</string>
@@ -980,13 +996,20 @@
     <string name="ui_quick_connections_nearby">附近的網路</string>
     <string name="ui_quick_connections_saved">已儲存的網路</string>
     <string name="ui_quick_connections_paired">已配對的裝置</string>
-    <string name="ui_quick_connections_scanning">正在搜尋網路</string>
     <string name="ui_quick_connections_no_networks">找不到網路</string>
     <string name="ui_quick_connections_no_paired">沒有已配對的裝置</string>
     <string name="ui_quick_connections_row_joining">正在連線</string>
     <string name="ui_quick_connections_row_failed">連線失敗</string>
     <string name="ui_quick_connections_secured">已加密</string>
     <string name="ui_quick_connections_forget">忘記</string>
+    <string name="ui_quick_connections_forget_device">忘記</string>
+    <string name="ui_quick_connections_pair_controller">配對控制器</string>
+    <string name="ui_quick_connections_pair_stop">停止</string>
+    <string name="ui_quick_connections_nearby_controllers">在附近找到</string>
+    <string name="ui_quick_connections_controllers_searching">按住控制器的配對按鈕</string>
+    <string name="ui_quick_connections_no_controllers">找不到控制器</string>
+    <string name="ui_quick_connections_row_pairing">配對中</string>
+    <string name="ui_quick_connections_row_pair_failed">無法配對</string>
     <string name="ui_quick_connections_bluetooth_permission">Argosy 需要權限才能顯示已配對的裝置。</string>
     <string name="ui_quick_connections_bluetooth_permission_allow">允許</string>
     <string name="ui_quick_connections_device_connected">已連線</string>
@@ -1001,10 +1024,36 @@
     <string name="ui_quick_connections_join_busy">正在加入</string>
     <string name="ui_quick_connections_join_cancel">取消</string>
     <string name="ui_quick_connections_join_failed">裝置無法加入此網路。</string>
+    <string name="ui_quick_connections_bluetooth_status_one">已連線 %1$s</string>
+    <plurals name="ui_quick_connections_bluetooth_status_many">
+        <item quantity="other">已連線 %1$d 台裝置</item>
+    </plurals>
+    <string name="ui_quick_connections_bluetooth_status_none">未連線任何裝置</string>
+    <string name="ui_quick_connections_wifi_status_network">%1$s · %2$s</string>
+    <string name="ui_quick_connections_searching_controllers">正在搜尋</string>
+    <string name="ui_quick_connections_found_pair">配對</string>
+    <string name="ui_quick_connections_retry_pair">重試</string>
+    <string name="ui_quick_connections_retry_join">重試</string>
+    <string name="ui_quick_connections_scan_running">正在掃描網路</string>
+    <string name="ui_quick_connections_scan_again">重新掃描</string>
+    <string name="ui_quick_connections_saved_out_of_range">不在範圍內</string>
+    <string name="ui_quick_connections_saved_connected">已連線</string>
+    <string name="ui_quick_connections_nearby_join">加入</string>
+    <string name="ui_quick_connections_nearby_join_outside">在 Wi-Fi 設定中加入</string>
+    <string name="ui_quick_connections_bluetooth_off_hint">開啟後即可配對控制器</string>
+    <string name="ui_quick_connections_wifi_off_hint">開啟後即可查看附近的網路</string>
+    <string name="ui_quick_connections_bluetooth_toggle_standard">請在藍牙設定中關閉</string>
+    <string name="ui_quick_connections_forget_device_hint">請在 Android 藍牙設定中忘記裝置</string>
+    <string name="ui_quick_connections_wifi_toggle_standard">在 Wi-Fi 面板中開啟或關閉 Wi-Fi</string>
+    <string name="ui_quick_connections_wifi_permission">允許位置資訊權限以查看網路名稱和附近的網路</string>
+    <string name="ui_quick_connections_wifi_permission_allow">允許</string>
+    <string name="ui_quick_connections_wifi_permission_denied">Argosy 的位置資訊權限已關閉</string>
+    <string name="ui_quick_connections_wifi_permission_settings">開啟應用程式權限</string>
+    <string name="ui_quick_connections_bluetooth_permission_denied">Argosy 的鄰近裝置權限已關閉</string>
+    <string name="ui_quick_connections_bluetooth_permission_settings">開啟應用程式權限</string>
     <string name="ui_quick_settings_wifi">Wi-Fi</string>
     <string name="ui_quick_settings_bluetooth">藍牙</string>
     <string name="ui_quick_settings_radio_on">開啟</string>
-    <string name="ui_quick_settings_radio_off">關閉</string>
     <string name="ui_quick_settings_wifi_connected">已連線</string>
     <string name="ui_quick_settings_wifi_not_connected">未連線</string>
     <string name="ui_sibling_choice_title_download">選擇要下載的版本</string>
@@ -1046,8 +1095,37 @@
     <string name="ui_launch_overlay_running_busy_title">%1$s正在執行</string>
     <string name="ui_launch_overlay_running_busy_message_game">%1$s仍在背景執行%2$s。</string>
     <string name="ui_launch_overlay_running_busy_message">%1$s仍在背景開啟。</string>
-    <string name="ui_launch_overlay_running_open_title">%1$s仍處於開啟狀態</string>
-    <string name="ui_launch_overlay_running_open_message">啟動其他遊戲會將其關閉。</string>
+    <string name="ui_launch_overlay_makeroom_title">為%1$s騰出空間</string>
+    <string name="ui_launch_overlay_makeroom_subtitle">選擇一個要關閉的遊戲。它會先儲存。</string>
+    <string name="ui_launch_overlay_makeroom_saved">%1$s儲存</string>
+    <string name="ui_launch_overlay_makeroom_close">關閉</string>
+    <string name="ui_launch_overlay_makeroom_saving">正在儲存</string>
+    <string name="ui_launch_overlay_makeroom_closed">已關閉</string>
     <string name="ui_launch_overlay_running_close_label">關閉並啟動</string>
     <string name="ui_launch_overlay_running_close_subtitle">執行中遊戲未儲存的進度將會遺失</string>
+    <string name="ui_game_card_running">執行中</string>
+    <string name="ui_game_card_saving">正在儲存</string>
+    <string name="ui_running_duration_hours_minutes">%1$dh %2$dm</string>
+    <string name="ui_running_duration_minutes">%1$dm</string>
+    <string name="ui_status_bar_running_desc">執行中的遊戲</string>
+    <string name="ui_quick_menu_row_running">執行中</string>
+    <string name="ui_quick_menu_row_running_in">正在 %1$s 中執行</string>
+    <string name="ui_quick_menu_row_saving">正在儲存</string>
+    <string name="ui_quick_menu_random_action_resume_game">繼續遊戲</string>
+    <string name="gamelist_row_running">執行中</string>
+    <string name="gamelist_row_running_in">正在 %1$s 中執行</string>
+    <string name="gamelist_row_saving">正在儲存</string>
+    <string name="ui_client_cert_password_title">憑證密碼</string>
+    <string name="ui_client_cert_password_label">密碼</string>
+    <string name="ui_client_cert_password_message">請輸入 %1$s 的密碼。若檔案沒有密碼，請留空。</string>
+    <string name="ui_client_cert_password_import">匯入</string>
+    <string name="ui_client_cert_password_import_busy">正在匯入…</string>
+    <string name="ui_client_cert_password_cancel">取消</string>
+    <string name="ui_client_cert_password_status_importing">正在匯入憑證…</string>
+    <string name="ui_client_cert_password_error_not_a_file">無法開啟該檔案。</string>
+    <string name="ui_client_cert_password_error_wrong_password">此憑證檔案的密碼錯誤。</string>
+    <string name="ui_client_cert_password_error_no_private_key">此檔案不含私密金鑰。請將憑證連同金鑰一起匯出。</string>
+    <string name="ui_client_cert_password_error_unreadable">該檔案不是可讀取的 .p12 或 .pfx 憑證。</string>
+    <string name="ui_client_cert_password_error_expired">此憑證已過期。</string>
+    <string name="ui_client_cert_password_error_unsupported_key">此裝置無法儲存此類型的金鑰。請使用 RSA 或 EC 金鑰。</string>
 </resources>

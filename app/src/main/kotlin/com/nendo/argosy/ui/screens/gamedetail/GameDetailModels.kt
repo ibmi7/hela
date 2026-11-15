@@ -212,6 +212,7 @@ data class MoreOptionsContext(
     val hasManageableFiles: Boolean = false,
     val platformSlug: String? = null,
     val launchDisplayCount: Int = 0,
+    val offersDownload: Boolean = false,
     val canReleaseZip: Boolean = false
 )
 
@@ -224,6 +225,7 @@ fun buildMoreOptions(ctx: MoreOptionsContext): List<MoreOptionAction> = buildLis
     val isEmulatedGame = !ctx.isSteamGame && !ctx.isAndroidApp
     val usesTitleId = ctx.platformSlug?.let(com.nendo.argosy.data.platform.PlatformDefinitions::hasTitleId) == true
 
+    if (ctx.offersDownload) add(MoreOptionAction.Download)
     if (ctx.isDownloaded && ctx.launchDisplayCount > 1) add(MoreOptionAction.LaunchOnDisplay)
     if (ctx.canManageSaves || ctx.canManageStates) add(MoreOptionAction.ManageSaves)
     if (canTrackProgress) add(MoreOptionAction.RatingsStatus)
@@ -244,6 +246,7 @@ fun buildMoreOptions(ctx: MoreOptionsContext): List<MoreOptionAction> = buildLis
 }
 
 sealed class MoreOptionAction {
+    data object Download : MoreOptionAction()
     data object LaunchOnDisplay : MoreOptionAction()
     data object ManageSaves : MoreOptionAction()
     data object RatingsStatus : MoreOptionAction()
@@ -299,7 +302,7 @@ data class GameDetailUiState(
     val downloadStatus: GameDownloadStatus = GameDownloadStatus.NOT_DOWNLOADED,
     val hasManageableFiles: Boolean = false,
     val canReleaseZip: Boolean = false,
-    val isAwaitingServer: Boolean = false,
+    val downloadWaitStatus: DownloadWaitStatus? = null,
     val downloadSizeBytes: Long? = null,
     val selectedCoreId: String? = null,
     val siblingGameIds: List<Long> = emptyList(),
@@ -356,7 +359,10 @@ data class GameDetailUiState(
     val hasSocialAccount: Boolean = false,
     val isPrivate: Boolean = false,
     val perGameSettings: com.nendo.argosy.ui.screens.gamedetail.delegates.PerGameSettingsState =
-        com.nendo.argosy.ui.screens.gamedetail.delegates.PerGameSettingsState()
+        com.nendo.argosy.ui.screens.gamedetail.delegates.PerGameSettingsState(),
+    val running: com.nendo.argosy.ui.common.RunningGameUi? = null,
+    val runningMoveTargets: List<com.nendo.argosy.ui.screens.running.RunningMoveTarget> = emptyList(),
+    val stream: com.nendo.argosy.ui.screens.stream.StreamOffer? = null
 ) {
     val hasPreviousGame: Boolean get() = currentGameIndex > 0
     val hasNextGame: Boolean get() = currentGameIndex >= 0 && currentGameIndex < siblingGameIds.size - 1
@@ -387,7 +393,10 @@ data class GameDetailUiState(
                 hasRelated = relatedGames.isNotEmpty(),
                 hasPerGameSettings = game != null && !game.isSteamGame && !game.isAndroidApp &&
                     downloadStatus == GameDownloadStatus.DOWNLOADED,
-                hasDocuments = documents.isNotEmpty()
+                hasDocuments = documents.isNotEmpty(),
+                isRunning = running != null,
+                moveTargetCount = if (running != null) runningMoveTargets.size else 0,
+                stream = stream
             )
         }
 }

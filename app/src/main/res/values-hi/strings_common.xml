@@ -21,6 +21,8 @@
     <string name="completion_status_retired">रिटायर</string>
     <string name="completion_status_never_playing">नहीं खेलेंगे</string>
 
+    <string name="play_session_device_romm_streaming">RomM स्ट्रीमिंग</string>
+
     <!-- Save manager (ui/common/savechannel) -->
 
     <string name="ui_save_channel_title">सेव प्रबंधन</string>
@@ -75,8 +77,6 @@
     <string name="ui_save_channel_rename_prompt_save_as">इस सेव स्लॉट के लिए एक नाम दर्ज करें</string>
     <string name="ui_save_channel_rename_prompt_new_slot">इस सेव स्लॉट के लिए एक नाम दर्ज करें</string>
     <string name="ui_save_channel_rename_prompt_rename">एक नया नाम दर्ज करें</string>
-    <string name="ui_save_channel_rename_footer_confirm">पुष्टि करें</string>
-    <string name="ui_save_channel_rename_footer_cancel">रद्द करें</string>
     <string name="ui_save_channel_rename_placeholder">स्लॉट का नाम</string>
     <string name="ui_save_channel_rename_cancel_button">रद्द करें</string>
 
@@ -148,6 +148,7 @@
     <string name="ui_save_channel_notice_restored_state">%1$s रीस्टोर हुआ</string>
     <string name="ui_save_channel_notice_state_not_cached">स्टेट कैश में नहीं मिला</string>
     <string name="ui_save_channel_notice_state_no_config">इस एमुलेटर के लिए कोई स्टेट कॉन्फ़िगरेशन नहीं है</string>
+    <string name="ui_save_channel_notice_state_other_core">यह स्टेट किसी दूसरे कोर ने सेव की थी और यहाँ लोड नहीं हो सकती</string>
     <string name="ui_save_channel_notice_delete_target_auto">ऑटो स्टेट</string>
     <string name="ui_save_channel_notice_delete_target_slot">स्टेट स्लॉट %1$d</string>
     <string name="ui_save_channel_notice_deleted_state">%1$s हटाया गया</string>
@@ -198,6 +199,21 @@
     <string name="ui_pushed_apk_not_now">अभी नहीं</string>
 
     <string name="ui_modal_search_placeholder">खोजें...</string>
+    <string name="ui_modal_search_keyboard_submit">खोजें</string>
+
+    <string name="ui_keyboard_key_shift">शिफ़्ट</string>
+    <string name="ui_keyboard_key_caps_lock">कैप्स लॉक</string>
+    <string name="ui_keyboard_key_backspace">बैकस्पेस</string>
+    <string name="ui_keyboard_key_space">स्पेस</string>
+    <string name="ui_keyboard_key_symbols">चिह्न</string>
+    <string name="ui_keyboard_key_letters">अक्षर</string>
+    <string name="ui_keyboard_key_layout">लेआउट बदलें</string>
+    <string name="ui_keyboard_paste">पेस्ट करें</string>
+    <string name="ui_keyboard_key_enter_default">हो गया</string>
+    <plurals name="ui_keyboard_password_announce">
+        <item quantity="one">%d वर्ण</item>
+        <item quantity="other">%d वर्ण</item>
+    </plurals>
 
     <string name="ui_disc_picker_title">डिस्क चुनें</string>
     <string name="ui_disc_picker_subtitle">लॉन्च करने के लिए डिस्क चुनें</string>
@@ -290,7 +306,6 @@
     <string name="ui_expandable_preference_collapse">समेटें</string>
     <string name="ui_expandable_preference_expand">विस्तार करें</string>
 
-    <string name="ui_permission_card_granted">स्वीकृत</string>
 
     <string name="ui_game_card_favorite">पसंदीदा</string>
     <string name="ui_game_card_downloaded">डाउनलोड हो चुका</string>
@@ -302,7 +317,6 @@
     <string name="ui_section_breadcrumb_next">अगला सेक्शन</string>
 
     <string name="ui_qr_code_description">%1$s के लिए QR कोड</string>
-    <string name="ui_qr_scanner_hint">RomM पेयरिंग QR कोड पर पॉइंट करें</string>
 
     <string name="ui_custom_tile_menu_header">टाइल</string>
 
@@ -354,7 +368,6 @@
 
     <string name="ui_tile_picker_title">ग्रिड में जोड़ें</string>
     <string name="ui_tile_picker_title_track_game">एक गेम ट्रैक करें</string>
-    <string name="ui_tile_picker_subtitle_matching">\"%1$s\" से मेल खाता</string>
     <string name="ui_tile_picker_empty_games">जोड़ने के लिए कोई इंस्टॉल्ड गेम नहीं</string>
     <string name="ui_tile_picker_empty_collections">अभी तक कोई कलेक्शन नहीं</string>
     <string name="ui_tile_picker_empty_apps">कोई ऐप नहीं मिला</string>
@@ -474,6 +487,7 @@
     <string name="ui_platform_filter_sort_most_games">सबसे ज़्यादा गेम</string>
     <string name="ui_platform_filter_sort_least_games">सबसे कम गेम</string>
     <string name="ui_platform_filter_search_placeholder">प्लेटफ़ॉर्म खोजें...</string>
+    <string name="ui_platform_filter_keyboard_submit">पूर्ण</string>
     <string name="ui_platform_filter_search_clear">साफ़ करें</string>
     <plurals name="ui_platform_filter_count">
         <item quantity="one">%d प्लेटफ़ॉर्म</item>
@@ -807,6 +821,7 @@
     <string name="ui_quick_menu_empty_favorites">अभी तक कोई पसंदीदा नहीं</string>
     <string name="ui_quick_menu_empty_random">कोई गेम उपलब्ध नहीं</string>
     <string name="ui_quick_menu_search_placeholder">गेम खोजें...</string>
+    <string name="ui_quick_menu_search_keyboard_submit">खोजें</string>
     <string name="ui_quick_menu_search_prompt">खोजने के लिए कम से कम 2 अक्षर टाइप करें</string>
     <string name="ui_quick_menu_search_no_results">\"%1$s\" के लिए कोई गेम नहीं मिला</string>
     <string name="ui_quick_menu_recent_searches_heading">हाल की खोजें</string>
@@ -843,6 +858,7 @@
     <string name="ui_file_browser_new_folder_field_label">फ़ोल्डर का नाम</string>
     <string name="ui_file_browser_new_folder_cancel">रद्द करें</string>
     <string name="ui_file_browser_new_folder_confirm">बनाएं</string>
+    <string name="ui_file_browser_new_folder_keyboard_submit">बनाएं</string>
     <string name="ui_file_browser_new_folder_error_empty">फ़ोल्डर का नाम खाली नहीं हो सकता</string>
     <string name="ui_file_browser_new_folder_error_invalid">अमान्य फ़ोल्डर नाम</string>
     <string name="ui_file_browser_new_folder_error_exists">फ़ोल्डर पहले से मौजूद है</string>
@@ -998,6 +1014,8 @@
     <string name="gamedetail_action_buttons_no_space">जगह नहीं</string>
     <string name="gamedetail_action_buttons_downloading_percent">%1$d%%</string>
     <string name="gamedetail_action_buttons_waiting_for_server">सर्वर की प्रतीक्षा है…</string>
+    <string name="gamedetail_action_buttons_retrying">फिर से प्रयास जारी है…</string>
+    <string name="gamedetail_action_buttons_waiting_for_network">नेटवर्क की प्रतीक्षा है…</string>
     <string name="gamedetail_action_buttons_extracting">एक्सट्रैक्ट हो रहा है...</string>
     <string name="gamedetail_action_buttons_resume_percent">रिज़्यूम %1$d%%</string>
     <string name="gamedetail_action_buttons_retry">पुनः प्रयास करें</string>
@@ -1009,7 +1027,6 @@
     <string name="home_grid_local_video_row_subtitle">सीधे आपके स्टोरेज से चलता है</string>
     <string name="ui_quick_settings_swap_displays">डिस्प्ले बदलें</string>
     <string name="ui_quick_settings_page_connections">कनेक्शन</string>
-    <string name="ui_quick_connections_unsupported">यह डिवाइस वाई-फ़ाई और ब्लूटूथ को सीधे नियंत्रित करने की अनुमति नहीं देता</string>
     <string name="ui_quick_connections_tab_wifi">वाई-फ़ाई</string>
     <string name="ui_quick_connections_tab_bluetooth">ब्लूटूथ</string>
     <string name="ui_quick_connections_wifi_off">वाई-फ़ाई बंद है</string>
@@ -1017,13 +1034,20 @@
     <string name="ui_quick_connections_nearby">आस-पास के नेटवर्क</string>
     <string name="ui_quick_connections_saved">सहेजे गए नेटवर्क</string>
     <string name="ui_quick_connections_paired">पेयर किए गए डिवाइस</string>
-    <string name="ui_quick_connections_scanning">नेटवर्क खोजे जा रहे हैं</string>
     <string name="ui_quick_connections_no_networks">कोई नेटवर्क नहीं मिला</string>
     <string name="ui_quick_connections_no_paired">कोई पेयर किया गया डिवाइस नहीं</string>
     <string name="ui_quick_connections_row_joining">जुड़ रहा है</string>
     <string name="ui_quick_connections_row_failed">विफल</string>
     <string name="ui_quick_connections_secured">सुरक्षित</string>
     <string name="ui_quick_connections_forget">भूलें</string>
+    <string name="ui_quick_connections_forget_device">भूलें</string>
+    <string name="ui_quick_connections_pair_controller">कंट्रोलर पेयर करें</string>
+    <string name="ui_quick_connections_pair_stop">रोकें</string>
+    <string name="ui_quick_connections_nearby_controllers">आसपास मिले</string>
+    <string name="ui_quick_connections_controllers_searching">कंट्रोलर का पेयरिंग बटन दबाए रखें</string>
+    <string name="ui_quick_connections_no_controllers">कोई कंट्रोलर नहीं मिला</string>
+    <string name="ui_quick_connections_row_pairing">पेयर हो रहा है</string>
+    <string name="ui_quick_connections_row_pair_failed">पेयर नहीं हुआ</string>
     <string name="ui_quick_connections_bluetooth_permission">पेयर किए गए डिवाइस दिखाने के लिए Argosy को अनुमति चाहिए।</string>
     <string name="ui_quick_connections_bluetooth_permission_allow">अनुमति दें</string>
     <string name="ui_quick_connections_device_connected">कनेक्ट है</string>
@@ -1038,10 +1062,37 @@
     <string name="ui_quick_connections_join_busy">जुड़ रहा है</string>
     <string name="ui_quick_connections_join_cancel">रद्द करें</string>
     <string name="ui_quick_connections_join_failed">डिवाइस इस नेटवर्क से नहीं जुड़ सका।</string>
+    <string name="ui_quick_connections_bluetooth_status_one">%1$s कनेक्ट है</string>
+    <plurals name="ui_quick_connections_bluetooth_status_many">
+        <item quantity="one">%1$d डिवाइस कनेक्ट है</item>
+        <item quantity="other">%1$d डिवाइस कनेक्ट हैं</item>
+    </plurals>
+    <string name="ui_quick_connections_bluetooth_status_none">कोई डिवाइस कनेक्ट नहीं है</string>
+    <string name="ui_quick_connections_wifi_status_network">%1$s · %2$s</string>
+    <string name="ui_quick_connections_searching_controllers">खोज जारी है</string>
+    <string name="ui_quick_connections_found_pair">पेयर करें</string>
+    <string name="ui_quick_connections_retry_pair">फिर से कोशिश करें</string>
+    <string name="ui_quick_connections_retry_join">फिर से कोशिश करें</string>
+    <string name="ui_quick_connections_scan_running">नेटवर्क स्कैन हो रहे हैं</string>
+    <string name="ui_quick_connections_scan_again">फिर से स्कैन करें</string>
+    <string name="ui_quick_connections_saved_out_of_range">रेंज में नहीं</string>
+    <string name="ui_quick_connections_saved_connected">कनेक्ट है</string>
+    <string name="ui_quick_connections_nearby_join">जुड़ें</string>
+    <string name="ui_quick_connections_nearby_join_outside">वाई-फ़ाई सेटिंग में जुड़ें</string>
+    <string name="ui_quick_connections_bluetooth_off_hint">कंट्रोलर पेयर करने के लिए इसे चालू करें</string>
+    <string name="ui_quick_connections_wifi_off_hint">आसपास के नेटवर्क देखने के लिए इसे चालू करें</string>
+    <string name="ui_quick_connections_bluetooth_toggle_standard">इसे ब्लूटूथ सेटिंग में बंद करें</string>
+    <string name="ui_quick_connections_forget_device_hint">डिवाइस को Android की ब्लूटूथ सेटिंग में भूलें</string>
+    <string name="ui_quick_connections_wifi_toggle_standard">वाई-फ़ाई पैनल में वाई-फ़ाई चालू या बंद करें</string>
+    <string name="ui_quick_connections_wifi_permission">नेटवर्क के नाम और आसपास के नेटवर्क देखने के लिए लोकेशन की अनुमति दें</string>
+    <string name="ui_quick_connections_wifi_permission_allow">अनुमति दें</string>
+    <string name="ui_quick_connections_wifi_permission_denied">Argosy के लिए लोकेशन की अनुमति बंद है</string>
+    <string name="ui_quick_connections_wifi_permission_settings">ऐप की अनुमतियां खोलें</string>
+    <string name="ui_quick_connections_bluetooth_permission_denied">Argosy के लिए आसपास के डिवाइस की अनुमति बंद है</string>
+    <string name="ui_quick_connections_bluetooth_permission_settings">ऐप की अनुमतियां खोलें</string>
     <string name="ui_quick_settings_wifi">वाई-फ़ाई</string>
     <string name="ui_quick_settings_bluetooth">ब्लूटूथ</string>
     <string name="ui_quick_settings_radio_on">चालू</string>
-    <string name="ui_quick_settings_radio_off">बंद</string>
     <string name="ui_quick_settings_wifi_connected">कनेक्ट है</string>
     <string name="ui_quick_settings_wifi_not_connected">कनेक्ट नहीं है</string>
     <string name="ui_sibling_choice_title_download">डाउनलोड के लिए वैरिएंट चुनें</string>
@@ -1083,8 +1134,37 @@
     <string name="ui_launch_overlay_running_busy_title">%1$s चल रहा है</string>
     <string name="ui_launch_overlay_running_busy_message_game">%1$s अभी भी बैकग्राउंड में %2$s चला रहा है।</string>
     <string name="ui_launch_overlay_running_busy_message">%1$s अभी भी बैकग्राउंड में खुला है।</string>
-    <string name="ui_launch_overlay_running_open_title">%1$s अभी भी खुला है</string>
-    <string name="ui_launch_overlay_running_open_message">दूसरा गेम शुरू करने पर यह बंद हो जाएगा।</string>
+    <string name="ui_launch_overlay_makeroom_title">%1$s के लिए जगह बनाएं</string>
+    <string name="ui_launch_overlay_makeroom_subtitle">बंद करने के लिए एक गेम चुनें। यह पहले सेव होगा।</string>
+    <string name="ui_launch_overlay_makeroom_saved">सेव किया गया %1$s</string>
+    <string name="ui_launch_overlay_makeroom_close">बंद करें</string>
+    <string name="ui_launch_overlay_makeroom_saving">सेव हो रहा है</string>
+    <string name="ui_launch_overlay_makeroom_closed">बंद हो गया</string>
     <string name="ui_launch_overlay_running_close_label">बंद करें और लॉन्च करें</string>
     <string name="ui_launch_overlay_running_close_subtitle">चल रहे गेम में बिना सेव की गई प्रगति खो जाएगी</string>
+    <string name="ui_game_card_running">चल रहा है</string>
+    <string name="ui_game_card_saving">सेव हो रहा है</string>
+    <string name="ui_running_duration_hours_minutes">%1$dh %2$dm</string>
+    <string name="ui_running_duration_minutes">%1$dm</string>
+    <string name="ui_status_bar_running_desc">चल रहे गेम</string>
+    <string name="ui_quick_menu_row_running">चल रहा है</string>
+    <string name="ui_quick_menu_row_running_in">%1$s में चल रहा है</string>
+    <string name="ui_quick_menu_row_saving">सेव हो रहा है</string>
+    <string name="ui_quick_menu_random_action_resume_game">फिर से खेलें</string>
+    <string name="gamelist_row_running">चल रहा है</string>
+    <string name="gamelist_row_running_in">%1$s में चल रहा है</string>
+    <string name="gamelist_row_saving">सेव हो रहा है</string>
+    <string name="ui_client_cert_password_title">प्रमाणपत्र पासवर्ड</string>
+    <string name="ui_client_cert_password_label">पासवर्ड</string>
+    <string name="ui_client_cert_password_message">%1$s का पासवर्ड दर्ज करें। अगर फ़ाइल में पासवर्ड नहीं है तो खाली छोड़ दें।</string>
+    <string name="ui_client_cert_password_import">आयात करें</string>
+    <string name="ui_client_cert_password_import_busy">आयात हो रहा है…</string>
+    <string name="ui_client_cert_password_cancel">रद्द करें</string>
+    <string name="ui_client_cert_password_status_importing">प्रमाणपत्र आयात हो रहा है…</string>
+    <string name="ui_client_cert_password_error_not_a_file">वह फ़ाइल खोली नहीं जा सकी।</string>
+    <string name="ui_client_cert_password_error_wrong_password">इस प्रमाणपत्र फ़ाइल के लिए गलत पासवर्ड।</string>
+    <string name="ui_client_cert_password_error_no_private_key">इस फ़ाइल में निजी कुंजी नहीं है। प्रमाणपत्र को उसकी कुंजी के साथ निर्यात करें।</string>
+    <string name="ui_client_cert_password_error_unreadable">वह फ़ाइल पढ़ने योग्य .p12 या .pfx प्रमाणपत्र नहीं है।</string>
+    <string name="ui_client_cert_password_error_expired">इस प्रमाणपत्र की अवधि समाप्त हो गई है।</string>
+    <string name="ui_client_cert_password_error_unsupported_key">यह डिवाइस इस प्रकार की कुंजी संग्रहीत नहीं कर सकता। RSA या EC कुंजी का उपयोग करें।</string>
 </resources>

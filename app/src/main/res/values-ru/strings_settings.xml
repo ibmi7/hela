@@ -6,6 +6,8 @@
     <string name="settings_main_section_gameplay">ИГРОВОЙ ПРОЦЕСС</string>
     <string name="settings_main_section_library">БИБЛИОТЕКА</string>
     <string name="settings_main_section_connections">ПОДКЛЮЧЕНИЯ</string>
+    <string name="settings_main_network_title">Сеть и Bluetooth</string>
+    <string name="settings_main_network_subtitle">Сети Wi-Fi и контроллеры Bluetooth</string>
     <string name="settings_main_section_system">СИСТЕМА</string>
 
     <string name="settings_main_theme_title">Тема</string>
@@ -240,9 +242,11 @@
     <string name="settings_navigation_shortcut_capture_subtitle">В меню Argosy кнопка больше не будет делать ничего другого</string>
     <string name="settings_navigation_shortcut_capture_reserved">%1$s нужна для перемещения по меню и не может быть назначена</string>
     <string name="settings_navigation_shortcut_capture_hint_cancel">Отмена</string>
-    <string name="settings_navigation_section_system_buttons">Системные кнопки</string>
+    <string name="settings_navigation_section_system_buttons">Глобальные сочетания</string>
     <string name="settings_navigation_system_hotkeys_title">Комбинации Домой и Назад</string>
     <string name="settings_navigation_system_hotkeys_subtitle">Комбинации кнопок контроллера, которые работают как Домой и Назад, пока открыто другое приложение</string>
+    <string name="settings_navigation_home_button_in_games_title">Удерживать Домой для смены игры</string>
+    <string name="settings_navigation_home_button_in_games_subtitle">Удерживайте кнопку Домой на устройстве в игре, запущенной Argosy, чтобы открыть переключатель игр. Выключите, чтобы оставить кнопку Домой устройству. Нужен root</string>
     <string name="settings_navigation_system_hotkeys_access_title">Служба специальных возможностей</string>
     <string name="settings_navigation_system_hotkeys_access_subtitle">Комбинации доходят до других приложений через службу специальных возможностей Argosy</string>
     <string name="settings_navigation_system_hotkeys_access_on">Вкл.</string>
@@ -250,7 +254,7 @@
     <string name="settings_navigation_system_home_title">Домой</string>
     <string name="settings_navigation_system_home_subtitle">Удерживайте вместе 2 секунды. Нажатие кнопки Guide тоже ведёт домой</string>
     <string name="settings_navigation_system_back_title">Назад</string>
-    <string name="settings_navigation_system_back_subtitle">Удерживайте первые кнопки, затем нажмите последнюю. Удержание кнопки Guide 1 секунду тоже работает как Назад. В игре удержание комбинации 3 секунды открывает быструю панель</string>
+    <string name="settings_navigation_system_back_subtitle">Удерживайте первые кнопки, затем нажмите последнюю. В игре удержание комбинации 3 секунды открывает быструю панель</string>
     <string name="settings_navigation_system_combo_capture_prompt">Удерживайте 2 или 3 кнопки по порядку...</string>
 
     <!-- ===== Displays section ===== -->
@@ -408,6 +412,17 @@
     <string name="settings_interface_pre_launch_recaps_subtitle">Перед игрой RetroAchievements, в которую вы не играли неделю, показывать, на чём вы остановились</string>
     <string name="settings_interface_monthly_recap_title">Итоги месяца</string>
     <string name="settings_interface_monthly_recap_subtitle">В начале каждого месяца показывать на главном экране сводку за прошлый месяц</string>
+    <string name="settings_interface_section_notifications">Уведомления</string>
+    <string name="settings_interface_notifications_title">Уведомления</string>
+    <string name="settings_interface_notifications_subtitle">Показывать уведомления Argosy в лаунчере и поверх игр. Уведомления о батарее по-прежнему показываются</string>
+    <string name="settings_interface_notify_downloads_finished_title">Загрузки завершены</string>
+    <string name="settings_interface_notify_downloads_finished_subtitle">Показывать уведомление, когда загрузка завершится</string>
+    <string name="settings_interface_notify_battery_title">Батарея</string>
+    <string name="settings_interface_notify_battery_subtitle" formatted="false">Предупреждать при 15% и 5%. Встроенные игры всё равно сохраняются при 5%</string>
+    <string name="settings_interface_notify_charging_title">Зарядка</string>
+    <string name="settings_interface_notify_charging_subtitle">Показывать уведомление, когда зарядку подключают или отключают во время игры</string>
+    <string name="settings_interface_notify_controllers_title">Контроллеры</string>
+    <string name="settings_interface_notify_controllers_subtitle">Показывать уведомление, когда контроллер подключается, отключается или разряжается</string>
 
     <string name="settings_home_screen_background_title">Фон</string>
     <string name="settings_home_screen_background_subtitle">Арт игры или фоновый узор</string>
@@ -686,23 +701,6 @@
 
     <!-- ===== Permissions section ===== -->
 
-    <string name="settings_permissions_intro">Argosy требует определённых разрешений для полноценной работы. Нажмите на каждое разрешение, чтобы предоставить доступ.</string>
-    <string name="settings_permissions_storage_title">Доступ к хранилищу</string>
-    <string name="settings_permissions_storage_description">Требуется для скачивания игр, синхронизации файлов сохранений и доступа к файлам ROM на устройстве.</string>
-    <string name="settings_permissions_usage_stats_title">Доступ к статистике использования</string>
-    <string name="settings_permissions_usage_stats_description">Обеспечивает точный учёт времени игры и бесшовное возобновление игровой сессии при переключении между приложениями.</string>
-    <string name="settings_permissions_notifications_title">Уведомления</string>
-    <string name="settings_permissions_notifications_description">Показывает прогресс загрузки при скачивании игр в фоне.</string>
-    <string name="settings_permissions_write_settings_title">Доступ к системным настройкам</string>
-    <string name="settings_permissions_write_settings_description">Позволяет управлять режимом производительности устройства и настройками вентилятора из панели быстрых настроек.</string>
-    <string name="settings_permissions_screen_capture_title">Захват экрана</string>
-    <string name="settings_permissions_screen_capture_description">Позволяет LED-подсветке считывать цвета экрана во время игры.</string>
-    <string name="settings_permissions_display_overlay_title">Отображение поверх других приложений</string>
-    <string name="settings_permissions_display_overlay_description">Показывает уведомления об обнаружении сохранений при игре во внешних эмуляторах.</string>
-    <string name="settings_permissions_accessibility_title">Служба специальных возможностей</string>
-    <string name="settings_permissions_accessibility_description">Позволяет открывать быструю панель поверх других эмуляторов и беззвучно делать снимки сохранений</string>
-    <string name="settings_permissions_live_wallpaper_title">Анимированный экран блокировки</string>
-    <string name="settings_permissions_live_wallpaper_description">Разрешите Argosy установить анимированный экран блокировки.</string>
     <!-- %1$s is a root or system-access app name, such as Magisk or Shizuku -->
     <string name="settings_permissions_privileged_title">Доступ через %1$s</string>
     <string name="settings_permissions_privileged_description_off">Разрешите Argosy доступ к папкам сохранений эмуляторов в Android/data.</string>
@@ -713,7 +711,6 @@
     <string name="settings_permissions_privileged_description_refused">Доступ не предоставлен. Выберите, чтобы запросить снова.</string>
     <string name="settings_lock_screen_wallpaper_label">Библиотека Argosy</string>
     <string name="settings_lock_screen_wallpaper_description">Разрешите Argosy установить анимированный экран блокировки.</string>
-    <string name="settings_permissions_status_footer">Статус: предоставлено %1$d/%2$d разрешений</string>
 
     <!-- ===== About section ===== -->
 
@@ -734,7 +731,7 @@
     <string name="settings_about_update_subtitle_current">Актуальная версия</string>
     <string name="settings_about_update_subtitle_on_prerelease">Используется пре-релизная сборка</string>
     <string name="settings_about_update_subtitle_idle">Проверить наличие новых версий</string>
-    <string name="settings_about_update_action_download">Скачать</string>
+    <string name="settings_about_update_action_install">Установить</string>
     <string name="settings_about_update_action_check">Проверить</string>
     <string name="settings_about_update_action_changelog">Список изменений</string>
     <string name="settings_about_changelog_preview_title">Что нового - %1$s</string>
@@ -1668,6 +1665,8 @@
     <string name="settings_builtin_controls_hotkeys_subtitle">Настроить сочетания для меню, перемотки вперёд и назад</string>
     <string name="settings_builtin_controls_limit_hotkeys_title">Горячие клавиши только для игрока 1</string>
     <string name="settings_builtin_controls_limit_hotkeys_subtitle">Горячие клавиши работают только с контроллером игрока 1</string>
+    <string name="settings_builtin_controls_confirm_return_title">Подтверждать возврат в Argosy</string>
+    <string name="settings_builtin_controls_confirm_return_subtitle">Спрашивать перед выходом из игры по кнопке Home</string>
     <string name="settings_builtin_controls_select_as_back_title">Select как «Назад»</string>
     <string name="settings_builtin_controls_select_as_back_subtitle">Для контроллеров, у которых Select отправляет «Назад». В режиме «Авто» «Назад» работает как Select на контроллерах без кнопки Select.</string>
     <string name="settings_builtin_controls_select_as_back_auto">Авто</string>
@@ -2213,7 +2212,16 @@
     <!-- ===== RomM config form (Settings > components > RomMConfigForm) ===== -->
 
     <string name="settings_romm_config_server_url_label">URL сервера</string>
-    <string name="settings_romm_config_server_url_placeholder">https://romm.example.com</string>
+    <string name="settings_romm_config_url_keyboard_submit">Готово</string>
+    <string name="settings_romm_config_pairing_code_keyboard_label">Код привязки</string>
+    <string name="settings_romm_config_pairing_code_keyboard_submit">Готово</string>
+    <string name="settings_jellyfin_config_keyboard_submit">Сохранить</string>
+    <string name="settings_jellyfin_signin_username_keyboard_submit">Готово</string>
+    <string name="settings_jellyfin_signin_password_keyboard_submit">Войти</string>
+    <string name="settings_ra_login_username_keyboard_submit">Готово</string>
+    <string name="settings_ra_login_password_keyboard_submit">Готово</string>
+    <string name="settings_ra_proxy_address_keyboard_submit">Готово</string>
+    <string name="settings_steam_add_game_keyboard_submit">Добавить</string>    <string name="settings_romm_config_server_url_placeholder">https://romm.example.com</string>
     <string name="settings_romm_config_auth_method_title">Способ входа</string>
     <string name="settings_romm_config_auth_method_device">Привязка устройства</string>
     <string name="settings_romm_config_auth_method_pairing_code">Код привязки</string>
@@ -2225,8 +2233,6 @@
     <string name="settings_romm_config_connect_title">Подключить</string>
     <string name="settings_romm_config_connect_device_subtitle">Создать QR-код для привязки</string>
     <string name="settings_romm_config_connect_subtitle">Подключиться к серверу RomM</string>
-    <string name="settings_romm_config_scan_title">Сканировать QR-код</string>
-    <string name="settings_romm_config_scan_subtitle">Отсканируйте QR-код привязки из веб-интерфейса RomM</string>
     <string name="settings_romm_config_certificate_title">Добавить сертификат</string>
     <string name="settings_romm_config_certificate_subtitle">Доверять серверу с частным центром сертификации</string>
     <plurals name="settings_romm_config_certificate_subtitle_count">
@@ -2925,4 +2931,27 @@
     <string name="settings_builtin_gpu_driver_reason_core_system_only">%1$s использует системный драйвер</string>
     <string name="settings_builtin_gpu_driver_reason_backend">Действует, когда рендерер Vulkan</string>
     <string name="settings_builtin_gpu_driver_reason_device">Свои драйверы требуют GPU Adreno</string>
+    <string name="settings_client_cert_row_title">Клиентский сертификат</string>
+    <string name="settings_client_cert_row_subtitle_none">Для серверов, требующих клиентский сертификат (mTLS)</string>
+    <string name="settings_client_cert_row_subtitle_active">%1$s · действителен до %2$s</string>
+    <string name="settings_client_cert_modal_header">Клиентский сертификат</string>
+    <string name="settings_client_cert_modal_title_none">Клиентский сертификат не импортирован</string>
+    <string name="settings_client_cert_modal_title_active">%1$s · действителен до %2$s</string>
+    <string name="settings_client_cert_use_romm_title">Использовать для RomM</string>
+    <string name="settings_client_cert_use_romm_subtitle">Предъявлять этот сертификат при подключении к вашему серверу RomM</string>
+    <string name="settings_client_cert_use_jellyfin_title">Использовать для Jellyfin</string>
+    <string name="settings_client_cert_use_jellyfin_subtitle">Предъявлять этот сертификат при подключении к вашему серверу Jellyfin</string>
+    <string name="settings_client_cert_import_subtitle">Выберите файл .p12 или .pfx с сертификатом и закрытым ключом</string>
+    <string name="settings_client_cert_replace_subtitle">Импортировать другой файл .p12 или .pfx вместо этого</string>
+    <string name="settings_client_cert_remove_subtitle">Удалить сертификат и его закрытый ключ с этого устройства</string>
+    <string name="settings_client_cert_import">Импортировать сертификат…</string>
+    <string name="settings_client_cert_replace">Заменить сертификат…</string>
+    <string name="settings_client_cert_remove">Удалить сертификат</string>
+    <string name="settings_client_cert_remove_title">Удалить клиентский сертификат?</string>
+    <string name="settings_client_cert_remove_message">Сертификат и его закрытый ключ будут удалены с этого устройства. Серверы, которые его требуют, будут отклонять подключения, пока вы снова не импортируете файл.</string>
+    <string name="settings_client_cert_remove_confirm">Удалить</string>
+    <string name="settings_client_cert_filebrowser_title">Выберите клиентский сертификат</string>
+    <string name="settings_romm_config_error_client_certificate_required">Сервер требует клиентский сертификат. Импортируйте его в разделе «Клиентский сертификат» или включите там «Использовать для RomM».</string>
+    <string name="settings_accounts_pairing_error_client_certificate_required">Сервер требует клиентский сертификат. Импортируйте его в разделе «Клиентский сертификат» или включите там «Использовать для RomM».</string>
+    <string name="settings_jellyfin_error_client_certificate_required">Сервер требует клиентский сертификат. Включите «Использовать для Jellyfin» в разделе «Клиентский сертификат».</string>
 </resources>
