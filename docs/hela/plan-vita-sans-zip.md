@@ -1,6 +1,6 @@
 # Plan : jeux Vita jouables sans leur zip
 
-Rédigé le 15/11/2026 sur la branche `hela`. Fait le même jour (voir `etat-des-travaux.md`, section Lancement Vita) ; l'action n'a été ajoutée qu'au menu rapide de l'accueil, pas au menu de la bibliothèque.
+Rédigé le 15/11/2026 sur la branche `hela`. Fait le même jour (voir `etat-des-travaux.md`, section Lancement Vita) ; l'action a d'abord été ajoutée au menu rapide de l'accueil, puis le 15/11 au menu de la bibliothèque et à la fiche du jeu.
 
 ## But
 
@@ -13,7 +13,7 @@ Un jeu PS Vita installé dans Vita3K (`<VitaFS>/ux0/app/<identifiant>`) reste jo
 | Ce qui remplace le zip | Un fichier témoin `<nom du zip sans .zip>.vita3k`, dans le même dossier, qui contient l'identifiant |
 | Suppression manuelle | Nouvelle action « Libérer le zip » dans le menu du jeu, visible seulement pour un jeu Vita installé ; « Supprimer le fichier local » d'Argosy reste inchangé |
 | Suppression automatique | Option par plateforme, désactivée par défaut, déclenchée en fin de session (après la synchro des sauvegardes) |
-| Jeux installés sans zip jamais téléchargé | Plus tard, chantier séparé (reconnaissance par le nom) |
+| Jeux installés sans zip jamais téléchargé | Chantier séparé, fait le 15/11 : `plan-vita-relier.md` |
 
 ## Ce que le code impose
 

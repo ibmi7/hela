@@ -1,10 +1,10 @@
 # État des travaux Hela
 
-État au 14/11/2026, branche `hela`, au-dessus d'Argosy 2.31.0 (`29e350f7b`).
+État au 15/11/2026, branche `hela`, au-dessus d'Argosy 2.31.0 (`29e350f7b`).
 
 ## Reprendre sur un autre ordinateur
 
-1. `git clone https://github.com/ibmi7/hela.git`, puis `git checkout hela`.
+1. `git clone git@github.com:ibmi7/hela.git` (SSH ; la clé de la machine doit être enregistrée sur GitHub), puis `git checkout hela`.
 2. Récupérer les sous-modules, sans lesquels le build échoue : `git submodule update --init --recursive`.
 3. Ajouter l'amont, absent d'un clone neuf : `git remote add upstream https://github.com/rommapp/argosy-launcher.git`.
 4. Installer un JDK 21 (Temurin), le SDK Android, le NDK et CMake : versions et commandes Windows/Linux dans la section « Environnement de build » de `CLAUDE.md`.
@@ -108,8 +108,14 @@ Un pack `smart_folders` (asset Silk) contient `smart_folders/by_platform/<platef
   - « Libérer le zip » dans le menu du jeu (accueil Argosy, accueil Hela), visible seulement si `Vita3kZipRelease.candidate` l'accepte : Vita, émulateur de la famille Vita3K, zip présent (ou revenu à côté d'un témoin), identifiant connu, jeu dans `ux0/app`. N'efface pas l'état de synchro (contrairement à « Supprimer le téléchargement »), ni les DLC, ni le `.m3u`.
   - Option « Libérer les zips une fois installés » (Réglages > Plateformes > PlayStation Vita, clé `hela_vita_auto_release_zip`, désactivée par défaut) : en fin de session, seulement après une synchro des sauvegardes réussie (`SessionEndCoordinator`, résultats `Success`, `Duplicate`, `Skipped`).
   - Vérifié sur la Thor avec Killzone : libération depuis le menu, puis deux lancements depuis le témoin (`-r PCSF00243`, négociation `NO_OP`), redémarrage de Hela et synchro RomM de la plateforme sans retour à « Télécharger » ; option activée, une session de 45 s a libéré le zip remis en place après un `NO_CHANGE`. FEZ (non installé) ne propose pas l'action. Uncharted, sans sauvegarde dans Vita3K, finit sa session en erreur (« Nothing to archive ») et garde son zip.
-  - Non vérifié : session courte (le code l'annule avant la synchro, donc sans libération), option désactivée, menu de la bibliothèque et fiche du jeu (l'action n'y est pas ajoutée), « Supprimer le téléchargement » sur un jeu libéré.
-- Restent en zip chez Hela : Uncharted et les deux Trails (installés dans Vita3K), FEZ (non installé).
+  - Non vérifié : session courte (le code l'annule avant la synchro, donc sans libération), option désactivée, « Supprimer le téléchargement » sur un jeu libéré.
+  - Bibliothèque et fiche du jeu (15/11) : « Libérer le zip » est aussi dans le menu rapide de la bibliothèque (ligne `RELEASE_ZIP`, juste avant « Supprimer le téléchargement ») et dans les options de la fiche (`MoreOptionAction.ReleaseZip`). Les deux passent par `GameActionsDelegate.canReleaseZip` / `releaseZip`, qui appellent `Vita3kZipRelease`. Vérifié sur la Thor avec Uncharted : libération depuis la bibliothèque à la manette, puis zip remis depuis `~/hela-backup` et libération depuis la fiche au toucher ; l'entrée disparaît une fois le zip parti ; FEZ ne la propose pas. Un zip en cours de copie suffit à faire réapparaître l'action (le fichier partiel compte comme zip).
+- Jeux installés dans Vita3K sans zip jamais téléchargé (15/11, plan dans `plan-vita-relier.md`) : Réglages > Plateformes > PlayStation Vita > « Relier les jeux installés dans Vita3K ». Hela lit `ux0/app` et le `param.sfo` de chaque jeu (`VitaParamSfo`), trouve les correspondances (`Vita3kLinkMatcher`) et relie (`Vita3kLink`) : témoin `<nom RomM>.vita3k` à plat dans `psvita/`, là où Hela poserait le zip téléchargé (`fs_name.zip`, pas les noms des zips d'origine, qui viennent d'un autre outil), `localPath` dessus, `ROMM_SYNCED`, `ADOPTED`, identifiant enregistré.
+  - Correspondance sûre (identifiant connu, entre crochets dans le nom RomM, ou dans le nom d'un `.pkg` listé par RomM) : reliée tout de suite. Par le titre seul : liste à cocher (`HelaVitaLinkModal`, manette et toucher), rien de coché par défaut. Une paire n'est gardée que si le jeu et l'application se choisissent l'un l'autre sans rival ; un jeu dont l'identifiant connu n'est pas installé n'est jamais proposé par le titre.
+  - Vérifié sur la Thor : scan sans écriture (4 sûrs : FIFA 15, MLB 14, Ys VIII, Catherine trouvé par son `.pkg` malgré son titre japonais ; 3 par le titre : Persona 4 Golden, Danganronpa, Virtua Tennis 4) ; liaison des 4 sûrs (« 4 jeux reliés »), qui restent « Jouer » après une synchro RomM de la plateforme, « Analyser les fichiers » et un redémarrage de Hela ; Ys VIII démarre (`-r PCSB01128`) ; liste par le titre, Persona et Danganronpa cochés et reliés, Virtua Tennis relié dans un second passage ; troisième appui : « Aucun jeu à relier ». « Supprimer le téléchargement » sur Virtua Tennis : seul le témoin part, le jeu repasse en « Télécharger », son ancien dossier reste ; relié de nouveau ensuite (directement, son identifiant étant resté en base).
+  - Sauvegardes, Persona 4 Golden (rom 504, serveur vide avant) : premier lancement, négociation `LocalIsNewer`, fin de session de 50 s `Result=UPLOADED`, `GET /api/saves?rom_id=504` montre la sauvegarde 11 (`vita3k`, `autosave`, même hash que le local) ; deux relances : `NO_OP, Content is identical` deux fois, serveur inchangé.
+  - Non vérifié : sauvegardes des autres jeux reliés (Danganronpa, Catherine, Ys VIII… ont une sauvegarde dans Vita3K, encore absente du serveur ; elle partira à leur première session de plus de 30 s), fermeture de la liste par B sur l'appareil (couverte par un test), un pref-path sous `Android/data` (lecture directe refusée : le bouton affiche alors « Impossible de lire… »).
+- Restent en zip chez Hela : les deux Trails (installés dans Vita3K), FEZ (non installé). Uncharted a son zip et son témoin (`localPath` sur le témoin).
 
 ## Ce qui reste
 

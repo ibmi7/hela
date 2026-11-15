@@ -1,6 +1,6 @@
 # Plan : relier les jeux installés dans Vita3K
 
-Rédigé le 15/11/2026 sur la branche `hela`. Suite de `plan-vita-sans-zip.md` : un jeu PS Vita installé dans Vita3K (`<pref-path>/ux0/app/<identifiant>`) dont le zip n'a jamais été téléchargé devient jouable depuis Hela, sans téléchargement.
+Rédigé le 15/11/2026 sur la branche `hela`. Fait le même jour, les trois étapes vérifiées sur la Thor (détail dans `etat-des-travaux.md`, section Lancement Vita). Écarts avec ce plan : les lignes de la liste sont des interrupteurs (`SwitchPreference`, comme `DownloadDefaultsModal`) plutôt que des cases ; l'état de la liste vit dans `HelaVitaLinkController` et non dans l'état des réglages ; `GameDao.updateLocalPath` acceptait déjà source et origine, sans nouvelle requête. Suite de `plan-vita-sans-zip.md` : un jeu PS Vita installé dans Vita3K (`<pref-path>/ux0/app/<identifiant>`) dont le zip n'a jamais été téléchargé devient jouable depuis Hela, sans téléchargement.
 
 ## But
 
